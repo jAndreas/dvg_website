@@ -1,0 +1,3 @@
+<div id="outer">
+	<span class="YES" alias="ROFLCOPTER">YES ${scope.test} SIR!</span>
+</div>
