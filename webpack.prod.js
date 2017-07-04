@@ -48,19 +48,25 @@ module.exports = {
 			{
 				test:		/\.html$/,
 				use: [
-					{ loader:		'raw-loader' } ]
+					{ loader:		'raw-loader' }
+				]
 			},
 			{
 				test:		/\.htmlx$/,
 				use: [
 					{ loader:		'babel-loader' },
-					{ loaderkey: "value", 	'template-string-loader' }
+					{ loader:		'template-string-loader' }
 				]
 			},
 			{
 				test:		/\.jpg$|.png$/,
 				use: [
-					{ loader:		'url-loader' }
+					{
+						loader:		'url-loader',
+						options:	{
+							limit:	8192
+						}
+					}
 				]
 			}
 		]
@@ -70,7 +76,7 @@ module.exports = {
 		new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
 		new webpack.DefinePlugin({
-			ENV_PROD: true, 
+			ENV_PROD: true,
 		})
 	]
 };

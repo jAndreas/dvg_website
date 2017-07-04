@@ -46,13 +46,19 @@ module.exports = {
 			{
 				test:		/\.htmlx$/,
 				use: [
+					{ loader:		'babel-loader' },
 					{ loader:		'template-string-loader' }
 				]
 			},
 			{
 				test:		/\.jpg$|.png$/,
 				use: [
-					{ loader:		'url-loader' }
+					{
+						loader:		'url-loader',
+						options:	{
+							limit:	8192
+						}
+					}
 				]
 			}
 		]
