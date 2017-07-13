@@ -2,7 +2,7 @@ const	webpack		= require( 'webpack' ),
 		path		= require( 'path' ),
 		fs			= require( 'fs' ),
 		websiteName	= 'der-vegane-germane.de',
-		websitePath	= `/var/www/html/${websitePath}/`;
+		websitePath	= `/var/www/html/${websiteName}/`;
 
 console.log( `\nRemoving old files in target ${websitePath}:\n` );
 fs.readdirSync( websitePath ).forEach( file  => {
