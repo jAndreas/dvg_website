@@ -4,9 +4,9 @@
 document.getElementById( 'foo' ).addEventListener( 'click', function( event ) {
 	alert('requesting... via import()');
 
-	import( /* webpackChunkName: "Module1" */ './modules/mod1/entry.js' ).then( module => {
-		console.log( 'mod1.js transfered and evaluated, value: ', module );
-		module.main();
+	import( /* webpackChunkName: "TopSection" */ './modules/topsection/main.js' ).then( TopSection => {
+		console.log( 'main.js transfered and evaluated, value: ', TopSection );
+		TopSection.main();
 	}).catch( err => {
 		console.log('ERR: ', err);
 	});

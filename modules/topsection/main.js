@@ -35,6 +35,11 @@ class TopSection extends Component {
 			}, 3000);
 		});
 	}
+
+	async main() {
+		await this.appEvents.fire( 'waitForDOM' );
+		console.log( 'TopSection main()', this );
+	}
 }
 
 // possibly mixin features here
@@ -42,10 +47,7 @@ class TopSection extends Component {
 async function main() {
 	style.use();
 
-	await appEvents.fire( 'waitForDOM' );
-
-	const inst = new TopSection();
-	console.log('instance is: ', inst);
+	new TopSection();
 }
 
 export { main };
