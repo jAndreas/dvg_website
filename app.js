@@ -6,7 +6,7 @@ document.getElementById( 'foo' ).addEventListener( 'click', function( event ) {
 
 	import( /* webpackChunkName: "TopSection" */ './modules/topsection/main.js' ).then( TopSection => {
 		console.log( 'main.js transfered and evaluated, value: ', TopSection );
-		TopSection.main();
+		TopSection.start();
 	}).catch( err => {
 		console.log('ERR: ', err);
 	});

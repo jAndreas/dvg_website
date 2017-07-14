@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component, init } from 'barfoos2.0/core.js';
+import { Component } from 'barfoos2.0/core.js';
 import { mix, extend } from 'barfoos2.0/toolkit.js';
 import { win, doc } from 'barfoos2.0/domkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
@@ -28,26 +28,16 @@ class TopSection extends Component {
 
 		console.log('Module1 is entering the stage boys and girls..');
 
-		return new Promise( (res, rej) => {
-			setTimeout(() => {
-				console.log('fake delay passed!');
-				res( this );
-			}, 3000);
-		});
-	}
-
-	async main() {
-		await this.appEvents.fire( 'waitForDOM' );
-		console.log( 'TopSection main()', this );
+		return this.appEvents.fire( 'waitForDOM' );
 	}
 }
 
 // possibly mixin features here
 
-async function main() {
+async function start() {
 	style.use();
 
-	new TopSection();
+	const inst = await new TopSection();
 }
 
-export { main };
+export { start };

@@ -4,14 +4,16 @@ const	webpack		= require( 'webpack' ),
 		websiteName	= 'der-vegane-germane.de',
 		websitePath	= `/var/www/html/${websiteName}/`;
 
-console.log( `\nRemoving old files in target ${websitePath}:\n` );
+console.log( `\nRemoving old javascript and mapping files in ${websitePath}...` );
 fs.readdirSync( websitePath ).forEach( file  => {
 	if( /\.js$|\.map$/.test( file ) ) {
-		console.log( 'removing ', file );
+		console.log( `\tremoving ${file}` );
 		fs.unlink( websitePath + file, () => {} );
 	}
 });
-console.log( '\nDone.\n' );
+console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
+fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${websitePath}index.html` ) );
+console.log( 'Done.\n' );
 
 module.exports = {
 	context:	__dirname,
