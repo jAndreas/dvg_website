@@ -28,7 +28,7 @@ class TopSection extends Component {
 
 		console.log('Module1 is entering the stage boys and girls..');
 
-		return this.appEvents.fire( 'waitForDOM' );
+		return Promise.all( [ this.appEvents.fire( 'waitForDOM' ) ] ).then( Return => this );
 	}
 }
 
