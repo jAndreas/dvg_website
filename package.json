@@ -31,10 +31,10 @@
 		"socket.io": "^2.0.3",
 		"style-loader": "^0.18.2",
 		"template-string-loader": "0.0.3",
-		"uglify-es": "^3.0.24",
-		"uglify-js": "^3.0.24",
+		"uglify-es": "^3.0.25",
+		"uglify-js": "^3.0.25",
 		"url-loader": "^0.5.8",
-		"webpack": "^3.2.0",
+		"webpack": "^3.3.0",
 		"webpack-dev-server": "^2.5.1",
 		"webpack-sources": "^1.0.1"
 	},
