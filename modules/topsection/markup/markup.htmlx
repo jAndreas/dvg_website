@@ -1,0 +1,4 @@
+<div id="topSection">
+	<div class="gridOverlay"></div>
+	<video class="introduction" autoplay></video>
+</div>

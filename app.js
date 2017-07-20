@@ -1,10 +1,14 @@
 'use strict';
-// rofl
 
+import { start } from './modules/topsection/js/main.js';
+
+console.log('starting topSection...');
+start();
+/*
 document.getElementById( 'foo' ).addEventListener( 'click', function( event ) {
 	alert('requesting... via import()');
 
-	import( /* webpackChunkName: "TopSection" */ './modules/topsection/main.js' ).then( TopSection => {
+	import( /* webpackChunkName: "TopSection" / './modules/topsection/js/main.js' ).then( TopSection => {
 		console.log( 'main.js transfered and evaluated, value: ', TopSection );
 		TopSection.start();
 	}).catch( err => {
@@ -14,9 +18,10 @@ document.getElementById( 'foo' ).addEventListener( 'click', function( event ) {
 }, false);
 
 setTimeout(function() {
-	import( /* webpackChunkName: "Module2" */ './modules/mod2/entry.js' ).then( MOD2 => {
+	import( /* webpackChunkName: "Module2" / './modules/mod2/entry.js' ).then( MOD2 => {
 		console.log('REALLY NEWSTYLE mod2.js was transfered and now gets evaluated immediately: ', MOD2);
 	}).catch( err => {
 		console.log('ERR: ', err);
 	});
 }, 2000);
+*/

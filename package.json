@@ -29,6 +29,7 @@
 		"loader-utils": "^1.1.0",
 		"raw-loader": "^0.5.1",
 		"socket.io": "^2.0.3",
+		"hls.js": "^0.7.10",
 		"style-loader": "^0.18.2",
 		"template-string-loader": "0.0.3",
 		"uglify-es": "^3.0.25",

@@ -1,0 +1,22 @@
+div#topSection > div.gridOverlay {
+	display:inline-block;
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	z-index:1;
+	background-image:url(../images/grid.png);
+	background-repeat:repeat;
+}
+
+div#topSection > video.introduction {
+	position:relative;
+	height:85vh;
+	width:auto;
+}
+
+@media (min-aspect-ratio: 16/9) video.introduction {
+	width:100%;
+	height:auto;
+}
