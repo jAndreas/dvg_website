@@ -22,7 +22,13 @@ module.exports = {
 		path:		websitePath,
 		filename:	'[name]-bundle.js'
 	},
-	//devtool:	'source-map',
+	resolve:	{
+		modules:	[
+			path.resolve( './node_modules/' ),
+			path.resolve( './lib/' )
+		]
+	},
+	devtool:	'source-map',
 	module:	{
 		rules:	[
 			{
@@ -69,7 +75,7 @@ module.exports = {
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
 		new webpack.DefinePlugin({
-			ENV_PROD: false,
+			ENV_PROD: false
 		})
 	]
 };

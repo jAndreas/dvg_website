@@ -20,6 +20,12 @@ module.exports = {
 		path:		websitePath,
 		filename:	'[name]-bundle.js'
 	},
+	resolve:	{
+		modules:	[
+			path.resolve( './node_modules/' ),
+			path.resolve( './lib/' )
+		]
+	},
 	devtool:	'source-map',
 	module:	{
 		rules: [
@@ -73,10 +79,10 @@ module.exports = {
 	},
 	plugins:	[
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+		new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false, drop_console: true } }),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
 		new webpack.DefinePlugin({
-			ENV_PROD: true,
+			ENV_PROD: true
 		})
 	]
 };

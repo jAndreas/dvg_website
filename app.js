@@ -1,9 +1,10 @@
 'use strict';
 
-import { start } from './modules/topsection/js/main.js';
+import * as topSection from './modules/topsection/js/main.js';
 
-console.log('starting topSection...');
-start();
+console.log('starting topSection...: ');
+topSection.start();
+//topSection.start();
 /*
 document.getElementById( 'foo' ).addEventListener( 'click', function( event ) {
 	alert('requesting... via import()');

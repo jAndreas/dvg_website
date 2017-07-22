@@ -34,6 +34,7 @@
 		"template-string-loader": "0.0.3",
 		"uglify-es": "^3.0.25",
 		"uglify-js": "^3.0.25",
+		"uglifyjs-webpack-plugin": "^0.4.6",
 		"url-loader": "^0.5.8",
 		"webpack": "^3.3.0",
 		"webpack-dev-server": "^2.5.1",
