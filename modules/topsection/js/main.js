@@ -1,11 +1,10 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { mix, extend } from 'barfoos2.0/toolkit.js';
-import { win, doc } from 'barfoos2.0/domkit.js';
+import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 
-import { hlsJSTransfer, loadVideo } from 'video.js';
+import { loadVideo } from 'video.js';
 
 //import io from 'socket.io-client';
 import htmlx from '../markup/markup.htmlx';
@@ -32,9 +31,9 @@ class TopSection extends Component {
 
 		super( options );
 
-		this.dependencies.push( hlsJSTransfer );
+		this.dependencies.push( this.appEvents.fire( 'waitforHLSSupport' ) );
 
-		return Promise.all( this.dependencies ).then( Return => this );
+		return Promise.all( this.dependencies ).then( () => this );
 	}
 }
 
@@ -44,7 +43,7 @@ async function start() {
 	style.use();
 
 	const inst = await new TopSection();
-	console.log('TopSection was initialized.');
+	inst.log('TopSection was initialized.: ', inst.id);
 
 	loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
 }
