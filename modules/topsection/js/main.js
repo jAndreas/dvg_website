@@ -43,7 +43,6 @@ async function start() {
 	style.use();
 
 	const inst = await new TopSection();
-	inst.log('TopSection was initialized.: ', inst.id);
 
 	loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
 }

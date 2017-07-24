@@ -1,4 +1,4 @@
 <div id="topSection">
-	<video class="introduction darken" muted playsinline autoplay></video>
+	<video alias="myVideo" class="introduction darken" muted playsinline autoplay></video>
 	<div class="gridOverlay"></div>
 </div>
