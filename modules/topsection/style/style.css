@@ -13,7 +13,7 @@ div#topSection > div.gridOverlay {
 div#topSection > video.introduction {
 	position:relative;
 	height:100vh;
-	width:100%;
+	width:auto;
 }
 
 div#topSection > video.introduction.darken {
