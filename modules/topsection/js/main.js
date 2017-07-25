@@ -31,9 +31,9 @@ class TopSection extends Component {
 
 		super( options );
 
-		this.dependencies.push( this.appEvents.fire( 'waitforHLSSupport' ) );
+		this.runtimeDependencies.push( this.appEvents.fire( 'waitforHLSSupport' ) );
 
-		return Promise.all( this.dependencies ).then( () => this );
+		return this.init();
 	}
 }
 
@@ -42,9 +42,13 @@ class TopSection extends Component {
 async function start() {
 	style.use();
 
-	const inst = await new TopSection();
+	const inst	= await new TopSection();
+	const video	= await loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
 
-	loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
+	inst.appEvents.on( 'appVisibilityChange appFocusChange', active => {
+		video[ active ? 'play' : 'pause' ]();
+		inst.log( `app is visible/focused? -> ${active}`);
+	}, inst );
 }
 
 export { start };
