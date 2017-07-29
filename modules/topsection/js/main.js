@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component } from 'barfoos2.0/core.js';
+import { ComponentEx } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 
@@ -20,7 +20,10 @@ socket.on('pongo', ( data ) => {
 	console.log( 'recv from server: ', data );
 });*/
 
-class TopSection extends Component {
+/*****************************************************************************************************
+ * Class TopSection inherits from BarFoos Component, GUI Module
+ *****************************************************************************************************/
+class TopSection extends ComponentEx {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -31,24 +34,33 @@ class TopSection extends Component {
 
 		super( options );
 
-		this.runtimeDependencies.push( this.appEvents.fire( 'waitforHLSSupport' ) );
+		this.runtimeDependencies.push( this.fire( 'waitforHLSSupport.appEvents' ) );
 
 		return this.init();
 	}
 }
+/****************************************** TopSection End ******************************************/
 
-// possibly mixin features here
-
+/*****************************************************************************************************
+ *  Entry point for this GUI Module.
+ *****************************************************************************************************/
 async function start() {
 	style.use();
 
-	const inst	= await new TopSection();
-	const video	= await loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
+	const	inst	= await new TopSection(),
+			video	= await loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
 
-	inst.appEvents.on( 'appVisibilityChange appFocusChange', active => {
-		video[ active ? 'play' : 'pause' ]();
-		inst.log( `app is visible/focused? -> ${active}`);
-	}, inst );
+	inst.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
+		if( active && video.paused ) {
+			inst.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, play video!`);
+			video.play();
+		}
+
+		if(!active && !video.paused) {
+			inst.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, paused video!`);
+			video.pause();
+		}
+	});
 }
 
 export { start };
