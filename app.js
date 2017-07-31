@@ -1,19 +1,34 @@
 'use strict';
 
 import * as topSection from './modules/topsection/js/main.js';
-import { makeClass } from 'barfoos2.0/toolkit.js';
+import { mix } from 'barfoos2.0/toolkit.js';
 import { LogTools } from 'barfoos2.0/domkit.js';
 import { Mediator } from 'barfoos2.0/mediator.js';
 
-const	eventLoop	= makeClass().mixin( Mediator ),
-		console		= makeClass( class app{ }, { id: 'app' } ).mixin( LogTools );
+class DVGWebsite extends mix().with( Mediator, LogTools ) {
+	constructor() {
+		super( ...arguments );
+		this.init();
+	}
 
-eventLoop.fire( 'defineApp.appEvents', {
-		name:		'Der Vegane Germane - Website',
-		title:		'Der Vegane Germane',
-		version:	'0.2.0',
-		status:		'alpha'
- });
+	async init() {
+		await this.fire( 'configApp.core', {
+			name:				'Der Vegane Germane - Website',
+			title:				'Der Vegane Germane',
+			version:			'0.0.2',
+			status:				'alpha',
+			background:			{
+				image:		'/images/background.jpg',
+				css:		{
+					filter:		'blur(5px)'
+				}
+			}
+		});
 
-console.log('starting topSection...: ');
-topSection.start();
+		this.log('starting topSection...: ');
+		topSection.start();
+	}
+}
+
+let res = new DVGWebsite();
+console.log('res is: ', res);

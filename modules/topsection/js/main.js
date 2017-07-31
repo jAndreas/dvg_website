@@ -1,6 +1,6 @@
 'use strict';
 
-import { ComponentEx } from 'barfoos2.0/core.js';
+import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 
@@ -23,7 +23,7 @@ socket.on('pongo', ( data ) => {
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class TopSection extends ComponentEx {
+class TopSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -34,9 +34,30 @@ class TopSection extends ComponentEx {
 
 		super( options );
 
-		this.runtimeDependencies.push( this.fire( 'waitforHLSSupport.appEvents' ) );
+		this.runtimeDependencies.push(
+			this.fire( 'waitforHLSSupport.appEvents' ),
+			loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath )
+		);
 
 		return this.init();
+	}
+
+	async init() {
+		let [ waitForDOM, waitForHLSJS, video ] = await super.init();
+
+		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
+			if( active && video.paused ) {
+				this.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, play video!`);
+				video.play();
+			}
+
+			if(!active && !video.paused) {
+				this.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, paused video!`);
+				video.pause();
+			}
+		});
+
+		return this;
 	}
 }
 /****************************************** TopSection End ******************************************/
@@ -47,20 +68,7 @@ class TopSection extends ComponentEx {
 async function start() {
 	style.use();
 
-	const	inst	= await new TopSection(),
-			video	= await loadVideo( videoLink, inst.nodes[ 'video.introduction' ], fallbackPath );
-
-	inst.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
-		if( active && video.paused ) {
-			inst.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, play video!`);
-			video.play();
-		}
-
-		if(!active && !video.paused) {
-			inst.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, paused video!`);
-			video.pause();
-		}
-	});
+	const inst	= await new TopSection();
 }
 
 export { start };
