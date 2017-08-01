@@ -35,15 +35,16 @@ class TopSection extends Component {
 		super( options );
 
 		this.runtimeDependencies.push(
-			this.fire( 'waitforHLSSupport.appEvents' ),
-			loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath )
+			this.fire( 'waitforHLSSupport.appEvents' )
 		);
 
 		return this.init();
 	}
 
 	async init() {
-		let [ waitForDOM, waitForHLSJS, video ] = await super.init();
+		await super.init();
+
+		let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
 			if( active && video.paused ) {

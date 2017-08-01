@@ -12,7 +12,8 @@ class DVGWebsite extends mix().with( Mediator, LogTools ) {
 	}
 
 	async init() {
-		await this.fire( 'configApp.core', {
+		this.log( 'loading background-image...' );
+		let cfgRet = await this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
 			version:			'0.0.2',
@@ -25,10 +26,10 @@ class DVGWebsite extends mix().with( Mediator, LogTools ) {
 			}
 		});
 
-		this.log('starting topSection...: ');
+		this.log( 'bg image loaded. Starting topSection, cfgRet is: ', cfgRet );
+
 		topSection.start();
 	}
 }
 
-let res = new DVGWebsite();
-console.log('res is: ', res);
+new DVGWebsite();
