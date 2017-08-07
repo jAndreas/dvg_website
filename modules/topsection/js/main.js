@@ -44,6 +44,14 @@ class TopSection extends Component {
 	async init() {
 		await super.init();
 
+		this.on( 'backgroundImageLoaded.core', this.onBackgroundImageLoaded, this );
+
+		return this;
+	}
+
+	async onBackgroundImageLoaded() {
+		this.log( 'onBackgroundImageLoaded, now loading background video...' );
+
 		let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
@@ -57,8 +65,6 @@ class TopSection extends Component {
 				video.pause();
 			}
 		});
-
-		return this;
 	}
 }
 /****************************************** TopSection End ******************************************/
