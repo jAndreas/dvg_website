@@ -1,5 +1,10 @@
 <div id="topSection">
-	Der Vegane Germane!
 	<video alias="myVideo" class="introduction darken" muted playsinline autoplay></video>
 	<div class="gridOverlay"></div>
+	<div class="navOverlay">
+		<span class="title">Der Vegane Germane!</span>
+		<nav>
+
+		</nav>
+	</div>
 </div>
