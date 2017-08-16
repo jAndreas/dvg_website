@@ -8,7 +8,7 @@ import { loadVideo } from 'video.js';
 
 //import io from 'socket.io-client';
 import htmlx from '../markup/markup.htmlx';
-import style from '../style/style.css';
+import style from '../style/style.scss';
 
 const	videoLink		= '/video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 		fallbackPath	= '/fallback/intro_480.mp4';
