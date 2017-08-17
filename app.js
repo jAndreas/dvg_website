@@ -21,7 +21,7 @@ class DVGWebsite extends mix().with( Mediator, LogTools ) {
 			background:			{
 				image:		'/images/background.jpg',
 				css:		{
-					filter:		'blur(5px)'
+					filter:		'blur(10px)'
 				}
 			}
 		});

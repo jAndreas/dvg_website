@@ -3,10 +3,10 @@
 	<div class="gridOverlay"></div>
 	<nav>
 		<ul class="navOverlay">
-			<li>
-				<a class="home">HOME</a>
+			<li class="homeContainer">
+				<a class="home"></a>
 			</li>
-			<li>
+			<li class="jumpListContainer">
 				<ul class="jumpList">
 					<li><a class="jumpToVideoSection">Videos</a></li>
 					<li><a class="jumpToArticleSection">Beiträge</a></li>
@@ -14,7 +14,7 @@
 					<li><a class="jumpToAboutSection">Über mich</a></li>
 				</ul>
 			</li>
-			<li>
+			<li class="titleContainer">
 				<a class="title">Der Vegane Germane</a>
 			</li>
 		</ul>

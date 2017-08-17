@@ -5,12 +5,13 @@ div#topSection {
 		position:relative;
 		height:100vh;
 		width:auto;
-		box-shadow:0px 0px 35px 4px white;
+		box-shadow:0px 0px 115px 115px white;
+		mix-blend-mode:overlay;
 	}
 
 	> video.introduction.darken {
 		filter:grayscale(0.5);
-		opacity:0.85;
+		opacity:0.95;
 	}
 
 	> div.gridOverlay {
@@ -33,22 +34,21 @@ div#topSection {
 		> ul.navOverlay {
 			list-style:none;
 			display:flex;
-			flex-direction:row;
-			flex-wrap:wrap;
-			align-content:space-around;
+			flex-direction:column;
+			align-items:center;
+			justify-content:flex-start;
 			position:absolute;
 			top:0;
 			left:0;
 			right:0;
 			bottom:0;
 			z-index:2;
-			background-color: transparent;
+			background-color:transparent;
+			mix-blend-mode:lighten;
 
 			> li {
 				width:auto;
 				height:auto;
-				flex-grow:1;
-				flex-basis: 100%;
 
 				display:flex;
 				flex-direction:row;
@@ -61,6 +61,21 @@ div#topSection {
 					padding:0;
 					color:$defaultTextColor;
 				}
+			}
+
+			> li.homeContainer {
+				flex-grow:1;
+
+				> a.home {
+					background-image:url(../images/dvg.jpg);
+					background-size: 100% 100%;
+					width: 256px;
+					height: 256px;
+				}
+			}
+
+			> li.jumpListContainer {
+				flex-grow:4;
 
 				> ul.jumpList {
 					list-style:none;
@@ -76,8 +91,31 @@ div#topSection {
 
 						> a {
 							color:$defaultTextColor;
+							font-size:25px;
+							font-weight:bold;
+							text-shadow:0px 0px 20px white;
+							font-family:cursive, "Lucida Console";
+							cursor:pointer;
+
+							transition:all 200ms ease-in-out;
+
+							&:hover {
+								text-shadow:0px 0px 15px rgba(0,220,0,0.95);
+							}
 						}
 					}
+				}
+			}
+
+			> li.titleContainer {
+				flex-grow:10;
+
+				> a.title {
+					font-size:calc(100vw / 12);
+					font-weight:bold;
+					font-family:cursive, "Lucida Console";
+					white-space:nowrap;
+					text-shadow:0px 0px 6px white;
 				}
 			}
 		}

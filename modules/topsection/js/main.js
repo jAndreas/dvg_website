@@ -42,9 +42,9 @@ class TopSection extends Component {
 	}
 
 	async init() {
-		await super.init();
-
 		this.on( 'backgroundImageLoaded.core', this.onBackgroundImageLoaded, this );
+
+		await super.init();
 
 		return this;
 	}
