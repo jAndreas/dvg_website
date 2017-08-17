@@ -66,12 +66,14 @@ div#topSection {
 					list-style:none;
 					display:flex;
 					flex-direction:row;
-					flex-wrap:nowrap;
-					justify-content: space-evenly;
+					flex-wrap:wrap;
+					justify-content:center;
 
 					width: 90vw;
 
 					> li {
+						margin-right:20px;
+
 						> a {
 							color:$defaultTextColor;
 						}
@@ -86,5 +88,11 @@ div#topSection {
 	video.introduction {
 		width:100%;
 		height:auto;
+	}
+}
+
+@media (max-width: 769px) {
+	div#topSection > video.introduction {
+		width:100%;
 	}
 }
