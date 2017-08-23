@@ -14,6 +14,9 @@
 					<li><a class="jumpToAboutSection">Über mich</a></li>
 				</ul>
 			</li>
+			<li class="WatchIntroContainer">
+				<a class="revealIntro">✠</a>
+			</li>
 			<li class="titleContainer">
 				<a class="title">Der Vegane Germane</a>
 			</li>
