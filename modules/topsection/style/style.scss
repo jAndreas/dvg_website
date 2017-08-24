@@ -135,7 +135,10 @@ div#topSection {
 					font-family:cursive, "Lucida Console";
 					white-space:nowrap;
 					color:rgba(245,245,245,1);
-					text-shadow:0px 0px 6px white;
+					text-shadow:0px 0px 16px white;
+
+					height:10vw;
+					line-height:5vw;
 
 					align-self:flex-start;
 
@@ -151,10 +154,15 @@ div#topSection {
 				user-select:none;
 
 				> a.revealIntro {
+					position:relative;
+
 					font-size:15vw;
 					font-weight:bold;
 					font-family:"Verdana", "Lucida Console";
-					line-height:12vw;
+					line-height:8vw;
+					height:9vw;
+					padding:4px;
+					overflow:hidden;
 
 					white-space:nowrap;
 					color:rgba(0, 0, 0, 1);

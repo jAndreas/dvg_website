@@ -46,6 +46,8 @@ class TopSection extends Component {
 
 		await super.init();
 
+		console.log('nodes: ', this.nodes);
+
 		return this;
 	}
 
