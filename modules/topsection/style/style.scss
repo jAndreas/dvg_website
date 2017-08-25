@@ -1,5 +1,6 @@
 $defaultTextColor:rgba(220,220,220,0.95);
-$iPhone6AndSmaller:415px;
+$iPhone6Portrait:415px;
+$iPhone6Landscape:736px;
 $iPadPortrait:768px;
 
 div#topSection {
@@ -78,7 +79,7 @@ div#topSection {
 					height:calc(100vh / 3)
 				}
 
-				@media screen and (max-width:$iPhone6AndSmaller) {
+				@media screen and (max-width:$iPhone6Portrait) {
 					flex-grow:0;
 				}
 			}
@@ -114,19 +115,19 @@ div#topSection {
 							}
 						}
 
-						@media screen and (max-width:$iPhone6AndSmaller) {
+						@media screen and (max-width:$iPhone6Portrait) {
 							margin-right:0;
 						}
 					}
 
-					@media screen and (max-width:$iPhone6AndSmaller) {
+					@media screen and (max-width:$iPhone6Portrait) {
 						flex-direction:column;
 						justify-content:space-around;
 						align-items:center;
 					}
 				}
 
-				@media screen and (max-width:$iPhone6AndSmaller) {
+				@media screen and (max-width:$iPhone6Portrait) {
 					flex-grow:3;
 				}
 			}
@@ -147,7 +148,7 @@ div#topSection {
 
 					align-self:flex-start;
 
-					@media screen and (max-width:$iPhone6AndSmaller) {
+					@media screen and (max-width:$iPhone6Portrait) {
 						position:relative;
 						top:30px;
 					}
@@ -165,8 +166,8 @@ div#topSection {
 					font-size:15vw;
 					font-weight:bold;
 					font-family:"Verdana", "Lucida Console";
-					line-height:8vw;
-					height:9vw;
+					line-height:7vw;
+					height:10vw;
 					padding:4px;
 					overflow:hidden;
 
@@ -177,12 +178,23 @@ div#topSection {
 					cursor:pointer;
 
 					&:hover {
-
 						color:rgba(10, 10, 70, 0.8);
 					}
 
-					@media screen and (max-width:$iPhone6AndSmaller) {
+					@media screen and (max-width:$iPhone6Portrait) {
+						top:4px;
+						line-height:14vw;
+						height:14vw;
 					}
+
+					@media screen and(max-width:$iPhone6Landscape) {
+						line-height:12vw;
+						height:12vw;
+					}
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					height:10vw;
 				}
 			}
 		}
