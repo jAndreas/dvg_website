@@ -2,7 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
-import { NodeTools } from 'barfoos2.0/domkit.js';
+//import { NodeTools } from 'barfoos2.0/domkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 
 import { loadVideo } from 'video.js';
@@ -47,7 +47,7 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this.showIntro.bind( this ), ), false );
+		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this.showIntro.bind( this ), false );
 
 		this.log('nodes: ', this.nodes);
 
@@ -72,11 +72,17 @@ class TopSection extends Component {
 		});
 	}
 
-	showIntro( event ) {
-		let myVideo = new NodeTools( this.nodes.myVideo );
+	async showIntro( event ) {
+		let { myVideo, 'li.WatchIntroContainer':cross, 'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
 
-		this.nodes.myVideo.classList.remove( 'darken' );
-		myVideo.transition()
+		await transition({
+			node:	title,
+			style:	{ marginLeft: '-130vw' }
+		});
+		
+		myVideo.classList.remove( 'darken' );
+		myVideo.muted		= false;
+		myVideo.controls	= true;
 	}
 }
 /****************************************** TopSection End ******************************************/
