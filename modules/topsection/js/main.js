@@ -2,9 +2,8 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
-//import { NodeTools } from 'barfoos2.0/domkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-
+import { transition } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 
 //import io from 'socket.io-client';
@@ -75,11 +74,18 @@ class TopSection extends Component {
 	async showIntro( event ) {
 		let { myVideo, 'li.WatchIntroContainer':cross, 'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
 
-		await transition({
-			node:	title,
-			style:	{ marginLeft: '-130vw' }
+		let result = await transition({
+			node:		title,
+			style:		{
+				marginLeft: '-130vw'
+			},
+			rules:		{
+				timing:		'ease-in-out'
+			}
 		});
-		
+
+		this.log( 'transition result: ', result );
+
 		myVideo.classList.remove( 'darken' );
 		myVideo.muted		= false;
 		myVideo.controls	= true;
