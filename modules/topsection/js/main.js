@@ -47,8 +47,7 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this._boundShowIntro = this.showIntro.bind( this );
-		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this._boundShowIntro, false );
+		this.nodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
 
 		this.log('nodes: ', this.nodes);
 
@@ -58,7 +57,7 @@ class TopSection extends Component {
 	async onBackgroundImageLoaded() {
 		this.log( 'onBackgroundImageLoaded, now loading background video...' );
 
-		let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+		//let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
 			if( active && video.paused ) {
@@ -73,12 +72,23 @@ class TopSection extends Component {
 		});
 	}
 
-	async showIntro( event ) {
-		this.nodes[ 'a.revealIntro' ].removeEventListener( 'click', this._boundShowIntro, false );
+	showIntro = async event => {
+		this.nodes[ 'a.revealIntro' ].removeEventListener( 'click', this.showIntro, false );
 
-		let { myVideo, w1, w2, w3, 'li.WatchIntroContainer':cross, 'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
+		let {	myVideo, w1, w2, w3, 'a.revealIntro':revealIntro, 'li.WatchIntroContainer':cross,
+				'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
 
-		transition({
+		let menuTransition = transition({
+			node:		menu,
+			className:	'moveThroughScreen',
+			rules:		{
+				duration:	400
+			}
+		});
+
+		await menuTransition;
+
+		let word1Transition = transition({
 			node:		w1,
 			className:	'flutterLeft',
 			rules:		{
@@ -87,7 +97,7 @@ class TopSection extends Component {
 			}
 		});
 
-		transition({
+		let word2Transition = transition({
 			node:		w2,
 			className:	'flutterStraight',
 			rules:		{
@@ -96,7 +106,7 @@ class TopSection extends Component {
 			}
 		});
 
-		transition({
+		let word3Transition = transition({
 			node:		w3,
 			className:	'flutterRight',
 			rules:		{
@@ -105,14 +115,26 @@ class TopSection extends Component {
 			}
 		});
 
-	//	this.log( 'transition result: ', result );
+		await word3Transition;
 
-		//await result.undo();
+		let crossTransition = transition({
+			node:		revealIntro,
+			className:	'bottomLeftCorner',
+			rules:		{
+				duration:	400
+			}
+		});
 
-		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this._boundShowIntro, false );
+		await crossTransition;
+
+		revealIntro.textContent = '\u27f2';
+		revealIntro.classList.add( 'returnSymbol' );
+
 		myVideo.classList.remove( 'darken' );
 		myVideo.muted		= false;
 		myVideo.controls	= true;
+
+		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this.returnToMenu, false );
 	}
 }
 /****************************************** TopSection End ******************************************/

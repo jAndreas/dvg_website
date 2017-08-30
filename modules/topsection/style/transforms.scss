@@ -9,3 +9,11 @@
 .flutterRight {
 	transform:translateZ(1500px) rotateY(-800deg) rotateX(40deg) translateY(-30vw) translateX(-10vw) rotateZ(-140deg);
 }
+
+.moveThroughScreen {
+	transform:translateZ(1500px) translateY(100px);
+}
+
+.bottomLeftCorner {
+	transform:translateX(-40vw) translateY(20vh);
+}

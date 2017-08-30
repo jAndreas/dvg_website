@@ -190,6 +190,11 @@ div#topSection {
 						color:rgba(10, 10, 70, 0.8);
 					}
 
+					&.returnSymbol {
+						line-height:11vw;
+						height:13vw;
+					}
+
 					@media screen and (max-width:$iPhone6Portrait) {
 						top:4px;
 						line-height:14vw;
