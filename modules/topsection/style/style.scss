@@ -52,6 +52,9 @@ div#topSection {
 			background-color:transparent;
 			mix-blend-mode:lighten;
 
+			transform-style:preserve-3d;
+			perspective:1500px;
+
 			> li {
 				width:auto;
 				height:auto;
@@ -60,6 +63,8 @@ div#topSection {
 				flex-direction:row;
 				flex-wrap:nowrap;
 				justify-content:space-around;
+
+				opacity:1;
 
 				> a {
 					text-decoration:none;
@@ -147,6 +152,10 @@ div#topSection {
 					line-height:5vw;
 
 					align-self:flex-start;
+
+					> span {
+						display:inline-flex;
+					}
 
 					@media screen and (max-width:$iPhone6Portrait) {
 						position:relative;

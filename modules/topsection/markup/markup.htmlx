@@ -18,7 +18,7 @@
 				<a class="revealIntro">\u2720</a>
 			</li>
 			<li class="titleContainer">
-				<a class="title">Der Vegane Germane</a>
+				<a class="title"><span alias="w1">Der</span> <span alias="w2">Vegane</span> <span alias="w3">Germane</span></a>
 			</li>
 		</ul>
 	</nav>

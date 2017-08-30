@@ -9,6 +9,7 @@ import { loadVideo } from 'video.js';
 //import io from 'socket.io-client';
 import htmlx from '../markup/markup.htmlx';
 import style from '../style/style.scss';
+import transforms from '../style/transforms.scss';
 
 const	videoLink		= '/video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 		fallbackPath	= '/fallback/intro_480.mp4';
@@ -46,7 +47,8 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this.showIntro.bind( this ), false );
+		this._boundShowIntro = this.showIntro.bind( this );
+		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this._boundShowIntro, false );
 
 		this.log('nodes: ', this.nodes);
 
@@ -72,20 +74,42 @@ class TopSection extends Component {
 	}
 
 	async showIntro( event ) {
-		let { myVideo, 'li.WatchIntroContainer':cross, 'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
+		this.nodes[ 'a.revealIntro' ].removeEventListener( 'click', this._boundShowIntro, false );
 
-		let result = await transition({
-			node:		title,
-			style:		{
-				marginLeft: '-130vw'
-			},
+		let { myVideo, w1, w2, w3, 'li.WatchIntroContainer':cross, 'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
+
+		transition({
+			node:		w1,
+			className:	'flutterLeft',
 			rules:		{
-				timing:		'ease-in-out'
+				timing:		'ease-in-out',
+				duration:	2400
 			}
 		});
 
-		this.log( 'transition result: ', result );
+		transition({
+			node:		w2,
+			className:	'flutterStraight',
+			rules:		{
+				timing:		'ease-in-out',
+				duration:	2800
+			}
+		});
 
+		transition({
+			node:		w3,
+			className:	'flutterRight',
+			rules:		{
+				timing:		'ease-in-out',
+				duration:	1700
+			}
+		});
+
+	//	this.log( 'transition result: ', result );
+
+		//await result.undo();
+
+		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this._boundShowIntro, false );
 		myVideo.classList.remove( 'darken' );
 		myVideo.muted		= false;
 		myVideo.controls	= true;
@@ -97,7 +121,7 @@ class TopSection extends Component {
  *  Entry point for this GUI Module.
  *****************************************************************************************************/
 async function start() {
-	style.use();
+	[ transforms, style ].forEach( style => style.use() );
 
 	const inst	= await new TopSection();
 }
