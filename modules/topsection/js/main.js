@@ -47,33 +47,29 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this.nodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
-
-		this.log('nodes: ', this.nodes);
+		this.addNodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
 
 		return this;
 	}
 
 	async onBackgroundImageLoaded() {
-		this.log( 'onBackgroundImageLoaded, now loading background video...' );
+		if( ENV_PROD ) {
+			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
-		//let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
+				if( active && video.paused ) {
+					video.play();
+				}
 
-		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
-			if( active && video.paused ) {
-				this.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, play video!`);
-				video.play();
-			}
-
-			if(!active && !video.paused) {
-				this.log( `${event.name}: active: ${ active } and paused: ${ video.paused }, paused video!`);
-				video.pause();
-			}
-		});
+				if(!active && !video.paused) {
+					video.pause();
+				}
+			});
+		}
 	}
 
 	showIntro = async event => {
-		this.nodes[ 'a.revealIntro' ].removeEventListener( 'click', this.showIntro, false );
+		this.removeNodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
 
 		let {	myVideo, w1, w2, w3, 'a.revealIntro':revealIntro, 'li.WatchIntroContainer':cross,
 				'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;

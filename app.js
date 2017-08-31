@@ -12,7 +12,6 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	}
 
 	async init() {
-		this.log( 'loading background-image...' );
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
