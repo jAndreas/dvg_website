@@ -3,7 +3,6 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { transition } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 
 //import io from 'socket.io-client';
@@ -47,7 +46,7 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this.addNodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
+		this.addNodeEvent( 'a.revealIntro', 'click', this.showIntro );
 
 		return this;
 	}
@@ -69,14 +68,35 @@ class TopSection extends Component {
 	}
 
 	showIntro = async event => {
-		this.removeNodeEvent( this.nodes[ 'a.revealIntro' ], 'click', this.showIntro );
+		let {	myVideo,
+				w1,
+				w2,
+				w3,
+				'a.revealIntro':revealIntro,
+				'li.homeContainer':logo,
+				'li.jumpListContainer':menu } = this.nodes;
+this.log( 'showIntro() called' );
+		this.removeNodeEvent( revealIntro, 'click', this.showIntro );
 
-		let {	myVideo, w1, w2, w3, 'a.revealIntro':revealIntro, 'li.WatchIntroContainer':cross,
-				'li.homeContainer':logo, 'li.jumpListContainer':menu, 'li.titleContainer':title } = this.nodes;
+		let logoTransition = this.transition({
+			node:		logo,
+			className:	'moveOverViewportHeight invisible',
+			rules:		{
+				duration:	400
+			}
+		});
 
-		let menuTransition = transition({
+		let crossTransition = this.transition({
+			node:		revealIntro,
+			className:	'bottomLeftCorner',
+			rules:		{
+				duration:	1100
+			}
+		});
+
+		let menuTransition = this.transition({
 			node:		menu,
-			className:	'moveThroughScreen',
+			className:	'moveThroughScreen invisible',
 			rules:		{
 				duration:	400
 			}
@@ -84,27 +104,30 @@ class TopSection extends Component {
 
 		await menuTransition;
 
-		let word1Transition = transition({
+		revealIntro.textContent = '\u27f2';
+		revealIntro.classList.add( 'returnSymbol' );
+
+		let word1Transition = this.transition({
 			node:		w1,
-			className:	'flutterLeft',
+			className:	'flutterLeft invisible',
 			rules:		{
 				timing:		'ease-in-out',
 				duration:	2400
 			}
 		});
 
-		let word2Transition = transition({
+		let word2Transition = this.transition({
 			node:		w2,
-			className:	'flutterStraight',
+			className:	'flutterStraight invisible',
 			rules:		{
 				timing:		'ease-in-out',
 				duration:	2800
 			}
 		});
 
-		let word3Transition = transition({
+		let word3Transition = this.transition({
 			node:		w3,
-			className:	'flutterRight',
+			className:	'flutterRight invisible',
 			rules:		{
 				timing:		'ease-in-out',
 				duration:	1700
@@ -113,25 +136,34 @@ class TopSection extends Component {
 
 		await word3Transition;
 
-		let crossTransition = transition({
-			node:		revealIntro,
-			className:	'bottomLeftCorner',
-			rules:		{
-				duration:	400
-			}
-		});
-
-		await crossTransition;
-
-		revealIntro.textContent = '\u27f2';
-		revealIntro.classList.add( 'returnSymbol' );
-
 		myVideo.classList.remove( 'darken' );
 		myVideo.muted		= false;
 		myVideo.controls	= true;
 
-		this.nodes[ 'a.revealIntro' ].addEventListener( 'click', this.returnToMenu, false );
+		this.addNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 	}
+
+	returnToMenu = async event => {
+		let {	myVideo,
+				w1,
+				w2,
+				w3,
+				'a.revealIntro':revealIntro,
+				'li.homeContainer':logo,
+				'li.jumpListContainer':menu } = this.nodes;
+this.log( 'returnToMenu() called' );
+		[ w1, w2, w3, revealIntro, logo, menu ].forEach( node => this.data.get( node ).storage.transitions.last.undo() );
+
+		myVideo.classList.add( 'darken' );
+		myVideo.muted		= true;
+		myVideo.controls	= false;
+
+		revealIntro.textContent = '\u2720';
+		revealIntro.classList.remove( 'returnSymbol' );
+
+		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
+		this.addNodeEvent( revealIntro, 'click', this.showIntro );
+	};
 }
 /****************************************** TopSection End ******************************************/
 

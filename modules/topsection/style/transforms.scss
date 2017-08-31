@@ -1,19 +1,53 @@
+@import 'viewportDefinitions';
+
 .flutterStraight {
-	transform:translateZ(1500px) rotateY(800deg) translateY(-5vw) translateX(5vw) rotateZ(110deg);
+	transform:translateZ(1500px) rotateY(600deg) translateY(-30vw) translateX(-30vw) rotateZ(180deg);
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		transform:translateZ(1500px) rotateY(800deg) translateY(-55vw) translateX(15vw) rotateZ(160deg);
+	}
 }
 
 .flutterLeft {
 	transform:translateZ(1500px) rotateY(-700deg) translateY(-30vw) translateX(-40vw) rotateZ(170deg);
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		transform:translateZ(1500px) rotateY(-900deg) translateY(-50vw) translateX(-80vw) rotateZ(110deg);
+	}
 }
 
 .flutterRight {
 	transform:translateZ(1500px) rotateY(-800deg) rotateX(40deg) translateY(-30vw) translateX(-10vw) rotateZ(-140deg);
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		transform:translateZ(1500px) rotateY(-900deg) rotateX(50deg) translateY(-70vw) translateX(-75vw) rotateZ(-180deg);
+	}
 }
 
 .moveThroughScreen {
 	transform:translateZ(1500px) translateY(100px);
+
+	@media screen and (max-width:$iPhone6Portrait) and (orientation:portrait) {
+		transform:translateZ(1500px) translateY(-5vh);
+	}
+
+	@media screen and (max-width:$iPhone6Landscape) and (orientation:landscape) {
+		transform:translateZ(1500px) translateY(8vh);
+	}
+}
+
+.moveOverViewportHeight {
+	transform:translateY(-30vh);
 }
 
 .bottomLeftCorner {
-	transform:translateX(-40vw) translateY(20vh);
+	transform:translateX(-40vw) translateY(20vh) rotateY(720deg);
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		transform:translateX(-38vw) translateY(18vh) rotateY(720deg);
+	}
+}
+
+.invisible {
+	opacity:0;
 }
