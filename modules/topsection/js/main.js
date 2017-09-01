@@ -3,7 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { loadVideo } from 'video.js';
+import { loadVideo, VideoTools } from 'video.js';
 
 //import io from 'socket.io-client';
 import htmlx from '../markup/markup.htmlx';
@@ -76,10 +76,12 @@ class TopSection extends Component {
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
 			 	'li.titleContainer':title,
-			 	'ul.navOverlay':navOverlay } = this.nodes;
+			 	'ul.navOverlay':navOverlay,
+				'div.gridOverlay':gridOverlay } = this.nodes;
 
-		myVideo.pause();
 		this.removeNodeEvent( revealIntro, 'click', this.showIntro );
+
+		new VideoTools( myVideo ).fadeVolumeIn();
 
 		let logoTransition = this.transition({
 			node:		logo,
@@ -100,6 +102,14 @@ class TopSection extends Component {
 		let menuTransition = this.transition({
 			node:		menu,
 			className:	'moveThroughScreen invisible',
+			rules:		{
+				duration:	400
+			}
+		});
+
+		let gridTransition = this.transition({
+			node:		gridOverlay,
+			style:		{ opacity: 0 },
 			rules:		{
 				duration:	400
 			}
@@ -140,11 +150,9 @@ class TopSection extends Component {
 		await word3Transition;
 
 		myVideo.classList.remove( 'darken' );
-		myVideo.muted		= false;
 		myVideo.controls	= true;
 
 		title.style.visibility = 'hidden';
-		myVideo.play();
 
 		await Promise.all([ logoTransition, crossTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
@@ -161,26 +169,25 @@ class TopSection extends Component {
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
 				'li.titleContainer':title,
-				'ul.navOverlay':navOverlay } = this.nodes;
+				'ul.navOverlay':navOverlay,
+			 	'div.gridOverlay':gridOverlay } = this.nodes;
 
 		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
 
-		navOverlay.classList.remove( 'miniNav' );
+		//navOverlay.classList.remove( 'miniNav' );
 		title.style.visibility = '';
 
 		myVideo.classList.add( 'darken' );
-		myVideo.muted		= true;
 		myVideo.controls	= false;
 
-		myVideo.pause();
+		new VideoTools( myVideo ).fadeVolumeOut();
 
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		await Promise.all( [ w1, w2, w3, revealIntro, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+		await Promise.all( [ w1, w2, w3, gridOverlay, revealIntro, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
 
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );
-		myVideo.play();
 	};
 }
 /****************************************** TopSection End ******************************************/
