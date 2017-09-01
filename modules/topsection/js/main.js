@@ -52,7 +52,7 @@ class TopSection extends Component {
 	}
 
 	async onBackgroundImageLoaded() {
-		if( ENV_PROD ) {
+		if( true ) {
 			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
@@ -74,13 +74,16 @@ class TopSection extends Component {
 				w3,
 				'a.revealIntro':revealIntro,
 				'li.homeContainer':logo,
-				'li.jumpListContainer':menu } = this.nodes;
-this.log( 'showIntro() called' );
+				'li.jumpListContainer':menu,
+			 	'li.titleContainer':title,
+			 	'ul.navOverlay':navOverlay } = this.nodes;
+
+		myVideo.pause();
 		this.removeNodeEvent( revealIntro, 'click', this.showIntro );
 
 		let logoTransition = this.transition({
 			node:		logo,
-			className:	'moveOverViewportHeight invisible',
+			className:	'moveOverViewportTop invisible',
 			rules:		{
 				duration:	400
 			}
@@ -104,7 +107,7 @@ this.log( 'showIntro() called' );
 
 		await menuTransition;
 
-		revealIntro.textContent = '\u27f2';
+		revealIntro.textContent = '↻';
 		revealIntro.classList.add( 'returnSymbol' );
 
 		let word1Transition = this.transition({
@@ -112,7 +115,7 @@ this.log( 'showIntro() called' );
 			className:	'flutterLeft invisible',
 			rules:		{
 				timing:		'ease-in-out',
-				duration:	2400
+				duration:	2200
 			}
 		});
 
@@ -121,7 +124,7 @@ this.log( 'showIntro() called' );
 			className:	'flutterStraight invisible',
 			rules:		{
 				timing:		'ease-in-out',
-				duration:	2800
+				duration:	2200
 			}
 		});
 
@@ -140,6 +143,12 @@ this.log( 'showIntro() called' );
 		myVideo.muted		= false;
 		myVideo.controls	= true;
 
+		title.style.visibility = 'hidden';
+		myVideo.play();
+
+		await Promise.all([ logoTransition, crossTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
+
+		//navOverlay.classList.add( 'miniNav' );
 		this.addNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 	}
 
@@ -150,19 +159,28 @@ this.log( 'showIntro() called' );
 				w3,
 				'a.revealIntro':revealIntro,
 				'li.homeContainer':logo,
-				'li.jumpListContainer':menu } = this.nodes;
-this.log( 'returnToMenu() called' );
-		[ w1, w2, w3, revealIntro, logo, menu ].forEach( node => this.data.get( node ).storage.transitions.last.undo() );
+				'li.jumpListContainer':menu,
+				'li.titleContainer':title,
+				'ul.navOverlay':navOverlay } = this.nodes;
+
+		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
+
+		navOverlay.classList.remove( 'miniNav' );
+		title.style.visibility = '';
 
 		myVideo.classList.add( 'darken' );
 		myVideo.muted		= true;
 		myVideo.controls	= false;
 
+		myVideo.pause();
+
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
+		await Promise.all( [ w1, w2, w3, revealIntro, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );
+		myVideo.play();
 	};
 }
 /****************************************** TopSection End ******************************************/
