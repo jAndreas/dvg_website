@@ -52,13 +52,6 @@ div#topSection {
 			transform-style:preserve-3d;
 			perspective:1500px;
 
-			&.miniNav {
-				bottom:20px;
-				left:20px;
-				width:200px;
-				height:200px;
-			}
-
 			> li {
 				width:auto;
 				height:auto;

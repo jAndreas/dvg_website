@@ -150,13 +150,10 @@ class TopSection extends Component {
 		await word3Transition;
 
 		myVideo.classList.remove( 'darken' );
-		myVideo.controls	= true;
-
 		title.style.visibility = 'hidden';
 
 		await Promise.all([ logoTransition, crossTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
-		//navOverlay.classList.add( 'miniNav' );
 		this.addNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 	}
 
@@ -174,7 +171,6 @@ class TopSection extends Component {
 
 		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
 
-		//navOverlay.classList.remove( 'miniNav' );
 		title.style.visibility = '';
 
 		myVideo.classList.add( 'darken' );
