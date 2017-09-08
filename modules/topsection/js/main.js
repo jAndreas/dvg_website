@@ -83,6 +83,11 @@ class TopSection extends Component {
 
 		new VideoTools( myVideo ).fadeVolumeIn();
 
+		this.addNodes( revealIntro.cloneNode( true ), 'crossClone' );
+		revealIntro.parentElement.insertAdjacentElement( 'beforeend', this.nodes.crossClone );
+
+
+
 		let logoTransition = this.transition({
 			node:		logo,
 			className:	'moveOverViewportTop invisible',
@@ -91,9 +96,19 @@ class TopSection extends Component {
 			}
 		});
 
+		await logoTransition;
+
 		let crossTransition = this.transition({
 			node:		revealIntro,
 			className:	'bottomLeftCorner',
+			rules:		{
+				duration:	1100
+			}
+		});
+
+		let crossCloneTransition = this.transition({
+			node:		this.nodes.crossClone,
+			className:	'bottomRightCorner',
 			rules:		{
 				duration:	1100
 			}
@@ -162,6 +177,7 @@ class TopSection extends Component {
 				w1,
 				w2,
 				w3,
+				crossClone,
 				'a.revealIntro':revealIntro,
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
@@ -181,8 +197,9 @@ class TopSection extends Component {
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		await Promise.all( [ w1, w2, w3, gridOverlay, revealIntro, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+		await Promise.all( [ w1, w2, w3, gridOverlay, revealIntro, crossClone, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
 
+		this.removeNodes( 'crossClone', true );
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );
 	};
 }
