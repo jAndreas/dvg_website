@@ -169,13 +169,12 @@ div#topSection {
 				user-select:none;
 				-moz-user-select:none;
 
-				width:100px;
-				height:130px;
+				position:relative;
 
 				> a.revealIntro {
-					position:absolute;
+					position:relative;
 
-					font-size:15vw;
+					font-size:9vw;
 					font-weight:bold;
 					font-family:"Verdana", "Lucida Console";
 					line-height:7vw;
@@ -196,6 +195,16 @@ div#topSection {
 					&.returnSymbol {
 						line-height:11vw;
 						height:13vw;
+					}
+
+					&.replaySymbol {
+						line-height:11vw;
+						height:13vw;
+						font-size:7vw;
+					}
+
+					&.clone {
+						position:absolute;
 					}
 
 					@media screen and (max-width:$iPhone6Portrait) {

@@ -52,7 +52,7 @@ class TopSection extends Component {
 	}
 
 	async onBackgroundImageLoaded() {
-		if( true ) {
+		if( false ) {
 			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
@@ -76,7 +76,6 @@ class TopSection extends Component {
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
 			 	'li.titleContainer':title,
-			 	'ul.navOverlay':navOverlay,
 				'div.gridOverlay':gridOverlay } = this.nodes;
 
 		this.removeNodeEvent( revealIntro, 'click', this.showIntro );
@@ -84,9 +83,14 @@ class TopSection extends Component {
 		new VideoTools( myVideo ).fadeVolumeIn();
 
 		this.addNodes( revealIntro.cloneNode( true ), 'crossClone' );
-		revealIntro.parentElement.insertAdjacentElement( 'beforeend', this.nodes.crossClone );
+		revealIntro.insertAdjacentElement( 'afterend', this.nodes.crossClone );
+		this.nodes.crossClone.classList.add( 'clone' );
 
+		this.addNodeEvent( this.nodes.crossClone, 'click', () => {
+			new VideoTools( myVideo ).seek( 2 );
+		});
 
+		await this.timeout( 10 );
 
 		let logoTransition = this.transition({
 			node:		logo,
@@ -95,8 +99,6 @@ class TopSection extends Component {
 				duration:	400
 			}
 		});
-
-		await logoTransition;
 
 		let crossTransition = this.transition({
 			node:		revealIntro,
@@ -134,6 +136,8 @@ class TopSection extends Component {
 
 		revealIntro.textContent = '↻';
 		revealIntro.classList.add( 'returnSymbol' );
+		this.nodes.crossClone.textContent = '⏮';
+		this.nodes.crossClone.classList.add( 'replaySymbol' );
 
 		let word1Transition = this.transition({
 			node:		w1,
@@ -182,7 +186,6 @@ class TopSection extends Component {
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
 				'li.titleContainer':title,
-				'ul.navOverlay':navOverlay,
 			 	'div.gridOverlay':gridOverlay } = this.nodes;
 
 		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
@@ -194,6 +197,8 @@ class TopSection extends Component {
 
 		new VideoTools( myVideo ).fadeVolumeOut();
 
+		crossClone.textContent = '\u2720';
+		crossClone.classList.remove( 'replaySymbol' );
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
