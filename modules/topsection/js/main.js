@@ -68,6 +68,7 @@ class TopSection extends Component {
 	}
 
 	showIntro = async event => {
+		this.log('SHOW VIDEO');
 		let {	myVideo,
 				w1,
 				w2,
@@ -171,12 +172,13 @@ class TopSection extends Component {
 		myVideo.classList.remove( 'darken' );
 		title.style.visibility = 'hidden';
 
-		await Promise.all([ logoTransition, crossTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
+		await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
 		this.addNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 	}
 
 	returnToMenu = async event => {
+		this.log('RETURN TO MENU');
 		let {	myVideo,
 				w1,
 				w2,
@@ -190,7 +192,7 @@ class TopSection extends Component {
 
 		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
 
-		title.style.visibility = '';
+		title.style.visibility = 'visible';
 
 		myVideo.classList.add( 'darken' );
 		myVideo.controls	= false;
@@ -202,7 +204,7 @@ class TopSection extends Component {
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		await Promise.all( [ w1, w2, w3, gridOverlay, revealIntro, crossClone, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+		await Promise.all( [ revealIntro, w1, w2, w3, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
 
 		this.removeNodes( 'crossClone', true );
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );
