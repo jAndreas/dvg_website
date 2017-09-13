@@ -68,7 +68,6 @@ class TopSection extends Component {
 	}
 
 	showIntro = async event => {
-		this.log('SHOW VIDEO');
 		let {	myVideo,
 				w1,
 				w2,
@@ -93,35 +92,35 @@ class TopSection extends Component {
 
 		await this.timeout( 10 );
 
-		let logoTransition = this.transition({
+		let logoTransition = this.animate({
 			node:		logo,
-			className:	'moveOverViewportTop invisible',
 			rules:		{
-				duration:	400
+				duration:	400,
+				name:		'moveOverViewportTop'
 			}
 		});
 
-		let crossTransition = this.transition({
+		let crossTransition = this.animate({
 			node:		revealIntro,
-			className:	'bottomLeftCorner',
 			rules:		{
-				duration:	1100
+				duration:	1100,
+				name:		'bottomLeftCorner'
 			}
 		});
 
-		let crossCloneTransition = this.transition({
+		let crossCloneTransition = this.animate({
 			node:		this.nodes.crossClone,
-			className:	'bottomRightCorner',
 			rules:		{
-				duration:	1100
+				duration:	1100,
+				name:		'bottomRightCorner'
 			}
 		});
 
-		let menuTransition = this.transition({
+		let menuTransition = this.animate({
 			node:		menu,
-			className:	'moveThroughScreen invisible',
 			rules:		{
-				duration:	400
+				duration:	400,
+				name:		'moveThroughScreen'
 			}
 		});
 
@@ -140,30 +139,30 @@ class TopSection extends Component {
 		this.nodes.crossClone.textContent = '⏮';
 		this.nodes.crossClone.classList.add( 'replaySymbol' );
 
-		let word1Transition = this.transition({
+		let word1Transition = this.animate({
 			node:		w1,
-			className:	'flutterLeft invisible',
 			rules:		{
 				timing:		'ease-in-out',
-				duration:	2200
+				duration:	2200,
+				name:		'flutterLeft'
 			}
 		});
 
-		let word2Transition = this.transition({
+		let word2Transition = this.animate({
 			node:		w2,
-			className:	'flutterStraight invisible',
 			rules:		{
 				timing:		'ease-in-out',
-				duration:	2200
+				duration:	2200,
+				name:		'flutterStraight'
 			}
 		});
 
-		let word3Transition = this.transition({
+		let word3Transition = this.animate({
 			node:		w3,
-			className:	'flutterRight invisible',
 			rules:		{
 				timing:		'ease-in-out',
-				duration:	1700
+				duration:	1700,
+				name:		'flutterRight'
 			}
 		});
 
@@ -178,7 +177,6 @@ class TopSection extends Component {
 	}
 
 	returnToMenu = async event => {
-		this.log('RETURN TO MENU');
 		let {	myVideo,
 				w1,
 				w2,
@@ -204,7 +202,9 @@ class TopSection extends Component {
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		await Promise.all( [ revealIntro, w1, w2, w3, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+		await Promise.all( [ w1, w2, w3, revealIntro, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
+		await Promise.all( [ gridOverlay ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
+
 
 		this.removeNodes( 'crossClone', true );
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );
