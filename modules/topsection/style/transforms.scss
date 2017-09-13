@@ -1,7 +1,12 @@
 @import 'viewportDefinitions';
 
-.invisible {
-	opacity:0;
+@keyframes invisible {
+	from {
+		opacity:1;
+	}
+	to {
+		opacity:0;
+	}
 }
 
 @keyframes flutterRight {

@@ -124,11 +124,11 @@ class TopSection extends Component {
 			}
 		});
 
-		let gridTransition = this.transition({
+		let gridTransition = this.animate({
 			node:		gridOverlay,
-			style:		{ opacity: 0 },
 			rules:		{
-				duration:	400
+				duration:	400,
+				name:		'invisible'
 			}
 		});
 
@@ -202,9 +202,7 @@ class TopSection extends Component {
 		revealIntro.textContent = '\u2720';
 		revealIntro.classList.remove( 'returnSymbol' );
 
-		await Promise.all( [ w1, w2, w3, revealIntro, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
-		await Promise.all( [ gridOverlay ].map( node => this.data.get( node ).storage.transitions.last.undo() ) );
-
+		await Promise.all( [ w1, w2, w3, revealIntro, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
 
 		this.removeNodes( 'crossClone', true );
 		this.addNodeEvent( revealIntro, 'click', this.showIntro );

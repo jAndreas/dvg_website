@@ -2,8 +2,8 @@
 
 import * as topSection from './modules/topsection/js/main.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
-import { LogTools } from 'barfoos2.0/domkit.js';
-import { Mediator } from 'barfoos2.0/mediator.js';
+import Mediator from 'barfoos2.0/mediator.js';
+import LogTools from 'barfoos2.0/logtools.js';
 
 class DVGWebsite extends Composition( Mediator, LogTools ) {
 	constructor() {
@@ -15,7 +15,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
-			version:			'0.0.4',
+			version:			'0.0.5',
 			status:				'alpha',
 			background:			{
 				image:		'/images/background.jpg',
