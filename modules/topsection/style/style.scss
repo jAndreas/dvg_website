@@ -75,8 +75,8 @@ div#topSection {
 				> a.home {
 					background-image:url(../images/dvg.jpg);
 					background-size:100% 100%;
-					width:calc(100vh / 3);
-					height:calc(100vh / 3)
+					width:33vh;
+					height:33vh;
 				}
 
 				@media screen and (max-width:$iPhone6Portrait) {
@@ -211,7 +211,6 @@ div#topSection {
 					}
 
 					@media screen and (max-width:$iPhone6Portrait) {
-						/*top:4px;*/
 						line-height:14vw;
 						height:14vw;
 					}
@@ -234,8 +233,55 @@ div#topSection {
 
 				> a.slideDownArrow {
 					position:absolute;
-					transform:translateY(-12vh) translateX(5vw) scale(5,5);
+					background-image:url(../images/arrowdown.png);
+					background-size:100% 100%;
+					width:10vh;
+					height:10vh;
+					margin-top:5vh;
+					cursor:pointer;
+					z-index:3;
+					transform:translateY(-18vh) translateX(5vw);
 					text-shadow:0 0 10px white;
+
+					&:hover {
+						animation:2100ms ease 0ms infinite normal forwards bouncequick;
+					}
+
+					&.initialBounce {
+						animation:3100ms linear 0ms 2 normal forwards bouncequick;
+					}
+
+					@keyframes bouncequick {
+						0%, 30%, 50%, 80%, 100% {
+							transform:translateY(-18vh) translateX(5vw) rotate(0deg);
+						}
+						20%, 70% {
+							transform:translateY(-15vh) translateX(5vw) rotate(10deg);
+						}
+						40%, 65%, 75% {
+							transform:translateY(-16vh) translateX(5vw) rotate(8deg);
+						}
+						60% {
+							transform:translateY(-14vh) translateX(5vw) rotate(4deg);
+						}
+					}
+
+					@media screen and (max-width:$iPhone6Portrait) {
+						@keyframes bounce {
+							0%, 30%, 50%, 80%, 100% {
+								transform:translateY(-9vh) translateX(5vw);
+							}
+							20%, 65%, 70% {
+								transform:translateY(-7vh) translateX(5vw);
+							}
+							40% {
+								transform:translateY(-8vh) translateX(5vw);
+							}
+							60% {
+								transform:translateY(-6vh) translateX(5vw);
+							}
+						}
+					}
 				}
 			}
 		}

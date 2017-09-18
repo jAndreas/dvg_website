@@ -47,6 +47,10 @@ class TopSection extends Component {
 		await super.init();
 
 		this.addNodeEvent( 'a.revealIntro', 'click', this.showIntro );
+		this.nodes[ 'a.slideDownArrow' ].addEventListener('animationend', function _firstEnd( event ) {
+			this.classList.remove( 'initialBounce' );
+			this.removeEventListener( 'animationend', _firstEnd );
+		}, false);
 
 		return this;
 	}

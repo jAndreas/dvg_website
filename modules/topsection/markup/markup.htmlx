@@ -21,7 +21,7 @@
 				<a class="title"><span alias="w1">Der</span> <span alias="w2">Vegane</span> <span alias="w3">Germane</span></a>
 			</li>
 			<li class="slideDownContainer">
-				<a class="slideDownArrow">\u2939</a>
+				<a class="slideDownArrow initialBounce"></a>
 			</li>
 		</ul>
 	</nav>
