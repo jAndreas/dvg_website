@@ -6,8 +6,8 @@ import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo, VideoTools } from 'video.js';
 
 //import io from 'socket.io-client';
-import htmlx from '../markup/markup.htmlx';
-import style from '../style/style.scss';
+import htmlx from '../markup/main.htmlx';
+import style from '../style/main.scss';
 import transforms from '../style/transforms.scss';
 
 const	videoLink		= '/video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
