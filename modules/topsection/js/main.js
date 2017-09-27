@@ -46,7 +46,7 @@ class TopSection extends Component {
 
 		await super.init();
 
-		this.addNodeEvent( 'a.revealIntro', 'click', this.showIntro );
+		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
 		this.nodes[ 'a.slideDownArrow' ].addEventListener('animationend', function _firstEnd( event ) {
 			this.classList.remove( 'initialBounce' );
 			this.removeEventListener( 'animationend', _firstEnd );
@@ -82,7 +82,7 @@ class TopSection extends Component {
 			 	'li.titleContainer':title,
 				'div.gridOverlay':gridOverlay } = this.nodes;
 
-		this.removeNodeEvent( revealIntro, 'click', this.showIntro );
+	//	this.removeNodeEvent( revealIntro, 'click', this.showIntro );
 
 		new VideoTools( myVideo ).fadeVolumeIn();
 
@@ -177,7 +177,7 @@ class TopSection extends Component {
 
 		await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
-		this.addNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
+		this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
 	}
 
 	returnToMenu = async event => {
@@ -192,7 +192,7 @@ class TopSection extends Component {
 				'li.titleContainer':title,
 			 	'div.gridOverlay':gridOverlay } = this.nodes;
 
-		this.removeNodeEvent( revealIntro, 'click', this.returnToMenu );
+		this.removeNodeEvent( crossClone, 'click' );
 
 		title.style.visibility = 'visible';
 
@@ -209,7 +209,7 @@ class TopSection extends Component {
 		await Promise.all( [ w1, w2, w3, revealIntro, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
 
 		this.removeNodes( 'crossClone', true );
-		this.addNodeEvent( revealIntro, 'click', this.showIntro );
+		this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
 	};
 }
 /****************************************** TopSection End ******************************************/
