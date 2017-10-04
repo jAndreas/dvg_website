@@ -1,6 +1,6 @@
 'use strict';
 
-import * as topSection from './modules/topsection/js/main.js';
+import * as topSection from 'topsection/js/main.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';

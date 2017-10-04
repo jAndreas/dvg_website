@@ -28,7 +28,7 @@ class TopSection extends Component {
 		extend( options ).with({
 			location:		moduleLocations.center,
 			tmpl:			htmlx({
-				test:	'replaced by bf template'
+				test:	'CHECK'
 			})
 		}).and( input );
 
@@ -47,16 +47,14 @@ class TopSection extends Component {
 		await super.init();
 
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
-		this.nodes[ 'a.slideDownArrow' ].addEventListener('animationend', function _firstEnd( event ) {
-			this.classList.remove( 'initialBounce' );
-			this.removeEventListener( 'animationend', _firstEnd );
-		}, false);
+		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
+		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 
 		return this;
 	}
 
 	async onBackgroundImageLoaded() {
-		if( false ) {
+		if( true ) {
 			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
@@ -71,7 +69,17 @@ class TopSection extends Component {
 		}
 	}
 
-	showIntro = async event => {
+	slideDownArrowAnimationEnd( event ) {
+		event.target.classList.remove( 'initialBounce' );
+	}
+
+	async slideDownArrowClick( event ) {
+		let login = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/main.js'  );
+		this.log('login module transfered, launching...');
+		login.start();
+	}
+
+	async showIntro( event ) {
 		let {	myVideo,
 				w1,
 				w2,
@@ -79,10 +87,8 @@ class TopSection extends Component {
 				'a.revealIntro':revealIntro,
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
-			 	'li.titleContainer':title,
+				'li.titleContainer':title,
 				'div.gridOverlay':gridOverlay } = this.nodes;
-
-	//	this.removeNodeEvent( revealIntro, 'click', this.showIntro );
 
 		new VideoTools( myVideo ).fadeVolumeIn();
 
@@ -180,7 +186,7 @@ class TopSection extends Component {
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
 	}
 
-	returnToMenu = async event => {
+	async returnToMenu( event ) {
 		let {	myVideo,
 				w1,
 				w2,
@@ -190,7 +196,7 @@ class TopSection extends Component {
 				'li.homeContainer':logo,
 				'li.jumpListContainer':menu,
 				'li.titleContainer':title,
-			 	'div.gridOverlay':gridOverlay } = this.nodes;
+				'div.gridOverlay':gridOverlay } = this.nodes;
 
 		this.removeNodeEvent( crossClone, 'click' );
 
@@ -210,7 +216,7 @@ class TopSection extends Component {
 
 		this.removeNodes( 'crossClone', true );
 		this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
-	};
+	}
 }
 /****************************************** TopSection End ******************************************/
 

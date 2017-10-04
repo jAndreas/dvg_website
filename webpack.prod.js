@@ -1,8 +1,10 @@
-const	webpack		= require( 'webpack' ),
-		path		= require( 'path' ),
-		fs			= require( 'fs' ),
-		websiteName	= 'der-vegane-germane.de',
-		websitePath	= `/var/www/html/${websiteName}/`;
+const	webpack			= require( 'webpack' ),
+		path			= require( 'path' ),
+		fs				= require( 'fs' ),
+		{ execSync }	= require( 'child_process' ),
+		UglifyJSPlugin	= require('uglifyjs-webpack-plugin'),
+		websiteName		= 'der-vegane-germane.de',
+		websitePath		= `/var/www/html/${websiteName}/`;
 
 console.log( `\nRemoving old files in target ${websitePath}:\n` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -13,9 +15,17 @@ fs.readdirSync( websitePath ).forEach( file  => {
 });
 console.log( '\nDone.\n' );
 
+console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
+fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${websitePath}index.html` ) );
+console.log( 'Done.\n' );
+
+console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
+execSync( 'buildbf -p' );
+console.log( 'Done.\n' );
+
 module.exports = {
 	context:	__dirname,
-	entry:		[ './app.js' ],
+	entry:		[ './compatibility.js' ],
 	output:		{
 		path:		websitePath,
 		filename:	'[name]-bundle.js'
@@ -23,7 +33,8 @@ module.exports = {
 	resolve:	{
 		modules:	[
 			path.resolve( './node_modules/' ),
-			path.resolve( './lib/' )
+			path.resolve( './lib/' ),
+			path.resolve( './modules/' )
 		]
 	},
 	devtool:	'source-map',
@@ -37,13 +48,13 @@ module.exports = {
 					{ loader:		'eslint-loader' }
 				]
 			},
-			{
+			/*{
 				test:		/\.js$/,
 				exclude:	/node_modules/,
 				use: [
 					{ loader:		'babel-loader' }
 				]
-			},
+			},*/
 			{
 				test:		/\.css$/,
 				use: [
@@ -68,7 +79,7 @@ module.exports = {
 			{
 				test:		/\.htmlx$/,
 				use: [
-					{ loader:		'babel-loader' },
+					//{ loader:		'babel-loader' },
 					{ loader:		'template-string-loader' }
 				]
 			},
@@ -87,7 +98,17 @@ module.exports = {
 	},
 	plugins:	[
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false, drop_console: true } }),
+		//new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false, drop_console: true } }),
+		new UglifyJSPlugin({
+			uglifyOptions: {
+				compress:			{ warnings: false, drop_console: true } ,
+				warnings:			false,
+				ecma:				8,
+				ie8:				false,
+				mangle:				false,
+				keep_classnames:	true
+			}
+		}),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
 		new webpack.DefinePlugin({
 			ENV_PROD: true
