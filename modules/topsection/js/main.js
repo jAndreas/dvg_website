@@ -42,9 +42,11 @@ class TopSection extends Component {
 	}
 
 	async init() {
-		this.on( 'backgroundImageLoaded.core', this.onBackgroundImageLoaded, this );
-
 		await super.init();
+
+		await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
+
+		this.onBackgroundImageLoaded();
 
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
@@ -54,6 +56,7 @@ class TopSection extends Component {
 	}
 
 	async onBackgroundImageLoaded() {
+		this.log('LOAD VIDEO!!!');
 		if( true ) {
 			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
@@ -148,6 +151,7 @@ class TopSection extends Component {
 		revealIntro.classList.add( 'returnSymbol' );
 		this.nodes.crossClone.textContent = '⏮';
 		this.nodes.crossClone.classList.add( 'replaySymbol' );
+		myVideo.classList.remove( 'darken' );
 
 		let word1Transition = this.animate({
 			node:		w1,
@@ -178,7 +182,6 @@ class TopSection extends Component {
 
 		await word3Transition;
 
-		myVideo.classList.remove( 'darken' );
 		title.style.visibility = 'hidden';
 
 		await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);

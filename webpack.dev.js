@@ -1,9 +1,9 @@
-const	webpack		= require( 'webpack' ),
-		path		= require( 'path' ),
-		fs			= require( 'fs' ),
-		{ exec }	= require( 'child_process' ),
-		websiteName	= 'dev.der-vegane-germane.de',
-		websitePath	= `/var/www/html/${websiteName}/`;
+const	webpack			= require( 'webpack' ),
+		path			= require( 'path' ),
+		fs				= require( 'fs' ),
+		{ execSync }	= require( 'child_process' ),
+		websiteName		= 'dev.der-vegane-germane.de',
+		websitePath		= `/var/www/html/${websiteName}/`;
 
 console.log( `\nRemoving old javascript and mapping files in ${websitePath}...` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -18,7 +18,7 @@ fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${
 console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
-exec( 'buildbf -d' );
+execSync( 'buildbf -d' );
 console.log( 'Done.\n' );
 
 module.exports = {
