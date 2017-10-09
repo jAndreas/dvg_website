@@ -56,7 +56,6 @@ class TopSection extends Component {
 	}
 
 	async onBackgroundImageLoaded() {
-		this.log('LOAD VIDEO!!!');
 		if( true ) {
 			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
@@ -78,8 +77,10 @@ class TopSection extends Component {
 
 	async slideDownArrowClick( event ) {
 		let login = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/main.js'  );
-		this.log('login module transfered, launching...');
-		login.start();
+		this.log( `launching login with location: ${ this.id }` );
+		login.start({
+			location:	this.id
+		});
 	}
 
 	async showIntro( event ) {
@@ -226,10 +227,10 @@ class TopSection extends Component {
 /*****************************************************************************************************
  *  Entry point for this GUI Module.
  *****************************************************************************************************/
-async function start() {
+async function start( ...args ) {
 	[ transforms, style ].forEach( style => style.use() );
 
-	const inst	= await new TopSection();
+	const inst	= await new TopSection( ...args );
 }
 
 export { start };

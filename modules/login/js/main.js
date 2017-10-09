@@ -13,17 +13,12 @@ import style from '../style/main.scss';
 class Login extends mix( Overlay ).with( Dialog, Draggable, GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			location:		moduleLocations.center,
-			tmpl:			htmlx({
-
-			})
+			tmpl:			htmlx({})
 		}).and( input );
 
 		super( options );
 
-		this.runtimeDependencies.push(
-
-		);
+		//this.runtimeDependencies.push();
 
 		return this.init();
 	}
@@ -34,16 +29,15 @@ class Login extends mix( Overlay ).with( Dialog, Draggable, GlasEffect ) {
 		await super.init();
 
 		// any component related stuff which should wait on dependencies resolve before executing (waitForDOM at least or additional async data)
-
 		return this;
 	}
 }
 /****************************************** Login End ******************************************/
 
-async function start() {
+async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	const instance = await new Login();
+	const instance = await new Login( ...args );
 }
 
 export { start };

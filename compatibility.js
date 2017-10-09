@@ -36,9 +36,9 @@ try {
 
 	new CompatibilityCheck();`);
 } catch( ex ) {
-	console.log( 'It seems like this browser is unable to deal with our tech, redirect to ES5-based version...' );
+	window['console'].info( 'It seems like this browser is unable to deal with our requirements, redirecting to ES5-based version...' );
 	location.href = '//legacy.der-vegane-germane.de';
 }
 
-console.log( 'This Browser is a killer! :-)' );
+window['console'].info( 'This Browser is a killer! :-)' );
 import( /* webpackChunkName: DVGWebsite */ './app.js' );
