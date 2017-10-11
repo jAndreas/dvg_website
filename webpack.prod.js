@@ -105,8 +105,9 @@ module.exports = {
 				warnings:			false,
 				ecma:				8,
 				ie8:				false,
-				mangle:				false,
-				keep_classnames:	true
+				mangle:				true,
+				keep_classnames:	true,
+				parallel:			true
 			}
 		}),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
