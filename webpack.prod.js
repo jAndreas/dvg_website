@@ -110,7 +110,7 @@ module.exports = {
 				parallel:			true
 			}
 		}),
-		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, async: true }),
+		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, deepChildren: true, async: true }),
 		new webpack.DefinePlugin({
 			ENV_PROD: true
 		})

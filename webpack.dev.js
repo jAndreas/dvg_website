@@ -88,7 +88,8 @@ module.exports = {
 	},
 	plugins:	[
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new webpack.optimize.CommonsChunkPlugin({ name: 'main', children: true, async: true, minChunks: 2 }),
+		new webpack.ContextExclusionPlugin(),
+		new webpack.optimize.CommonsChunkPlugin({ name: 'main', children: true, deepChildren: true, async: true, minChunks: 2 }),
 		new webpack.DefinePlugin({
 			ENV_PROD: false
 		})
