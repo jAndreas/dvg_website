@@ -96,8 +96,15 @@ class TopSection extends Component {
 
 		new VideoTools( myVideo ).fadeVolumeIn();
 
-		this.addNodes( revealIntro.cloneNode( true ), 'crossClone' );
-		revealIntro.insertAdjacentElement( 'afterend', this.nodes.crossClone );
+		this.addNodes({
+				nodeData:	revealIntro.cloneNode( true ),
+				nodeName:	'crossClone',
+				reference:	{
+					node:		revealIntro,
+					position:	'afterend'
+				}
+		});
+
 		this.nodes.crossClone.classList.add( 'clone' );
 
 		this.addNodeEvent( this.nodes.crossClone, 'click', () => {
