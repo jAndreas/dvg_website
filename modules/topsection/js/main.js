@@ -3,7 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { loadVideo, VideoTools } from 'video.js';
+import { loadVideo, reInitHLSJS, VideoTools } from 'video.js';
 
 //import io from 'socket.io-client';
 import htmlx from '../markup/main.htmlx';
@@ -38,6 +38,10 @@ class TopSection extends Component {
 			this.fire( 'waitforHLSSupport.appEvents' )
 		);
 
+		extend( this ).with({
+			backgroundVideo:	null
+		});
+
 		return this.init();
 	}
 
@@ -57,15 +61,15 @@ class TopSection extends Component {
 
 	async onBackgroundImageLoaded() {
 		if( true ) {
-			let video = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+			this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
-				if( active && video.paused ) {
-					video.play();
+				if( active && this.backgroundVideo.paused ) {
+					this.backgroundVideo.play();
 				}
 
-				if(!active && !video.paused) {
-					video.pause();
+				if(!active && !this.backgroundVideo.paused) {
+					this.backgroundVideo.pause();
 				}
 			});
 		}
@@ -75,11 +79,69 @@ class TopSection extends Component {
 		event.target.classList.remove( 'initialBounce' );
 	}
 
+	async onDialogModeChange( active ) {
+		if( active ) {
+			this.nodes[ 'a.revealIntro' ].style.visibility = 'hidden';
+			if( this.nodes.crossClone ) {
+				this.nodes.crossClone.style.visibility = 'hidden';
+			}
+
+			if( this.nodes.myVideo.classList.contains( 'darken' ) === false ) {
+				this.removeNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
+				this.returnToMenu();
+			}
+		} else {
+			this.nodes[ 'a.revealIntro' ].style.visibility = 'visible';
+			if( this.nodes.crossClone ) {
+				this.nodes.crossClone.style.visibility = 'visible';
+			}
+		}
+
+		if( this.backgroundVideo ) {
+			if( active ) {
+				this.lastPlaybackTime = this.backgroundVideo.getTime;
+				this.backgroundVideo.stop();
+
+				await this.animate({
+					node:	this.nodes.myVideo,
+					rules:	{
+						duration:	400,
+						name:		'fadeOut'
+					}
+				});
+
+				this.nodes.myVideo.style.display = 'none';
+			} else {
+				this.nodes.myVideo.style.display = 'block';
+
+				await this.data.get( this.nodes.myVideo ).storage.animations.last.undo();
+
+				this.backgroundVideo.play( this.lastPlaybackTime );
+			}
+		}
+
+		super.onDialogModeChange && super.onDialogModeChange( active );
+	}
+
 	async slideDownArrowClick( event ) {
 		let login = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/main.js'  );
 		this.log( `launching login with location: ${ this.id }` );
 		login.start({
-			location:	this.id
+			location:	this.id,
+			position:	{
+				left:	400,
+				top:	300
+			}
+		});
+
+		let test = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/test.js'  );
+		this.log( `launching test with location: ${ this.id }` );
+		test.start({
+			location:	this.id,
+			position:	{
+				left:	600,
+				top:	500
+			}
 		});
 	}
 
@@ -94,21 +156,35 @@ class TopSection extends Component {
 				'li.titleContainer':title,
 				'div.gridOverlay':gridOverlay } = this.nodes;
 
-		new VideoTools( myVideo ).fadeVolumeIn();
+		this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+
+		if( this.backgroundVideo ) {
+			this.backgroundVideo.fadeVolumeIn();
+		}
 
 		this.addNodes({
-				nodeData:	revealIntro.cloneNode( true ),
-				nodeName:	'crossClone',
-				reference:	{
-					node:		revealIntro,
-					position:	'afterend'
-				}
+			nodeData:	revealIntro.cloneNode( true ),
+			nodeName:	'crossClone',
+			reference:	{
+				node:		revealIntro,
+				position:	'afterend'
+			}
 		});
 
 		this.nodes.crossClone.classList.add( 'clone' );
 
 		this.addNodeEvent( this.nodes.crossClone, 'click', () => {
-			new VideoTools( myVideo ).seek( 2 );
+			if( this.backgroundVideo ) {
+				this.backgroundVideo.seek( 2 );
+			}
+
+			this.addNodes({
+				htmlData:	'<div class="ROFLSUPERHARD">I am the hard ROFLer!!!</div>',
+				reference:	{
+					node:		'a.slideDownArrow',
+					position:	'afterend'
+				}
+			});
 		});
 
 		await this.timeout( 10 );
@@ -195,6 +271,7 @@ class TopSection extends Component {
 		await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
+		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 	}
 
 	async returnToMenu( event ) {
@@ -209,6 +286,7 @@ class TopSection extends Component {
 				'li.titleContainer':title,
 				'div.gridOverlay':gridOverlay } = this.nodes;
 
+		this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 		this.removeNodeEvent( crossClone, 'click' );
 
 		title.style.visibility = 'visible';
@@ -216,7 +294,9 @@ class TopSection extends Component {
 		myVideo.classList.add( 'darken' );
 		myVideo.controls	= false;
 
-		new VideoTools( myVideo ).fadeVolumeOut();
+		if( this.backgroundVideo ) {
+			this.backgroundVideo.fadeVolumeOut();
+		}
 
 		crossClone.textContent = '\u2720';
 		crossClone.classList.remove( 'replaySymbol' );
@@ -227,6 +307,7 @@ class TopSection extends Component {
 
 		this.removeNodes( 'crossClone', true );
 		this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
+		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 	}
 }
 /****************************************** TopSection End ******************************************/

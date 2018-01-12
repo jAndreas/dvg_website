@@ -18,18 +18,17 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	async init() {
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
 
-		console.time('bgImage');
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
-		console.timeEnd('bgImage');
+
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
 			version:			'0.0.6',
 			status:				'alpha',
 			background:			{
-				objURL:					objURL,
-				css:		{
+				objURL:		objURL,
+				css:	{
 				}
 			}
 		});
