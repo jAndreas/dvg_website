@@ -27,6 +27,22 @@ try {
 
 				}
 			};
+
+			class base {
+				constructor() {
+
+				}
+			}
+
+			class foo extends mixin( base ) {
+
+			}
+
+			let proxy = new Proxy({}, {
+				get: (t,p) => {
+					return t[p]
+				}
+			});
 		}
 
 		prop() {

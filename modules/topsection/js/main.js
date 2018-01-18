@@ -20,6 +20,8 @@ socket.on('pongo', ( data ) => {
 	console.log( 'recv from server: ', data );
 });*/
 
+let instance = null;
+
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
@@ -39,7 +41,7 @@ class TopSection extends Component {
 		);
 
 		extend( this ).with({
-			backgroundVideo:	null
+			backgroundVideo:null
 		});
 
 		return this.init();
@@ -54,13 +56,14 @@ class TopSection extends Component {
 
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
-		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
 
 		return this;
 	}
 
 	async onBackgroundImageLoaded() {
-		if( true ) {
+		//if( true ) {
 			this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
 			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
@@ -72,7 +75,7 @@ class TopSection extends Component {
 					this.backgroundVideo.pause();
 				}
 			});
-		}
+		//}
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -80,18 +83,23 @@ class TopSection extends Component {
 	}
 
 	async onDialogModeChange( active ) {
+		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
+
 		if( active ) {
 			this.nodes[ 'a.revealIntro' ].style.visibility = 'hidden';
+
 			if( this.nodes.crossClone ) {
 				this.nodes.crossClone.style.visibility = 'hidden';
 			}
 
-			if( this.nodes.myVideo.classList.contains( 'darken' ) === false ) {
+			if(!this.nodes.myVideo.classList.contains( 'darken' ) ) {
 				this.removeNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 				this.returnToMenu();
 			}
 		} else {
 			this.nodes[ 'a.revealIntro' ].style.visibility = 'visible';
+			this.addNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
+
 			if( this.nodes.crossClone ) {
 				this.nodes.crossClone.style.visibility = 'visible';
 			}
@@ -124,25 +132,21 @@ class TopSection extends Component {
 	}
 
 	async slideDownArrowClick( event ) {
-		let login = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/main.js'  );
-		this.log( `launching login with location: ${ this.id }` );
-		login.start({
-			location:	this.id,
-			position:	{
-				left:	400,
-				top:	300
-			}
+
+	}
+
+	async followMeClick( event ) {
+		this.removeNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
+
+		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
+
+		let registerEmailDialog = await import( /* webpackChunkName: "RegisterEmail Dialog" */ 'registerEmailDialog/js/main.js'  );
+		registerEmailDialog.start({
+			location:	this.id
 		});
 
-		let test = await import( /* webpackChunkName: "Login Dialog" */ 'login/js/test.js'  );
-		this.log( `launching test with location: ${ this.id }` );
-		test.start({
-			location:	this.id,
-			position:	{
-				left:	600,
-				top:	500
-			}
-		});
+		event.stopPropagation();
+		event.preventDefault();
 	}
 
 	async showIntro( event ) {
@@ -318,7 +322,15 @@ class TopSection extends Component {
 async function start( ...args ) {
 	[ transforms, style ].forEach( style => style.use() );
 
-	const inst	= await new TopSection( ...args );
+	instance = await new TopSection( ...args );
 }
 
-export { start };
+function stop() {
+	[ style ].forEach( style => style.unuse() );
+
+	if( instance ) {
+		instance.destroy();
+	}
+}
+
+export { start, stop };

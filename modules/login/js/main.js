@@ -15,7 +15,8 @@ let	instance	= null;
 class Login extends mix( Overlay ).with( Dialog, Draggable, GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			tmpl:			htmlx({})
+			tmpl:			htmlx({}),
+			center:			true
 		}).and( input );
 
 		super( options );
@@ -26,11 +27,8 @@ class Login extends mix( Overlay ).with( Dialog, Draggable, GlasEffect ) {
 	}
 
 	async init() {
-		// any component related declarations, bindings, listeners etc. which can get executed immediately, before we wait for possible dependencies
-
 		await super.init();
 
-		// any component related stuff which should wait on dependencies resolve before executing (waitForDOM at least or additional async data)
 		return this;
 	}
 

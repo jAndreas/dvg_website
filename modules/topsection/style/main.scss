@@ -137,6 +137,25 @@ div#topSection {
 							}
 						}
 
+						> a.followMe {
+								color:rgba(190,0,0,1);
+								text-shadow:0px 0px 20px white, -2px -2px 2px black;
+								transform:rotate(-35deg) translate(-80px, -20px);
+								font-size:35px;
+								position:absolute;
+								font-family:Verdana;
+								border:2px dashed rgba(220,220,220,0.8);
+								padding:4px;
+								border-radius:16px;
+								text-decoration-color:red;
+								text-decoration-style:dotted;
+
+								@media screen and (max-width:$iPhone6Portrait) {
+									font-size:20px;
+									transform:rotate(-35deg) translate(30px, 10px);
+								}
+						}
+
 						@media screen and (max-width:$iPhone6Portrait) {
 							margin-right:0;
 						}
@@ -267,7 +286,7 @@ div#topSection {
 					}
 
 					&.initialBounce {
-						animation:3100ms linear 0ms 2 normal forwards bouncequick;
+						animation:1100ms linear 0ms 2 normal forwards bouncequick;
 					}
 
 					@keyframes bouncequick {
