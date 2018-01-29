@@ -5,7 +5,7 @@ import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
-import htmlx from '../markup/main.htmlx';
+import html from '../markup/main.html';
 import style from '../style/main.scss';
 
 let instance		= null;
@@ -17,7 +17,7 @@ let instance		= null;
 class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			tmpl:			htmlx({}),
+			tmpl:			html,
 			center:			true
 		}).and( input );
 
@@ -35,19 +35,54 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		this.addNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
 		this.onInputKeyUp();
 
+		this.nodes[ 'input.emailAddress' ].focus();
+
 		return this;
 	}
 
 	onDialogModeChange( active ) {
 	}
 
-	onSubscribeClick( event ) {
+	async onSubscribeClick( event ) {
 		let {
 			'input.emailAddress':emailAddress,
-			'input.sendEmailAddress':sendEmailAddress,
-			'sup.statusUpdate':status } = this.nodes;
+			'span.subscribingInfo':infoText,
+			'input.okClose':closeBtn,
+			'section.page1':page1,
+			'section.page2':page2 } = this.nodes;
 
-		this.createModalOverlay( this.nodes.dialogRoot );
+		let modal = this.createModalOverlay({
+			at:		this.dialogElements[ 'div.bfContentDialogBody' ],
+			opts:	{
+				spinner: true
+			}
+		});
+
+		emailAddress.blur();
+
+		try {
+			let response = await this.send({
+				type:		'registerEmailAddress',
+				payload:	emailAddress.value
+			});
+
+			infoText.innerHTML = response.msg;
+			modal.spinner.fulfill();
+		} catch( ex ) {
+			modal.spinner.cleanup();
+			infoText.textContent = ex;
+			closeBtn.value = 'Schade...';
+		}
+
+		this.addNodeEventOnce( closeBtn, 'click', () => {
+			this.destroy();
+			return false;
+		});
+
+		page1.style.display = 'none';
+
+		await modal.fulfill();
+		page2.style.display = 'flex';
 	}
 
 	onInputKeyUp( event ) {
@@ -57,8 +92,14 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 			'sup.statusUpdate':status } = this.nodes;
 
 		if( emailAddress.checkValidity() ) {
-			sendEmailAddress.removeAttribute( 'disabled' );
-			status.textContent = '';
+			if( event.which === 13 ) {
+				this.removeNodeEvent( 'input.emailAddress', 'keyup', this.onInputKeyUp );
+				this.removeNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
+				this.onSubscribeClick();
+			} else {
+				sendEmailAddress.removeAttribute( 'disabled' );
+				status.textContent = '';
+			}
 		} else {
 			sendEmailAddress.setAttribute( 'disabled', 'disabled' );
 			status.textContent = emailAddress.validationMessage;

@@ -6,7 +6,7 @@ import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo, reInitHLSJS, VideoTools } from 'video.js';
 
 //import io from 'socket.io-client';
-import htmlx from '../markup/main.htmlx';
+import html from '../markup/main.html';
 import style from '../style/main.scss';
 import transforms from '../style/transforms.scss';
 
@@ -29,9 +29,7 @@ class TopSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
-			tmpl:			htmlx({
-				test:	'CHECK'
-			})
+			tmpl:			html
 		}).and( input );
 
 		super( options );
@@ -141,6 +139,7 @@ class TopSection extends Component {
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
 		let registerEmailDialog = await import( /* webpackChunkName: "RegisterEmail Dialog" */ 'registerEmailDialog/js/main.js'  );
+		
 		registerEmailDialog.start({
 			location:	this.id
 		});

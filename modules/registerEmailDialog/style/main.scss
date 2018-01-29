@@ -19,69 +19,128 @@ div.registerEmailDialog {
 		width:90vw;
 		height:50vh;
 	}
-}
 
-input.emailAddress {
-	font-size:5vh;
-	width:45vw;
-	color:rgba(20, 22, 25, 0.9);
-	background:rgba(240, 240, 240, 0.90);
-	border:2px solid transparent;
-	border-radius:12px;
-	padding:4px;
+	> section.page1 {
+		display:flex;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
 
-	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
-		font-size:4vh;
-		width:85vw;
+		> input.emailAddress {
+			font-size:5vh;
+			width:45vw;
+			color:rgba(20, 22, 25, 0.9);
+			background:rgba(240, 240, 240, 0.90);
+			border:2px solid transparent;
+			border-radius:12px;
+			padding:4px;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				font-size:4vh;
+				width:85vw;
+			}
+
+			@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+				font-size:6vh;
+				width:85vw;
+			}
+		}
+
+		> input.emailAddress:focus {
+			outline:none;
+		}
+
+		> input.emailAddress:invalid {
+			border:2px solid rgba(210, 50, 70, 0.9);
+		}
+
+		> sup.statusUpdate {
+			color:rgba(200,50,50,0.8);
+			align-self:flex-end;
+			font-size:1.5vh;
+			text-shadow:0px 0px 5px black;
+			position:absolute;
+			right:3vw;
+			top:7vh;
+		}
+
+		> input.sendEmailAddress {
+			font-size:3vh;
+			width:20vw;
+			cursor:pointer;
+			font-weight:bold;
+			margin-top:10px;
+			border-radius:12px;
+			text-shadow: 2px 2px 4px rgba(0,20,0,0.6);
+			box-shadow: 2px 2px 11px 0px white;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				font-size:3vh;
+				width:70vw;
+			}
+
+			@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+				font-size:5vh;
+				width:50vw;
+			}
+		}
+
+		> input.sendEmailAddress:disabled {
+			cursor:default;
+		}
+
+		> input.sendEmailAddress:active {
+			box-shadow:0px 0px 30px white;
+		}
+
+		> input.sendEmailAddress:focus {
+			outline:none;
+		}
 	}
 
-	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
-		font-size:6vh;
-		width:85vw;
+	> section.page2 {
+		display:none;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
+
+		> span.subscribingInfo {
+			font-size:2.5vh;
+			text-shadow:0px 0px 10px white;
+			padding:1vw;
+
+			> sup.smallLetters {
+				font-size:1.5vh;
+			}
+		}
+
+		> input.okClose {
+			font-size:3vh;
+			width:20vw;
+			cursor:pointer;
+			font-weight:bold;
+			margin-top:10px;
+			border-radius:12px;
+			text-shadow: 2px 2px 4px rgba(0,20,0,0.6);
+			box-shadow: 2px 2px 11px 0px white;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				font-size:3vh;
+				width:70vw;
+			}
+
+			@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+				font-size:5vh;
+				width:50vw;
+			}
+		}
+
+		> input.okClose:active {
+			box-shadow:0px 0px 30px white;
+		}
+
+		> input.okClose:focus {
+			outline:none;
+		}
 	}
-}
-
-input.emailAddress:focus {
-	outline:none;
-}
-
-input.emailAddress:invalid {
-	border:2px solid rgba(210, 50, 70, 0.9);
-}
-
-sup.statusUpdate {
-	color:rgba(200,50,50,0.8);
-	align-self:flex-end;
-	font-size:1.5vh;
-	text-shadow:0px 0px 5px black;
-	position:absolute;
-	right:3vw;
-	top:7vh;
-}
-
-input.sendEmailAddress {
-	font-size:3vh;
-	width:20vw;
-	cursor:pointer;
-	font-weight:bold;
-	margin-top:10px;
-	border-radius:12px;
-
-	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
-		font-size:3vh;
-		width:70vw;
-	}
-
-	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
-		font-size:5vh;
-		width:50vw;
-	}
-}
-
-input.sendEmailAddress:active {
-	box-shadow:0px 0px 30px white;
-}
-
-input.sendEmailAddress:focus {
-	outline:none;
 }

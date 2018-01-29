@@ -1,5 +1,0 @@
-<div class="registerEmailDialog">
-	<sup class="statusUpdate"></sup>
-	<input class="emailAddress" type="email" placeholder="E-Mail Adresse..." required/>
-	<input class="sendEmailAddress" type="button" value="Abonnieren!" disabled></input>
-</div>
