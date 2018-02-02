@@ -1,6 +1,6 @@
 'use strict';
 
-import * as topSection from 'topsection/js/main.js';
+import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
@@ -33,7 +33,17 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			}
 		});
 
-		topSection.start();
+		let hash = await this.fire( 'getHash.appEvents' );
+
+		if( hash.has( 'confirmSubscription' ) ) {
+			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
+			confirmSubDialog.start({
+				secretKey:	hash.get( 'confirmSubscription' )
+			});
+		} else {
+			let topSection = await import( /* webpackChunkName: "topSection" */ 'topsection/js/main.js' );
+			topSection.start();
+		}
 	}
 
 	waitForBackgroundImageLoaded() {

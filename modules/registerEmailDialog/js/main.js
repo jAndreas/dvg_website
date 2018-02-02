@@ -1,7 +1,6 @@
 'use strict';
 
-import { Overlay, Dialog, Draggable, GlasEffect } from 'barfoos2.0/dialog.js';
-import { moduleLocations } from 'barfoos2.0/defs.js';
+import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -63,7 +62,10 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		try {
 			let response = await this.send({
 				type:		'registerEmailAddress',
-				payload:	emailAddress.value
+				payload:	{
+					newAddress:	emailAddress.value,
+					origin:		location.origin
+				}
 			});
 
 			infoText.innerHTML = response.msg;
