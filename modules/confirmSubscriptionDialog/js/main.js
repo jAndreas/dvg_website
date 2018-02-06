@@ -15,7 +15,7 @@ let		instance		= null;
 *	user account on subscription on main site.
  *****************************************************************************************************/
 class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,
 			tmpl:					html,
@@ -44,9 +44,9 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 					}
 				});
 
-				this.nodes[ 'div.confirmSubscriptionDialog' ].textContent = response.msg;
+				this.nodes[ 'div.confirmSubscriptionDialog' ].innerHTML = response.msg;
 			} catch( ex ) {
-				this.nodes[ 'div.confirmSubscriptionDialog' ].textContent = ex;
+				this.nodes[ 'div.confirmSubscriptionDialog' ].innerHTML = ex;
 			}
 		}
 

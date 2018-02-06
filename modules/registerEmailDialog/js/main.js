@@ -14,14 +14,13 @@ let instance		= null;
  *	gets transfered to the backend
  *****************************************************************************************************/
 class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
-		extend( options ).with({
+	constructor( input = { }, options = { } ) {
+		extend(	options	).with({
 			tmpl:			html,
 			center:			true
 		}).and( input );
 
 		super( options );
-
 		//this.runtimeDependencies.push();
 
 		return this.init();
@@ -72,7 +71,7 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 			modal.spinner.fulfill();
 		} catch( ex ) {
 			modal.spinner.cleanup();
-			infoText.textContent = ex;
+			infoText.innerHTML = ex;
 			closeBtn.value = 'Schade...';
 		}
 
