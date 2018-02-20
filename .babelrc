@@ -1,6 +1,6 @@
 {
-	presets:	[ [ 'es2015' ], [ 'es2017' ] ],
-	plugins:	[ 'transform-class-properties', 'transform-runtime', 'syntax-dynamic-import', 'transform-regenerator' ],
+	"presets":	[ [ "es2015" ], [ "es2017" ] ],
+	"plugins":	[ "transform-es2015-destructuring", "transform-class-properties", "transform-runtime", "syntax-dynamic-import", "transform-regenerator" ],
 	"ignore": [
 	]
 }

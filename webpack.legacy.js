@@ -25,7 +25,7 @@ console.log( 'Done.\n' );
 
 module.exports = {
 	context:	__dirname,
-	entry:		[ './app.js' ],
+	entry:		[ 'babel-polyfill', './app.js' ],
 	output:		{
 		path:		websitePath,
 		filename:	'[name]-bundle.js'
@@ -103,7 +103,7 @@ module.exports = {
 		}),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, deepChildren: true, async: true }),
 		new webpack.DefinePlugin({
-			ENV_PROD: true
+			ENV_PROD: true,
 			ENV_LEGACY: true
 		})
 	]

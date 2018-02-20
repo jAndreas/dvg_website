@@ -37,7 +37,7 @@ module.exports = {
 			path.resolve( './modules/' )
 		]
 	},
-	devtool:	'source-map',
+	//devtool:	'source-map',
 	module:	{
 		rules: [
 			{
@@ -100,7 +100,7 @@ module.exports = {
 				ie8:				false,
 				mangle:				true,
 				keep_classnames:	true,
-				parallel:			true
+				parallel:			4
 			}
 		}),
 		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, deepChildren: true, async: true }),

@@ -56,6 +56,7 @@ class TopSection extends Component {
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
+		this.addNodeEvent( 'ul.jumpList', 'mousedown', this.notYet );
 
 		return this;
 	}
@@ -78,6 +79,15 @@ class TopSection extends Component {
 
 	slideDownArrowAnimationEnd( event ) {
 		event.target.classList.remove( 'initialBounce' );
+	}
+
+	notYet( event ) {
+		if( event.srcElement !== this.nodes[ 'a.followMe' ] ) {
+			alert('Geduld, bald ist es soweit! Bitte abonniere trotzem bereits jetzt, ich werde Euch informieren, wenn es hier richtig los geht!');
+			this.followMeClick.call( this, event );
+		}
+
+		return false;
 	}
 
 	async onDialogModeChange( active ) {
@@ -139,7 +149,7 @@ class TopSection extends Component {
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
 		let registerEmailDialog = await import( /* webpackChunkName: "RegisterEmail Dialog" */ 'registerEmailDialog/js/main.js'  );
-		
+
 		registerEmailDialog.start({
 			location:	this.id
 		});

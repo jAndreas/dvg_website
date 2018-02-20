@@ -51,10 +51,10 @@ try {
 	}
 
 	new CompatibilityCheck();`);
+
+	window['console'].info( 'This Browser is a killer! :-)' );
+	import( /* webpackChunkName: DVGWebsite */ './app.js' );
 } catch( ex ) {
 	window['console'].info( 'It seems like this browser is unable to deal with our requirements, redirecting to ES5-based version...' );
-	location.href = '//legacy.der-vegane-germane.de';
+	location.href = 'http://legacy.der-vegane-germane.de';
 }
-
-window['console'].info( 'This Browser is a killer! :-)' );
-import( /* webpackChunkName: DVGWebsite */ './app.js' );

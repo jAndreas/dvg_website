@@ -21,7 +21,6 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		}).and( input );
 
 		super( options );
-		//this.runtimeDependencies.push();
 
 		return this.init();
 	}
@@ -72,7 +71,7 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		} catch( ex ) {
 			modal.spinner.cleanup();
 			infoText.innerHTML = ex;
-			closeBtn.value = 'Schade...';
+			closeBtn.value = 'Alles klar!';
 		}
 
 		this.addNodeEventOnce( closeBtn, 'click', () => {
