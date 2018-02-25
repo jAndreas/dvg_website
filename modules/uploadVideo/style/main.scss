@@ -10,32 +10,33 @@ div.uploadVideo {
 	align-items:center;
 
 	width:50vw;
-	height:60vh;
 
 	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
 		width:95vw;
-		height:80vh;
 	}
 
 	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
 		width:90vw;
-		height:70vh;
 	}
 
 	> section.tab1 {
+		position:relative;
 		display:flex;
 		flex-direction:column;
 		justify-content:center;
 		align-items:center;
+		width:100%;
 
 		> form.uploadData {
-			position:absolute;
+			position:relative;
 			width:95%;
+			padding:20px;
 
 			display:flex;
-			flex-direction:column;
-			justify-content:center;
+			flex-direction:row;
+			justify-content:flex-start;
 			align-items:center;
+			flex-wrap:wrap;
 
 			> input {
 				margin-top:10px;
@@ -58,15 +59,20 @@ div.uploadVideo {
 				background-color:rgba(200,0,0,0.1);
 			}
 
-			> input.videoFile {
+			> input.videoFile, input.thumbnailFile {
 				display:block;
-				top:0;
+				top:0px;
+				width:20px;
 				position:absolute;
 				opacity:0;
 				cursor:pointer;
 			}
 
-			> label.uploadStyle {
+			> input.thumbnailFile {
+				left:-100px;
+			}
+
+			> label.uploadStyle, label.thumbnailStyle {
 				font-size:4vh;
 				width:95%;
 				border:1px dashed gray;
@@ -80,18 +86,29 @@ div.uploadVideo {
 				padding:4px;
 			}
 
-			> label.uploadStyle:hover {
+			> label.thumbnailStyle {
+				margin-top:5px;
+				width:60%;
+			}
+
+			> input.uploadThumbnail {
+				width:20%;
+				font-size:2vh;
+				margin-left:1vw;
+			}
+
+			> label.uploadStyle:hover, label.thumbnailStyle:hover {
 				border:1px dashed white;
 			}
 
 			> input.videoFile:invalid ~ label.uploadStyle {
 				background-color:rgba(200,0,0,0.1);
-				content:"Datei auswählen...";
+				content:"Video auswählen...";
 				color:rgba(205,205,205,0.5);
 			}
 
 			> input.videoFile:invalid ~ label.uploadStyle:after {
-				content:"Datei auswählen...";
+				content:"Video auswählen...";
 				position: relative;
 				left: 10px;
 				color:rgba(205,205,205,0.5);

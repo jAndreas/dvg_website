@@ -1,10 +1,16 @@
 <div class="uploadVideo">
 	<section class="tab1">
 		<form class="uploadData">
-			<input class="videoFile" id="videoFileId" type="file" required/>
-			<label class="uploadStyle" for="videoFileId">☁</label>
-			<input class="videoTitle" type="text" placeholder="Titel des Videos..." required/>
-			<textarea class="videoDescription" required placeholder="Videobeschreibung..."></textarea>
+			<input class="videoFile" id="videoFileId" type="file" accept="video/*" required/>
+			<label class="uploadStyle" for="videoFileId">📹</label>
+
+			<input class="thumbnailFile" id="thumbnailFileId" type="file" accept="image/*"/>
+			<label class="thumbnailStyle" for="thumbnailFileId">📷</label>
+			<input class="uploadThumbnail bfButton" type="button" value="Speichern" disabled/>
+
+			<input class="videoTitle" type="text" placeholder="Titel des Videos..."/>
+			<textarea class="videoDescription" placeholder="Videobeschreibung..."></textarea>
+			<input class="videoTags" type="text" placeholder="Tags..."/>
 			<input class="password" type="password" placeholder="Passwort..." required/>
 			<input class="uploadVideo bfButton" type="submit" value="Upload"/>
 		</form>

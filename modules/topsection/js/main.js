@@ -3,7 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { loadVideo, reInitHLSJS, VideoTools } from 'video.js';
+import { loadVideo } from 'video.js';
 
 //import io from 'socket.io-client';
 import html from '../markup/main.html';
@@ -65,7 +65,7 @@ class TopSection extends Component {
 		//if( true ) {
 			this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
-			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active, event ) => {
+			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
 				if( active && this.backgroundVideo.paused ) {
 					this.backgroundVideo.play();
 				}
@@ -139,7 +139,7 @@ class TopSection extends Component {
 		super.onDialogModeChange && super.onDialogModeChange( active );
 	}
 
-	async slideDownArrowClick( event ) {
+	async slideDownArrowClick() {
 
 	}
 
@@ -158,7 +158,7 @@ class TopSection extends Component {
 		event.preventDefault();
 	}
 
-	async showIntro( event ) {
+	async showIntro() {
 		let {	myVideo,
 				w1,
 				w2,
@@ -287,7 +287,7 @@ class TopSection extends Component {
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 	}
 
-	async returnToMenu( event ) {
+	async returnToMenu() {
 		let {	myVideo,
 				w1,
 				w2,

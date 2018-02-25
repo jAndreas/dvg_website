@@ -4,7 +4,8 @@ const	webpack			= require( 'webpack' ),
 		{ execSync }	= require( 'child_process' ),
 		UglifyJSPlugin	= require('uglifyjs-webpack-plugin'),
 		websiteName		= 'der-vegane-germane.de',
-		websitePath		= `/var/www/html/${websiteName}/`;
+		websitePath		= `/var/www/html/${websiteName}/`,
+		buildTime		= Date.now();
 
 console.log( `\nRemoving old files in target ${websitePath}:\n` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -16,7 +17,9 @@ fs.readdirSync( websitePath ).forEach( file  => {
 console.log( '\nDone.\n' );
 
 console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
-fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${websitePath}index.html` ) );
+let indexHTML = fs.readFileSync( path.resolve( `${__dirname}/index.html` ), 'utf-8' );
+indexHTML = indexHTML.replace( /%build%/, buildTime );
+fs.writeFileSync( `${websitePath}index.html`, indexHTML );
 console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );

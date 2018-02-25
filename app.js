@@ -2,6 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
+import { doc } from 'barfoos2.0/domkit.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
@@ -17,6 +18,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 
 	async init() {
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
+		this.on( 'setTitle.appEvents', this.setTitle, this );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
@@ -51,6 +53,10 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 
 	waitForBackgroundImageLoaded() {
 		return this.backgroundImage;
+	}
+
+	setTitle( title = '' ) {
+		doc.title = title;
 	}
 }
 

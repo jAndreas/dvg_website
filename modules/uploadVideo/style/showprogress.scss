@@ -1,0 +1,44 @@
+div.showProgress {
+	display:flex;
+	flex-direction:row;
+	align-items:flex-start;
+	justify-content:flex-start;
+	flex-wrap:wrap;
+	width:95%;
+	background:linear-gradient(45deg, rgba(30,30,30,1), rgba(90,90,190,0.7));
+	border-radius:12px;
+	border:1px solid white;
+	padding:4px;
+	transition:all 800ms ease-in-out;
+}
+
+span.info {
+	width:90%;
+	font-size:2vh;
+	text-shadow:0px 0px 10px white;
+
+	position:relative;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+span.infoPercent {
+	width:5%;
+	font-size:2vh;
+	text-shadow:0px 0px 10px white;
+}
+
+progress.uploadProgress {
+	width:100%;
+}
+
+sup.bandwidthData {
+	width:95%;
+	font-size:1.5vh;
+}
+
+sup.visualizeProgress {
+	height:3vh;
+	width:2vw;
+}

@@ -37,10 +37,10 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		return this;
 	}
 
-	onDialogModeChange( active ) {
+	onDialogModeChange( /* active */ ) {
 	}
 
-	async onSubscribeClick( event ) {
+	async onSubscribeClick() {
 		let {
 			'input.emailAddress':emailAddress,
 			'span.subscribingInfo':infoText,
