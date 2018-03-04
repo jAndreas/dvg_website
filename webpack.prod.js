@@ -2,7 +2,6 @@ const	webpack			= require( 'webpack' ),
 		path			= require( 'path' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
-		UglifyJSPlugin	= require('uglifyjs-webpack-plugin'),
 		websiteName		= 'der-vegane-germane.de',
 		websitePath		= `/var/www/html/${websiteName}/`,
 		buildTime		= Date.now();
@@ -40,7 +39,6 @@ module.exports = {
 			path.resolve( './modules/' )
 		]
 	},
-	//devtool:	'source-map',
 	module:	{
 		rules: [
 			{
@@ -93,20 +91,6 @@ module.exports = {
 		]
 	},
 	plugins:	[
-		new webpack.optimize.ModuleConcatenationPlugin(),
-		//new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false, drop_console: true } }),
-		new UglifyJSPlugin({
-			uglifyOptions: {
-				compress:			{ warnings: false, drop_console: true } ,
-				warnings:			false,
-				ecma:				8,
-				ie8:				false,
-				mangle:				true,
-				keep_classnames:	true,
-				parallel:			4
-			}
-		}),
-		new webpack.optimize.CommonsChunkPlugin({ minChunks: 2, name: 'main', children: true, deepChildren: true, async: true }),
 		new webpack.DefinePlugin({
 			ENV_PROD: true
 		})

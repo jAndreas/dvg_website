@@ -32,9 +32,16 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		this.addNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
 		this.onInputKeyUp();
 
-		this.nodes[ 'input.emailAddress' ].focus();
+		this.nodes[ 'input.emailAddress' ].focus({
+			preventScroll:	true
+		});
 
 		return this;
+	}
+
+	async destroy() {
+		super.destroy && super.destroy();
+		[ style ].forEach( s => s.unuse() );
 	}
 
 	onDialogModeChange( /* active */ ) {
@@ -115,8 +122,6 @@ async function start( ...args ) {
 }
 
 function stop() {
-	[ style ].forEach( style => style.unuse() );
-
 	if( instance ) {
 		instance.destroy();
 	}

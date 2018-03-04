@@ -1,31 +1,26 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend } from 'barfoos2.0/toolkit.js';
+import Swipe from 'barfoos2.0/swipe.js';
+import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
 
-//import io from 'socket.io-client';
 import html from '../markup/main.html';
+import scrollUpMarkup from '../markup/scrollup.html';
 import style from '../style/main.scss';
+import scrollUpStyle from '../style/scrollup.scss';
 import transforms from '../style/transforms.scss';
 
-const	videoLink		= '/video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
+const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 		fallbackPath	= '/fallback/intro_480.mp4';
-
-/*var socket = io( 'http://judgemy.org' );
-
-socket.emit('echo', 'oh my.. wtf!!');
-socket.on('pongo', ( data ) => {
-	console.log( 'recv from server: ', data );
-});*/
 
 let instance = null;
 
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class TopSection extends Component {
+class TopSection extends mix( Component ).with( Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -39,55 +34,101 @@ class TopSection extends Component {
 		);
 
 		extend( this ).with({
-			backgroundVideo:null
+			backgroundVideo:		null,
+			isTheaterMode:			false,
+			outOfViewport:			false
 		});
 
 		return this.init();
 	}
 
 	async init() {
-		await super.init();
-
-		await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
-
-		this.onBackgroundImageLoaded();
+		try {
+			await super.init();
+			await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
+			await this.onBackgroundImageLoaded();
+		} catch( ex ) {
+			this.log( 'Error on initializing, module might not be fully available -> ', ex );
+		}
 
 		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
-		this.addNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
-		this.addNodeEvent( 'ul.jumpList', 'mousedown', this.notYet );
+		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+
+		this.on( 'slideUp.videoSection', this.onSlideUp, this );
+		this.on( 'centerScroll.appEvents', this.onCenterScroll, this );
 
 		return this;
 	}
 
+	async destroy() {
+		super.destroy && super.destroy();
+		[ style, scrollUpStyle, transforms ].forEach( s => s.unuse() );
+	}
+
 	async onBackgroundImageLoaded() {
-		//if( true ) {
-			this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+		this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
 
-			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
-				if( active && this.backgroundVideo.paused ) {
-					this.backgroundVideo.play();
-				}
+		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
+			if( active && this.backgroundVideo.paused ) {
+				this.backgroundVideo.play();
+			}
 
-				if(!active && !this.backgroundVideo.paused) {
-					this.backgroundVideo.pause();
+			if(!active && !this.backgroundVideo.paused) {
+				this.backgroundVideo.pause();
+			}
+		});
+	}
+
+	async onCenterScroll( data ) {
+		if( data.offsetTop >= data.innerHeight/2 && this.outOfViewport === false ) {
+			this.outOfViewport = true;
+
+			await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
+			this.addNodes({
+				htmlData:	scrollUpMarkup,
+				reference:	{
+					node:		'root',
+					position:	'beforeend'
 				}
 			});
-		//}
+
+			if(!this._dialogMode ) {
+				if( this.isTheaterMode ) {
+					this.returnToMenu();
+				}
+
+				this.stopVideoPlayback();
+			}
+		} else if( data.offsetTop < data.innerHeight/2 && this.outOfViewport ) {
+			this.outOfViewport = false;
+
+			await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
+			this.removeNodes( 'div.quickScrollUp', true );
+
+			if(!this._dialogMode ) {
+				if( this.backgroundVideo.stopped ) {
+					await this.startVideoPlayback();
+				}
+			}
+		}
+	}
+
+	async onQuickScrollUpClick() {
+		this.fire( 'slideUp.appEvents', this.nodes.root );
+	}
+
+	onSlideUp() {
+		this.fire( 'slideUp.appEvents', this.nodes.root );
+	}
+
+	onSwipeDown() {
+		this.fire( 'slideDown.topSection' );
 	}
 
 	slideDownArrowAnimationEnd( event ) {
 		event.target.classList.remove( 'initialBounce' );
-	}
-
-	notYet( event ) {
-		if( event.srcElement !== this.nodes[ 'a.followMe' ] ) {
-			alert('Geduld, bald ist es soweit! Bitte abonniere trotzem bereits jetzt, ich werde Euch informieren, wenn es hier richtig los geht!');
-			this.followMeClick.call( this, event );
-		}
-
-		return false;
 	}
 
 	async onDialogModeChange( active ) {
@@ -106,45 +147,58 @@ class TopSection extends Component {
 			}
 		} else {
 			this.nodes[ 'a.revealIntro' ].style.visibility = 'visible';
-			this.addNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
+			this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 
 			if( this.nodes.crossClone ) {
 				this.nodes.crossClone.style.visibility = 'visible';
 			}
 		}
 
-		if( this.backgroundVideo ) {
-			if( active ) {
-				this.lastPlaybackTime = this.backgroundVideo.getTime;
-				this.backgroundVideo.stop();
 
-				await this.animate({
-					node:	this.nodes.myVideo,
-					rules:	{
-						duration:	400,
-						name:		'fadeOut'
-					}
-				});
-
-				this.nodes.myVideo.style.display = 'none';
-			} else {
-				this.nodes.myVideo.style.display = 'block';
-
-				await this.data.get( this.nodes.myVideo ).storage.animations.last.undo();
-
-				this.backgroundVideo.play( this.lastPlaybackTime );
-			}
+		if( active ) {
+			await this.stopVideoPlayback();
+		} else {
+			await this.startVideoPlayback();
 		}
 
 		super.onDialogModeChange && super.onDialogModeChange( active );
 	}
 
-	async slideDownArrowClick() {
+	async stopVideoPlayback() {
+		if( this.backgroundVideo ) {
+			this.lastPlaybackTime = this.backgroundVideo.getTime || 1;
+			this.backgroundVideo.stop();
 
+			await this.animate({
+				node:	this.nodes.myVideo,
+				rules:	{
+					duration:	400,
+					name:		'fadeOut'
+				}
+			});
+
+			this.nodes.myVideo.style.display = 'none';
+		}
+	}
+
+	async startVideoPlayback() {
+		if( this.backgroundVideo ) {
+			this.nodes.myVideo.style.display = 'block';
+
+			this.backgroundVideo.play( this.lastPlaybackTime );
+
+			try {
+				await this.data.get( this.nodes.myVideo ).storage.animations.last.undo();
+			} catch( ex ) { }
+		}
+	}
+
+	async slideDownArrowClick() {
+		this.fire( 'slideDown.topSection' );
 	}
 
 	async followMeClick( event ) {
-		this.removeNodeEvent( 'a.followMe', 'mousedown touchstart', this.followMeClick );
+		this.removeNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
@@ -159,168 +213,190 @@ class TopSection extends Component {
 	}
 
 	async showIntro() {
-		let {	myVideo,
-				w1,
-				w2,
-				w3,
-				'a.revealIntro':revealIntro,
-				'li.homeContainer':logo,
-				'li.jumpListContainer':menu,
-				'li.titleContainer':title,
-				'div.gridOverlay':gridOverlay } = this.nodes;
-
-		this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
-
-		if( this.backgroundVideo ) {
-			this.backgroundVideo.fadeVolumeIn();
+		if( this.isTheaterMode ) {
+			return;
 		}
 
-		this.addNodes({
-			nodeData:	revealIntro.cloneNode( true ),
-			nodeName:	'crossClone',
-			reference:	{
-				node:		revealIntro,
-				position:	'afterend'
-			}
-		});
+		this.isTheaterMode = true;
 
-		this.nodes.crossClone.classList.add( 'clone' );
+		this.transitionToTheaterComplete = new Promise(async ( completeRes, completeRej ) => {
+			let {	myVideo,
+					w1,
+					w2,
+					w3,
+					'a.revealIntro':revealIntro,
+					'li.homeContainer':logo,
+					'li.jumpListContainer':menu,
+					'li.titleContainer':title,
+					'div.gridOverlay':gridOverlay } = this.nodes;
 
-		this.addNodeEvent( this.nodes.crossClone, 'click', () => {
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+
 			if( this.backgroundVideo ) {
-				this.backgroundVideo.seek( 2 );
+				this.backgroundVideo.fadeVolumeIn();
+			} else {
+				this.nodes[ 'video.introduction' ].src = '';
+				this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+				this.backgroundVideo.play();
+				console.log('readyState: ',this.nodes[ 'video.introduction' ].readyState );
+
 			}
 
 			this.addNodes({
-				htmlData:	'<div class="ROFLSUPERHARD">I am the hard ROFLer!!!</div>',
+				nodeData:	revealIntro.cloneNode( true ),
+				nodeName:	'crossClone',
 				reference:	{
-					node:		'a.slideDownArrow',
+					node:		revealIntro,
 					position:	'afterend'
 				}
 			});
+
+			this.nodes.crossClone.classList.add( 'clone' );
+
+			this.addNodeEvent( this.nodes.crossClone, 'click', () => {
+				if( this.backgroundVideo ) {
+					this.backgroundVideo.seek( 2 );
+				}
+			});
+
+			await this.timeout( 10 );
+
+			let logoTransition = this.animate({
+				node:		logo,
+				rules:		{
+					duration:	400,
+					name:		'moveOverViewportTop'
+				}
+			});
+
+			let crossTransition = this.animate({
+				node:		revealIntro,
+				rules:		{
+					duration:	1100,
+					name:		'bottomLeftCorner'
+				}
+			});
+
+			let crossCloneTransition = this.animate({
+				node:		this.nodes.crossClone,
+				rules:		{
+					duration:	1100,
+					name:		'bottomRightCorner'
+				}
+			});
+
+			let menuTransition = this.animate({
+				node:		menu,
+				rules:		{
+					duration:	400,
+					name:		'moveThroughScreen'
+				}
+			});
+
+			let gridTransition = this.animate({
+				node:		gridOverlay,
+				rules:		{
+					duration:	400,
+					name:		'invisible'
+				}
+			});
+
+			await menuTransition;
+
+			revealIntro.textContent = '↻';
+			revealIntro.classList.add( 'returnSymbol' );
+			this.nodes.crossClone.textContent = '⏮';
+			this.nodes.crossClone.classList.add( 'replaySymbol' );
+			myVideo.classList.remove( 'darken' );
+
+			let word1Transition = this.animate({
+				node:		w1,
+				rules:		{
+					timing:		'ease-in-out',
+					duration:	2200,
+					name:		'flutterLeft'
+				}
+			});
+
+			let word2Transition = this.animate({
+				node:		w2,
+				rules:		{
+					timing:		'ease-in-out',
+					duration:	2200,
+					name:		'flutterStraight'
+				}
+			});
+
+			let word3Transition = this.animate({
+				node:		w3,
+				rules:		{
+					timing:		'ease-in-out',
+					duration:	1700,
+					name:		'flutterRight'
+				}
+			});
+
+			await word3Transition;
+
+			title.style.visibility = 'hidden';
+
+			await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
+
+			this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+
+			completeRes();
 		});
 
-		await this.timeout( 10 );
-
-		let logoTransition = this.animate({
-			node:		logo,
-			rules:		{
-				duration:	400,
-				name:		'moveOverViewportTop'
-			}
-		});
-
-		let crossTransition = this.animate({
-			node:		revealIntro,
-			rules:		{
-				duration:	1100,
-				name:		'bottomLeftCorner'
-			}
-		});
-
-		let crossCloneTransition = this.animate({
-			node:		this.nodes.crossClone,
-			rules:		{
-				duration:	1100,
-				name:		'bottomRightCorner'
-			}
-		});
-
-		let menuTransition = this.animate({
-			node:		menu,
-			rules:		{
-				duration:	400,
-				name:		'moveThroughScreen'
-			}
-		});
-
-		let gridTransition = this.animate({
-			node:		gridOverlay,
-			rules:		{
-				duration:	400,
-				name:		'invisible'
-			}
-		});
-
-		await menuTransition;
-
-		revealIntro.textContent = '↻';
-		revealIntro.classList.add( 'returnSymbol' );
-		this.nodes.crossClone.textContent = '⏮';
-		this.nodes.crossClone.classList.add( 'replaySymbol' );
-		myVideo.classList.remove( 'darken' );
-
-		let word1Transition = this.animate({
-			node:		w1,
-			rules:		{
-				timing:		'ease-in-out',
-				duration:	2200,
-				name:		'flutterLeft'
-			}
-		});
-
-		let word2Transition = this.animate({
-			node:		w2,
-			rules:		{
-				timing:		'ease-in-out',
-				duration:	2200,
-				name:		'flutterStraight'
-			}
-		});
-
-		let word3Transition = this.animate({
-			node:		w3,
-			rules:		{
-				timing:		'ease-in-out',
-				duration:	1700,
-				name:		'flutterRight'
-			}
-		});
-
-		await word3Transition;
-
-		title.style.visibility = 'hidden';
-
-		await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
-
-		this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
-		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+		return this.transitionToTheaterComplete;
 	}
 
 	async returnToMenu() {
-		let {	myVideo,
-				w1,
-				w2,
-				w3,
-				crossClone,
-				'a.revealIntro':revealIntro,
-				'li.homeContainer':logo,
-				'li.jumpListContainer':menu,
-				'li.titleContainer':title,
-				'div.gridOverlay':gridOverlay } = this.nodes;
-
-		this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
-		this.removeNodeEvent( crossClone, 'click' );
-
-		title.style.visibility = 'visible';
-
-		myVideo.classList.add( 'darken' );
-		myVideo.controls	= false;
-
-		if( this.backgroundVideo ) {
-			this.backgroundVideo.fadeVolumeOut();
+		if(!this.isTheaterMode ) {
+			return;
 		}
 
-		crossClone.textContent = '\u2720';
-		crossClone.classList.remove( 'replaySymbol' );
-		revealIntro.textContent = '\u2720';
-		revealIntro.classList.remove( 'returnSymbol' );
+		this.isTheaterMode = false;
 
-		await Promise.all( [ w1, w2, w3, revealIntro, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
+		this.returnToMenuComplete = new Promise(async ( completeRes, completeRej ) => {
+			let {	myVideo,
+					w1,
+					w2,
+					w3,
+					crossClone,
+					'a.revealIntro':revealIntro,
+					'li.homeContainer':logo,
+					'li.jumpListContainer':menu,
+					'li.titleContainer':title,
+					'div.gridOverlay':gridOverlay } = this.nodes;
 
-		this.removeNodes( 'crossClone', true );
-		this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
-		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.removeNodeEvent( crossClone, 'click' );
+
+			title.style.visibility = 'visible';
+
+			myVideo.classList.add( 'darken' );
+			myVideo.controls	= false;
+
+			if( this.backgroundVideo ) {
+				this.backgroundVideo.fadeVolumeOut();
+			}
+
+			crossClone.textContent = '\u2720';
+			crossClone.classList.remove( 'replaySymbol' );
+			revealIntro.textContent = '\u2720';
+			revealIntro.classList.remove( 'returnSymbol' );
+
+			await Promise.all( [ w1, w2, w3, revealIntro, gridOverlay, crossClone, logo, menu ].map( node => this.data.get( node ).storage.animations.last.undo() ) );
+
+			this.removeNodes( 'crossClone', true );
+			this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+
+			completeRes();
+		});
+
+		return this.returnToMenuComplete;
 	}
 }
 /****************************************** TopSection End ******************************************/
@@ -329,7 +405,7 @@ class TopSection extends Component {
  *  Entry point for this GUI Module.
  *****************************************************************************************************/
 async function start( ...args ) {
-	[ transforms, style ].forEach( style => style.use() );
+	[ transforms, style, scrollUpStyle ].forEach( style => style.use() );
 
 	instance = await new TopSection( ...args );
 }

@@ -15,9 +15,9 @@ import progressConvertStyle from '../style/showprogress_convert.scss';
 let instance		= null;
 
 /*****************************************************************************************************
- *	uploadVideo is a dialog for privileged users which allows to upload video files to the dvg backend
+ *	uploadVideoDialog is a dialog for privileged users which allows to upload video files to the dvg backend
  *****************************************************************************************************/
-class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
+class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,
@@ -40,11 +40,23 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 		this.addNodeEvent( 'input#thumbnailFileId', 'change', this.thumbnailFileIdChanged );
 		this.addNodeEvent( 'form.uploadData', 'submit', this.onSubmit );
 		this.addNodeEvent( 'input.uploadThumbnail', 'click', this.onUploadThumbnailClick );
+		this.addNodeEvent( 'dialogRoot', 'change', this.onGlobalChange );
 
 		this.nodes[ 'label.thumbnailStyle' ].textContent = '📷 Thumbnail auswählen...';
 		this.nodes[ 'label.thumbnailStyle' ].style.color = 'rgba(255,255,255,0.5)';
 
 		return this;
+	}
+
+	async destroy() {
+		super.destroy && super.destroy();
+		[ style, progressStyle, progressConvertStyle ].forEach( s => s.unuse() );
+	}
+
+	onGlobalChange( event ) {
+		if( this.selectedVideoFile ) {
+			this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
+		}
 	}
 
 	videoFileChanged( event ) {
@@ -113,7 +125,6 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 
 			if( response.data.docData.ok ) {
 				Object.assign( this.currentDocData, response.data.docData );
-				saveButton.removeAttribute( 'disabled' );
 			}
 		} catch( ex ) {
 			let modal = this.createModalOverlay({
@@ -217,7 +228,7 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 						});
 					}
 
-					this.nodes[ 'span.info' ].textContent = `Übertrage ${ this.selectedVideoFile.name } (0%)`;
+					this.nodes[ 'span.info' ].textContent = `Übertrage ${ this.selectedVideoFile.name }`;
 
 					await modal.fulfill();
 					await this.transition({
@@ -239,7 +250,7 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 					this.log( 'We have a byte offset of: ', videoMeta.data.entry * chunkSize );
 					seek += (videoMeta.data.entry * chunkSize);
 
-					this.nodes[ 'span.info' ].textContent			= `Übertrage ${ this.selectedVideoFile.name }`;
+					//this.nodes[ 'span.info' ].textContent			= `Übertrage ${ this.selectedVideoFile.name }`;
 					this.nodes[ 'span.infoPercent' ].textContent	= `(${ Math.round( (seek / maxSize) * 100 ) }%)`;
 					this.nodes[ 'progress.uploadProgress' ].setAttribute( 'value', Math.round( (seek / maxSize) * 100 ) );
 
@@ -286,6 +297,7 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 						payload:	{
 							complete:	true,
 							fileName:	this.selectedVideoFile.name,
+							_id:		this.currentDocData.id,
 							fileID:		videoMeta.data.fileID,
 							pass:		pass.value
 						}
@@ -339,6 +351,8 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 
 					this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
 				} else if( videoMeta.data.mode === 'finish' ) {
+					this.removeNodes( 'input.uploadVideo', true );
+
 					progressConvertStyle.use();
 
 					if(!this.nodes[ 'div.showProgressConvert' ] ) {
@@ -370,7 +384,7 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 		event.preventDefault();
 	}
 
-	async readInForm( data ) {
+	async readInForm( data = { } ) {
 		let	{
 			'input.videoTitle':title,
 			'label.thumbnailStyle':thumbnail,
@@ -426,7 +440,7 @@ class uploadVideo extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new uploadVideo( ...args );
+	instance = await new uploadVideoDialog( ...args );
 }
 
 function stop() {

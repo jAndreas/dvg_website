@@ -1,0 +1,17 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.videoSection {
+	position:relative;
+
+	width:100vw;
+	min-height:100vh;
+
+	> div.videoContainer {
+		display:flex;
+		flex-direction:row;
+		flex-wrap:wrap;
+		justify-content:flex-start;
+
+		margin:3vh;
+	}
+}

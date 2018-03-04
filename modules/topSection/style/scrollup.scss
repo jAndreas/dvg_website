@@ -1,0 +1,25 @@
+div.quickScrollUp {
+	width:40px;
+	height:40px;
+	position:fixed;
+	right:4vw;
+	bottom:2vh;
+	border-radius:32px;
+	background-color:rgba(217, 221, 255, 0.4);
+	mix-blend-mode:hard-light;
+	border:1px solid rgba(245, 245, 245, 0.8);
+	box-sizing:border-box;
+	display:flex;
+	box-shadow:0 0 14px 1px white;
+	cursor:pointer;
+	z-index:10;
+}
+
+div.quickScrollUp:after {
+	content:'⇪';
+	font-size:22px;
+	font-weight:bold;
+	margin:auto;
+	color:rgba(243, 240, 255, 0.8);
+	text-shadow:1px 1px 2px black;
+}

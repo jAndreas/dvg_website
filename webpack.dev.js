@@ -38,13 +38,6 @@ module.exports = {
 	devtool:	'source-map',
 	module:	{
 		rules:	[
-		/*	{
-				test:		/\.js$/,
-				exclude:	/node_modules/,
-				use: [
-					{ loader:		'babel-loader' }
-				]
-			},*/
 			{
 				test:		/\.css$/,
 				use: [
@@ -80,9 +73,6 @@ module.exports = {
 		]
 	},
 	plugins:	[
-		new webpack.optimize.ModuleConcatenationPlugin(),
-		new webpack.ContextExclusionPlugin(),
-		new webpack.optimize.CommonsChunkPlugin({ name: 'main', children: true, deepChildren: true, async: true, minChunks: 2 }),
 		new webpack.DefinePlugin({
 			ENV_PROD: false
 		})
