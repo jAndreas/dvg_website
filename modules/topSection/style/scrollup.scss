@@ -13,13 +13,29 @@ div.quickScrollUp {
 	box-shadow:0 0 14px 1px white;
 	cursor:pointer;
 	z-index:10;
+	transition:all 100ms linear;
+	animation:fadeInScroll 500ms linear 1;
+
+	&:after {
+		content:'⇪';
+		font-size:22px;
+		font-weight:bold;
+		margin:auto;
+		color:rgba(243, 240, 255, 0.8);
+		text-shadow:1px 1px 2px black;
+	}
+
+	&:hover {
+		border:1px solid rgba(205, 215, 255, 0.9);
+		box-shadow:0 0 14px 1px rgba(175, 175, 255, 0.9);
+	}
 }
 
-div.quickScrollUp:after {
-	content:'⇪';
-	font-size:22px;
-	font-weight:bold;
-	margin:auto;
-	color:rgba(243, 240, 255, 0.8);
-	text-shadow:1px 1px 2px black;
+@keyframes fadeInScroll {
+	from {
+		opacity:0;
+	}
+	to {
+		opacity:1;
+	}
 }

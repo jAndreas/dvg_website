@@ -17,7 +17,7 @@ let		instance		= null;
  *  "description here"
  *****************************************************************************************************/
 class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
 			tmpl:			html
@@ -42,8 +42,15 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 				type:	'getPublishedVideos'
 			});
 
+			this.log('response.data.videoData: ', response.data.videoData);
+			response.data.videoData.sort((a,b) => {
+				return b.creationDate - a.creationDate;
+			});
+
 			for( let video of response.data.videoData ) {
-				this.render( videoPreviewMarkup ).with( video ).at({
+				video.hTime = this.getTimePeriod( video.creationDate );
+
+				this.render({ htmlData: videoPreviewMarkup, standalone: true }).with( video ).at({
 					node:		'div.videoContainer',
 					position:	'beforeend'
 				});
@@ -66,6 +73,33 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 	onSlideDown() {
 		this.fire( 'slideDown.appEvents', this.nodes.root );
+	}
+
+	getTimePeriod( timestamp ) {
+		let diff 			= Date.now() - timestamp,
+			diffSeconds		= Math.round( diff / 1000 ),
+			diffMinutes		= Math.round( diffSeconds / 60 ),
+			diffHours		= Math.round( diffMinutes / 60 ),
+			diffDays		= Math.round( diffHours / 24 ),
+			diffWeeks		= Math.round( diffDays / 7 ),
+			diffMonths		= (diffWeeks / 4).toFixed( 1 ),
+			diffYears		= (diffMonths / 12).toFixed( 1 );
+
+		if( diffYears >= 1 ) {
+			return diffYears + ' Jahr' + (diffYears > 1 ? 'e' : '');
+		} else if( diffMonths >= 1 ) {
+			return diffMonths + ' Monat' + (diffMonths > 1 ? 'e' : '');
+		} else if( diffWeeks >= 1 ) {
+			return diffWeeks + ' Woche' + (diffWeeks > 1 ? 'n' : '');
+		} else if( diffDays >= 1 ) {
+			return diffDays + ' Tag' + (diffDays > 1 ? 'e' : '');
+		} else if( diffHours >= 1 ) {
+			return diffHours + ' Stunde' + (diffHours > 1 ? 'n' : '');
+		} else if( diffMinutes >= 1) {
+			return diffMinutes + ' Minute' + (diffMinutes > 1 ? 'n' : '');
+		} else {
+			return diffSeconds + ' Sekunde' + (diffSeconds > 1 ? 'n' : '');
+		}
 	}
 }
 /****************************************** videoSection End ******************************************/

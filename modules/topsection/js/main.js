@@ -169,6 +169,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 			this.lastPlaybackTime = this.backgroundVideo.getTime || 1;
 			this.backgroundVideo.stop();
 
+			await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 			await this.animate({
 				node:	this.nodes.myVideo,
 				rules:	{
@@ -189,7 +190,9 @@ class TopSection extends mix( Component ).with( Swipe ) {
 
 			try {
 				await this.data.get( this.nodes.myVideo ).storage.animations.last.undo();
-			} catch( ex ) { }
+			} catch( ex ) {
+				/* unidentified random error, not handled yet */
+			}
 		}
 	}
 
