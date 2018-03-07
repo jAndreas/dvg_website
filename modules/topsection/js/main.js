@@ -55,6 +55,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
 
 		this.on( 'slideUp.videoSection', this.onSlideUp, this );
 		this.on( 'centerScroll.appEvents', this.onCenterScroll, this );
@@ -116,11 +117,11 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async onQuickScrollUpClick() {
-		this.fire( 'slideUp.appEvents', this.nodes.root );
+		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
 	onSlideUp() {
-		this.fire( 'slideUp.appEvents', this.nodes.root );
+		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
 	onSwipeDown() {
@@ -141,7 +142,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 				this.nodes.crossClone.style.visibility = 'hidden';
 			}
 
-			if(!this.nodes.myVideo.classList.contains( 'darken' ) ) {
+			if( this.isTheaterMode ) {
 				this.removeNodeEvent( 'a.revealIntro', 'click', this.returnToMenu );
 				this.returnToMenu();
 			}
@@ -183,7 +184,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async startVideoPlayback() {
-		if( this.backgroundVideo ) {
+		if( this.backgroundVideo && !this.outOfViewport ) {
 			this.nodes.myVideo.style.display = 'block';
 
 			this.backgroundVideo.play( this.lastPlaybackTime );

@@ -7,9 +7,7 @@ import { moduleLocations } from 'barfoos2.0/defs.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
-import videoPreviewMarkup from '../markup/videoPreview.html';
 import style from '../style/main.scss';
-import videoPreviewStyle from '../style/videoPreview.scss';
 
 let		instance		= null;
 
@@ -33,30 +31,33 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	async init() {
+		let response;
+
 		await super.init();
 
 		this.on( 'slideDown.topSection', this.onSlideDown, this );
 
 		try {
-			let response = await this.send({
+			response = await this.send({
 				type:	'getPublishedVideos'
 			});
-
-			this.log('response.data.videoData: ', response.data.videoData);
-			response.data.videoData.sort((a,b) => {
-				return b.creationDate - a.creationDate;
-			});
-
-			for( let video of response.data.videoData ) {
-				video.hTime = this.getTimePeriod( video.creationDate );
-
-				this.render({ htmlData: videoPreviewMarkup, standalone: true }).with( video ).at({
-					node:		'div.videoContainer',
-					position:	'beforeend'
-				});
-			}
 		} catch( ex ) {
 			this.log( ex );
+		}
+
+		response.data.videoData.sort(( a, b ) => {
+			return b.creationDate - a.creationDate;
+		});
+
+		for( let video of response.data.videoData ) {
+			video.hTime = this.getTimePeriod( video.creationDate );
+
+			let videoPreview = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
+
+			videoPreview.start({
+				location:	this.id,
+				videoData:	video
+			});
 		}
 
 		return this;
@@ -64,7 +65,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 	async destroy() {
 		super.destroy && super.destroy();
-		[ style, videoPreviewStyle ].forEach( s => s.unuse() );
+		[ style ].forEach( s => s.unuse() );
 	}
 
 	onSwipeUp() {
@@ -72,7 +73,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	onSlideDown() {
-		this.fire( 'slideDown.appEvents', this.nodes.root );
+		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 
 	getTimePeriod( timestamp ) {
@@ -105,7 +106,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 /****************************************** videoSection End ******************************************/
 
 async function start( ...args ) {
-	[ style, videoPreviewStyle ].forEach( style => style.use() );
+	[ style ].forEach( style => style.use() );
 
 	instance = await new videoSection( ...args );
 }
