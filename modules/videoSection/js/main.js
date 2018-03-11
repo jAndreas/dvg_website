@@ -36,10 +36,14 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 		await super.init();
 
 		this.on( 'slideDown.topSection', this.onSlideDown, this );
+		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
+		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
 		try {
 			response = await this.send({
-				type:	'getPublishedVideos'
+				type:		'getPublishedVideos'
+			}, {
+				noTimeout:	true
 			});
 		} catch( ex ) {
 			this.log( ex );
@@ -66,6 +70,20 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
+	}
+
+	onVideoPlayerLaunch( module ) {
+		if( module.id === 'videoPlayerDialog' ) {
+			this.overlay = this.createModalOverlay({
+				at:	this.nodes.root
+			});
+		}
+	}
+
+	async onVideoPlayerDestruction( module ) {
+		if( module.id === 'videoPlayerDialog' ) {
+			await this.overlay.fulfill( 400 );
+		}
 	}
 
 	onSwipeUp() {

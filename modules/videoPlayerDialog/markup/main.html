@@ -1,3 +1,24 @@
 <div class="videoPlayerDialog">
-	<span>Hello World</span>
+	<section class="tab1">
+		<div class="playerWrapper noPropagation">
+			<video class="mainPlayer" src="" controls autoplay></video>
+		</div>
+		<div class="videoInfoWrapper noPropagation">
+			<span class="title">%videoTitle%</span>
+			<span class="views">%views% Aufrufe</span>
+		</div>
+		<div class="actionButtonsWrapper sectionContainer noPropagation">
+			<div class="donationForm">
+				<input class="donateRange" type="range" min="2" max="100" step="1" value="5"/>
+				<input class="donateAmount" type="text" maxlength="4" value="5€"/>
+				<input class="donateNow bfButton" type="button" value="Spenden"/>
+			</div>
+			<div class="donate bfButton actionButton" title="Hilf mir, diese Plattform zu betreiben."></div>
+			<a class="shareFacebookLink" title="Auf Facebook teilen" href="https://www.facebook.com/sharer/sharer.php?u=https://%uri%/static/%internalId%/index.html" target="_blank"><div class="shareFacebook bfButton actionButton"></div></a>
+		</div>
+		<div class="descriptionWrapper sectionContainer noPropagation">
+			<span class="description folded">%videoDescription%</span>
+			<div class="expand">Mehr...</div>
+		</div>
+	</section>
 </div>

@@ -19,6 +19,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	async init() {
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
 		this.on( 'setTitle.appEvents', this.setTitle, this );
+		// dynamic routing is not enabled for now.
+		//this.on( 'hashChange.appEvents', this.routeByHash, this );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
@@ -26,7 +28,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
-			version:			'0.0.8',
+			version:			'0.0.9',
 			status:				'alpha',
 			background:			{
 				objURL:		objURL,
@@ -35,8 +37,18 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			}
 		});
 
-		let hash = await this.fire( 'getHash.appEvents' );
+		this.routeByHash( await this.fire( 'getHash.appEvents' ) );
+	}
 
+	waitForBackgroundImageLoaded() {
+		return this.backgroundImage;
+	}
+
+	setTitle( title = '' ) {
+		doc.title = title;
+	}
+
+	async routeByHash( hash ) {
 		if( hash.has( 'confirmSubscription' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
 			confirmSubDialog.start({
@@ -53,16 +65,12 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			topSection.start();
 
 			let videoSection = await videoSectionPromise;
-			videoSection.start();
+			await videoSection.start();
+
+			if( hash.has( 'watch' ) ) {
+				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
+			}
 		}
-	}
-
-	waitForBackgroundImageLoaded() {
-		return this.backgroundImage;
-	}
-
-	setTitle( title = '' ) {
-		doc.title = title;
 	}
 }
 

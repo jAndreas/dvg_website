@@ -1,21 +1,242 @@
 @import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
 
 div.videoPlayerDialog {
 	display:flex;
+	position:relative;
 
-	flex-direction:column;
+	flex-direction:row;
 	flex-wrap:wrap;
 	justify-content:center;
-	align-items:center;
+	align-items:flex-start;
 
-	width:80vw;
-	height:80vh;
+	padding:1vh;
 
-	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+	/*@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+		width:100vw;
+	}*/
+
+	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
 		width:95vw;
 	}
 
-	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
-		width:90vw;
+	> section.tab1 {
+		display:flex;
+		flex-direction:column;
+		flex-wrap:wrap;
+		width:100%;
+
+		@media screen and (min-width:$iPhone6Portrait) and (min-height:370px) {
+			width:92vw;;
+		}
+
+		@media screen and (min-width:$iPhone6Landscape) and (min-height:490px) {
+			width:95vw;
+		}
+
+		@media screen and (min-width:870px) {
+			width:854px;
+		}
+
+		@media screen and (min-width:1300px) and (min-height:900px) {
+			width:1280px;
+		}
+
+		.sectionContainer {
+			border:1px solid rgba(200,200,200,0.5);
+			background-color:rgba(20,20,20,0.3);
+		}
+
+		div.playerWrapper {
+			position:relative;
+			display:flex;
+			justify-content:center;
+			margin-bottom:1vh;
+
+			> video.mainPlayer {
+				background-color:rgba(0,0,0,0.8);
+				width:426px;
+				height:240px;
+				max-width:90vw;
+
+				@media screen and (min-width:$iPhone6Portrait) and (min-height:370px) {
+					width:92vw;
+					height:360px;
+				}
+
+				@media screen and (min-width:$iPhone6Landscape) and (min-height:490px) {
+					width:95vw;
+					height:480px;
+				}
+
+				@media screen and (min-width:870px) {
+					width:854px;
+					height:480px;
+				}
+
+				@media screen and (min-width:1300px) and (min-height:900px) {
+					min-width:1280px;
+					height:720px;
+				}
+			}
+		}
+
+		div.videoInfoWrapper {
+			display:flex;
+			flex-direction:row;
+			justify-content:space-between;
+			align-items:flex-start;
+			flex-wrap:wrap;
+			width:100%;
+			box-sizing: border-box;
+			margin-bottom:2vh;
+
+			> span.title {
+				max-width:70%;
+				width:100%;
+				font-size:3vh;
+				font-weight:bold;
+				display:none;
+
+				@media screen and (min-width:870px) {
+					display:block;
+				}
+			}
+
+			> span.views {
+				font-size:2vh;
+				display:none;
+
+				@media screen and (min-width:870px) {
+					display:block;
+				}
+			}
+		}
+
+		> div.actionButtonsWrapper {
+			width:100%;
+			height:5vh;
+			display:flex;
+			flex-direction:row;
+			justify-content:flex-end;
+			align-items:center;
+
+			> a.shareFacebookLink {
+				> div.shareFacebook {
+					background-size:100%;
+					background-repeat:no-repeat;
+					background-image:url(../images/fb.jpg);
+					opacity:0.7;
+
+					&:hover {
+						opacity:1;
+					}
+				}
+			}
+
+			> div.donationForm {
+				display:none;
+				flex-direction:row;
+				justify-content:space-around;
+				align-items:center;
+				margin-right:2vw;
+				background-image:linear-gradient(0deg, rgba(220,220,240,0.8), rgba(255,255,255,0.2));
+				border-radius:8px;
+				height:4vh;
+				width:30vh;
+				min-width:230px;
+
+				> input.donateRange {
+					margin-right:5px;
+					width:100px;
+				}
+
+				> input.donateAmount {
+					width:35px;
+					background:transparent;
+					color:white;
+					text-shadow:0 0 6px white;
+					outline:none;
+				}
+
+				> input.donateNow {
+					width:10vh;
+					min-width:2vh;
+					height:3.5vh;
+					font-size:2vh;
+				}
+			}
+
+			> div.donate {
+				background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4)), url(../images/paypalsupport.png);
+				background-color:transparent;
+				border-radius:4px;
+				width:28vh;
+				background-size:100% 100%;
+				border:1px solid gray;
+				height:3vh;
+				opacity:0.7;
+
+				&:hover {
+					opacity:1;
+				}
+			}
+
+			.actionButton {
+				width:4vh;
+				height:4vh;
+				box-shadow:none;
+				border-radius:0;
+				margin-right:1vw;
+				background-color:none;
+				background-size:100% 100%;
+			}
+		}
+
+		> div.descriptionWrapper {
+			width:100%;
+			display:none;
+			flex-direction:column;
+			margin-top:1vh;
+			justify-content:flex-start;
+
+			@media screen and (min-width:870px) {
+				display:flex;
+			}
+
+			> span.description {
+				font-size:2vh;
+				padding:2vw;
+				overflow:hidden;
+				transition:all 400ms ease-out;
+
+				&.folded {
+					filter:blur(1px);
+					box-shadow:0px -1.5vh 3vh 0px rgba(200,200,240,0.9) inset;
+					height:1vh;
+				}
+			}
+
+			> div.expand {
+				position:absolute;
+				width:5vw;
+				height:15px;
+				background:linear-gradient(0deg, rgba(210, 210, 250, 0.3), rgba(200, 200, 250, 0.1));
+				border:1px solid white;
+				border-left:none;
+				border-right:none;
+				border-top:none;
+				margin:auto;
+				cursor:pointer;
+				text-align:center;
+				text-shadow:0 0 6px black;
+				border-radius:0 0 8px 8px;
+				align-self:center;
+
+				&:hover {
+					background:linear-gradient(0deg, rgba(180, 180, 210, 0.3), rgba(200, 170, 250, 0.3));
+				}
+			}
+		}
 	}
 }

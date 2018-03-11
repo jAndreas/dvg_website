@@ -164,6 +164,9 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 	}
 
 	async onSubmit( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
 		let	{
 			'section.tab1':tab1,
 			'section.tab2':tab2,
@@ -380,8 +383,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 				}
 			}
 		}
-
-		event.preventDefault();
 	}
 
 	async readInForm( data = { } ) {

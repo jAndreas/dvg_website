@@ -34,6 +34,8 @@ class videoPreview extends Component {
 
 		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', 'click, touchstart', this.launchVideoModule );
 
+		this.on( 'openVideoPlayer.appEvents', this.onOpenVideoPlayer, this );
+
 		return this;
 	}
 
@@ -49,6 +51,12 @@ class videoPreview extends Component {
 			location:	this.location,
 			videoData:	this.videoData
 		});
+	}
+
+	onOpenVideoPlayer( internalId ) {
+		if( this.videoData.internalId === internalId ) {
+			this.launchVideoModule();
+		}
 	}
 
 	onDialogModeChange( active ) {

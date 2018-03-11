@@ -156,6 +156,10 @@ div#topSection {
 									font-size:20px;
 									transform:rotate(-35deg) translate(30px, 10px);
 								}
+
+								@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+									font-size:24px;
+								}
 						}
 
 						@media screen and (max-width:$iPhone6Portrait) {

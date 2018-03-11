@@ -13,7 +13,7 @@ import scrollUpStyle from '../style/scrollup.scss';
 import transforms from '../style/transforms.scss';
 
 const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
-		fallbackPath	= '/fallback/intro_480.mp4';
+		fallbackPath	= '/fallback/_video/intro_480.mp4';
 
 let instance = null;
 
@@ -51,7 +51,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 			this.log( 'Error on initializing, module might not be fully available -> ', ex );
 		}
 
-		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
+		this.addNodeEventOnce( 'a.revealIntro', 'click touchstart', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
@@ -69,7 +69,16 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async onBackgroundImageLoaded() {
-		this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
+		try {
+			this.backgroundVideo = await loadVideo({
+				videoLink:		videoLink,
+				videoElement:	this.nodes[ 'video.introduction' ],
+				fallbackPath:	fallbackPath,
+				silenced:		true
+			});
+		} catch( ex ) {
+			/* silent error */
+		}
 
 		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
 			if( active && this.backgroundVideo.paused ) {
@@ -234,16 +243,10 @@ class TopSection extends mix( Component ).with( Swipe ) {
 					'li.titleContainer':title,
 					'div.gridOverlay':gridOverlay } = this.nodes;
 
-			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 
 			if( this.backgroundVideo ) {
 				this.backgroundVideo.fadeVolumeIn();
-			} else {
-				this.nodes[ 'video.introduction' ].src = '';
-				this.backgroundVideo = await loadVideo( videoLink, this.nodes[ 'video.introduction' ], fallbackPath );
-				this.backgroundVideo.play();
-				console.log('readyState: ',this.nodes[ 'video.introduction' ].readyState );
-
 			}
 
 			this.addNodes({
@@ -346,8 +349,8 @@ class TopSection extends mix( Component ).with( Swipe ) {
 
 			await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
-			this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
-			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.addNodeEventOnce( 'a.revealIntro', 'click touchstart', this.returnToMenu );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 
 			completeRes();
 		});
@@ -374,7 +377,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 					'li.titleContainer':title,
 					'div.gridOverlay':gridOverlay } = this.nodes;
 
-			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 			this.removeNodeEvent( crossClone, 'click' );
 
 			title.style.visibility = 'visible';
@@ -395,7 +398,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 
 			this.removeNodes( 'crossClone', true );
 			this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
-			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 
 			completeRes();
 		});
