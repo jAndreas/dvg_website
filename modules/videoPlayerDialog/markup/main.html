@@ -5,10 +5,13 @@
 		</div>
 		<div class="videoInfoWrapper noPropagation">
 			<span class="title">%videoTitle%</span>
-			<span class="views">%views% Aufrufe</span>
+			<div class="videoViewsWrapper">
+				<span class="views">%views% Aufrufe</span>
+				<span class="uniqueViews">(ᚱ %uniqueViews%)</span>
+			</div>
 		</div>
 		<div class="actionButtonsWrapper sectionContainer noPropagation">
-			<div class="donationForm">
+			<div class="donationForm" title="Hilf mir, diese Plattform zu betreiben.">
 				<input class="donateRange" type="range" min="2" max="100" step="1" value="5"/>
 				<input class="donateAmount" type="text" maxlength="4" value="5€"/>
 				<input class="donateNow bfButton" type="button" value="Spenden"/>

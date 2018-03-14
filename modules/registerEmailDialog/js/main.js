@@ -55,7 +55,7 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 			'section.page1':page1,
 			'section.page2':page2 } = this.nodes;
 
-		let modal = this.createModalOverlay({
+		this.createModalOverlay({
 			at:		this.dialogElements[ 'div.bfContentDialogBody' ],
 			opts:	{
 				spinner: true
@@ -74,9 +74,9 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 			});
 
 			infoText.innerHTML = response.msg;
-			modal.spinner.fulfill();
+			this.modalOverlay.spinner.fulfill();
 		} catch( ex ) {
-			modal.spinner.cleanup();
+			this.modalOverlay.spinner.cleanup();
 			infoText.innerHTML = ex;
 			closeBtn.value = 'Alles klar!';
 		}
@@ -88,7 +88,7 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 
 		page1.style.display = 'none';
 
-		await modal.fulfill();
+		await this.modalOverlay.fulfill();
 		page2.style.display = 'flex';
 	}
 

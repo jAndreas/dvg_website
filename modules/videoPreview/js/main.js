@@ -2,7 +2,8 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend } from 'barfoos2.0/toolkit.js';
+import { extend, mix } from 'barfoos2.0/toolkit.js';
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -13,7 +14,7 @@ let		instance		= null;
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class videoPreview extends Component {
+class videoPreview extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			tmpl:			html,
@@ -33,8 +34,8 @@ class videoPreview extends Component {
 		await super.init();
 
 		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', 'click, touchstart', this.launchVideoModule );
-
 		this.on( 'openVideoPlayer.appEvents', this.onOpenVideoPlayer, this );
+		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 
 		return this;
 	}
@@ -56,6 +57,14 @@ class videoPreview extends Component {
 	onOpenVideoPlayer( internalId ) {
 		if( this.videoData.internalId === internalId ) {
 			this.launchVideoModule();
+		}
+	}
+
+	updateViewCount( data ) {
+		if( data.videoId === this.videoData.id ) {
+			this.videoData.views						= data.count;
+			this.videoData.uniqueViews					= data.uniqueCount;
+			this.nodes[ 'span.videoViews' ].textContent	= `${ data.count } Aufrufe`;
 		}
 	}
 

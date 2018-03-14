@@ -127,14 +127,14 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 				Object.assign( this.currentDocData, response.data.docData );
 			}
 		} catch( ex ) {
-			let modal = this.createModalOverlay({
+			this.createModalOverlay({
 				at:		this.dialogElements[ 'div.bfContentDialogBody' ]
 			});
 
 			this.log( ex );
 
-			await modal.log( ex || 'Fehler' );
-			modal.fulfill();
+			await this.modalOverlay.log( ex || 'Fehler' );
+			this.modalOverlay.fulfill();
 			saveButton.removeAttribute( 'disabled' );
 		}
 	}
@@ -184,7 +184,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 				seek			= 0,
 				currentChunk	= null;
 
-			let modal = this.createModalOverlay({
+			this.createModalOverlay({
 				at:		this.dialogElements[ 'div.bfContentDialogBody' ]
 			});
 
@@ -233,7 +233,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 
 					this.nodes[ 'span.info' ].textContent = `Übertrage ${ this.selectedVideoFile.name }`;
 
-					await modal.fulfill();
+					await this.modalOverlay.fulfill();
 					await this.transition({
 						node:	this.nodes[ 'div.showProgress' ],
 						style:	{ marginBottom:	'30px' },
@@ -295,10 +295,14 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 
 					this.removeNodes( 'input.uploadVideo', true );
 
+					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
+					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
+
 					let response = await this.send({
 						type:		'fileUpload',
 						payload:	{
 							complete:	true,
+							scaleOnly:	this.nodes[ 'input#ffmpegStrategy' ].checked,
 							fileName:	this.selectedVideoFile.name,
 							_id:		this.currentDocData.id,
 							fileID:		videoMeta.data.fileID,
@@ -314,9 +318,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 					this.removeNodes( 'div.showProgress', true );
 					this.onSubmit( event );
 				} else if( videoMeta.data.mode === 'convert' ) {
-					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
-					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
-
 					this.removeNodes( 'input.uploadVideo', true );
 
 					progressConvertStyle.use();
@@ -334,7 +335,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 					this.nodes[ 'span.infoConvert' ].textContent	= `Kodieren von ${ this.selectedVideoFile.name } ...`;
 					this.nodes[ 'sup.convertStep' ].textContent		= '???';
 
-					await modal.fulfill();
+					await this.modalOverlay.fulfill();
 
 					await this.transition({
 						node:	this.nodes[ 'div.showProgressConvert' ],
@@ -370,12 +371,12 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 
 					this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
 					this.nodes[ 'span.infoConvert' ].textContent	= `Kodieren von ${ this.selectedVideoFile.name } abgeschlossen.`;
-					await modal.fulfill();
+					await this.modalOverlay.fulfill();
 				}
 			} catch( ex ) {
 				this.log( ex );
-				await modal.log( ex || 'Fehler' );
-				modal.fulfill();
+				await this.modalOverlay.log( ex || 'Fehler' );
+				this.modalOverlay.fulfill();
 				uploadButton.removeAttribute( 'disabled' );
 
 				if( typeof this.progressAnimation !== 'undefined' ) {
@@ -418,6 +419,9 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 	}
 
 	async pauseUpload() {
+		event.preventDefault();
+		event.stopPropagation();
+
 		this.isUploadPaused = true;
 
 		this.fire( 'setTitle.appEvents', 'Pause' );

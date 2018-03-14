@@ -45,6 +45,8 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
 		this.addNodeEvent( 'input.donateNow', 'click touchstart', this.onDonateNowClick );
 
+		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
+
 		this.log('videoData: ', this.videoData);
 
 		return this;
@@ -94,20 +96,39 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
 			});
 		} catch( ex ) {
-			this.modalOverlay = this.createModalOverlay({
+			this.createModalOverlay({
 				at:		this.nodes[ 'div.playerWrapper' ]
 			});
 
 			await this.modalOverlay.log( ex || 'Fehler', 125000 );
 			await this.modalOverlay.fulfill();
-			this.modalOverlay = null;
+		}
+
+		try {
+			await this.send({
+				type:		'videoView',
+				payload:	{
+					id:	this.videoData.id
+				}
+			});
+		} catch( ex ) {
+			console.log( ex );
+		}
+	}
+
+	updateViewCount( data ) {
+		if( data.videoId === this.videoData.id ) {
+			this.videoData.views					= data.count;
+			this.videoData.uniqueViews				= data.uniqueCount;
+			this.nodes[ 'span.views' ].textContent	= `${ data.count } Aufrufe`;
 		}
 	}
 
 	showFullDescription() {
 		this.removeNodes( 'div.expand', true );
 		this.nodes[ 'span.description' ].classList.remove( 'folded' );
-		//this.nodes[ 'span.description' ].scrollIntoView();
+		this.nodes[ 'span.description' ].scrollIntoView();
+		this.centerOverlay();
 	}
 
 	onDonateClick() {

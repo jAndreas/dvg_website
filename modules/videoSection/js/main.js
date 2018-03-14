@@ -74,15 +74,18 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 	onVideoPlayerLaunch( module ) {
 		if( module.id === 'videoPlayerDialog' ) {
-			this.overlay = this.createModalOverlay({
-				at:	this.nodes.root
+			this.createModalOverlay({
+				at:		this.nodes.root,
+				opts:	{
+					inheritBackground:	true
+				}
 			});
 		}
 	}
 
 	async onVideoPlayerDestruction( module ) {
 		if( module.id === 'videoPlayerDialog' ) {
-			await this.overlay.fulfill( 400 );
+			this.modalOverlay.cleanup();
 		}
 	}
 

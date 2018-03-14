@@ -103,12 +103,25 @@ div.videoPlayerDialog {
 				}
 			}
 
-			> span.views {
-				font-size:2vh;
+			> div.videoViewsWrapper {
 				display:none;
+				flex-direction:column;
+				justify-content:center;
+				align-content:center;
 
 				@media screen and (min-width:870px) {
-					display:block;
+					display:flex;
+				}
+
+				> span.views {
+					font-size:2vh;
+				}
+
+				> span.uniqueViews {
+					font-size:1.5vh;
+					font-weight:bold;
+					text-align:right;
+					opacity:0.5;
 				}
 			}
 		}
@@ -139,12 +152,14 @@ div.videoPlayerDialog {
 				flex-direction:row;
 				justify-content:space-around;
 				align-items:center;
-				margin-right:2vw;
-				background-image:linear-gradient(0deg, rgba(220,220,240,0.8), rgba(255,255,255,0.2));
+				margin-right:1vw;
+				background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4));
 				border-radius:8px;
 				height:4vh;
 				width:30vh;
 				min-width:230px;
+				border: 1px solid rgba(200,200,235,0.5);
+				box-sizing: border-box;
 
 				> input.donateRange {
 					margin-right:5px;
@@ -162,7 +177,7 @@ div.videoPlayerDialog {
 				> input.donateNow {
 					width:10vh;
 					min-width:2vh;
-					height:3.5vh;
+					height:75%;
 					font-size:2vh;
 				}
 			}
@@ -212,7 +227,7 @@ div.videoPlayerDialog {
 
 				&.folded {
 					filter:blur(1px);
-					box-shadow:0px -1.5vh 3vh 0px rgba(200,200,240,0.9) inset;
+					box-shadow:0px -1.5vh 40px 0px rgba(220, 220, 240, 0.5) inset;
 					height:1vh;
 				}
 			}

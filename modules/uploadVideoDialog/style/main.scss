@@ -138,6 +138,22 @@ div.uploadVideo {
 			> input.uploadVideo {
 				width:50%;
 				font-size:3vh;
+				margin-right:2vw;
+			}
+
+			> div.ffmpegOptions {
+				display:flex;
+				flex-direction:row;
+				justify-content:flex-end;
+				align-items:center;
+
+				> input.ffmpegStrategy {
+					width:auto;
+				}
+
+				> label {
+					margin:4px;
+				}
 			}
 		}
 	}
