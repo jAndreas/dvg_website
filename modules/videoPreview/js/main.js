@@ -8,11 +8,9 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-
-let		instance		= null;
-
 /*****************************************************************************************************
- *  "description here"
+ *  videoPreview Module renders previews based on video data. It also launches the
+ *	videoPlayer Module
  *****************************************************************************************************/
 class videoPreview extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
@@ -76,15 +74,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new videoPreview( ...args );
+	return await new videoPreview( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

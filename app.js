@@ -19,6 +19,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	async init() {
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
 		this.on( 'setTitle.appEvents', this.setTitle, this );
+		this.once( 'aboutMe.launchModule', this.launchAboutMe, this );
 		// dynamic routing is not enabled for now.
 		//this.on( 'hashChange.appEvents', this.routeByHash, this );
 
@@ -58,19 +59,24 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			let uploadVideo = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
 			uploadVideo.start();
 		} else {
-			let topSectionPromise		= import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' ),
-				videoSectionPromise		= import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
+			let topSectionLoadingPromise		= import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' ),
+				videoSectionLoadingPromise		= import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
 
-			let topSection = await topSectionPromise;
+			let topSection = await topSectionLoadingPromise;
 			topSection.start();
 
-			let videoSection = await videoSectionPromise;
+			let videoSection = await videoSectionLoadingPromise;
 			await videoSection.start();
 
 			if( hash.has( 'watch' ) ) {
 				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
 			}
 		}
+	}
+
+	async launchAboutMe() {
+		let aboutMeSection = await import( /* webpackChunkName: "aboutMeSection" */ 'aboutMeSection/js/main.js' );
+		aboutMeSection.start();
 	}
 }
 

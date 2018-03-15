@@ -12,8 +12,6 @@ import style from '../style/main.scss';
 import progressStyle from '../style/showprogress.scss';
 import progressConvertStyle from '../style/showprogress_convert.scss';
 
-let instance		= null;
-
 /*****************************************************************************************************
  *	uploadVideoDialog is a dialog for privileged users which allows to upload video files to the dvg backend
  *****************************************************************************************************/
@@ -445,15 +443,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new uploadVideoDialog( ...args );
+	return await new uploadVideoDialog( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

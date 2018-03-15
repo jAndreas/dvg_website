@@ -8,8 +8,6 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-let		instance		= null;
-
 /*****************************************************************************************************
  *  confirmSubscriptionDialog tries to verify a passed secret-key which gets assigned to an
 *	user account on subscription on main site.
@@ -58,15 +56,7 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new confirmSubscriptionDialog( ...args );
+	return await new confirmSubscriptionDialog( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

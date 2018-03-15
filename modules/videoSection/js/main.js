@@ -9,16 +9,16 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-let		instance		= null;
-
 /*****************************************************************************************************
- *  "description here"
+ *  videoSection module receives all published video data and launches the videoPreview module based
+ *	on that data. It will supervise the videoPreview modules.
  *****************************************************************************************************/
 class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
-			tmpl:			html
+			tmpl:			html,
+			previewLinks:	[ ]
 		}).and( input );
 
 		super( options );
@@ -31,38 +31,16 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	async init() {
-		let response;
-
 		await super.init();
 
 		this.on( 'slideDown.topSection', this.onSlideDown, this );
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
-		try {
-			response = await this.send({
-				type:		'getPublishedVideos'
-			}, {
-				noTimeout:	true
-			});
-		} catch( ex ) {
-			this.log( ex );
-		}
+		this.on( 'reconnect.server', this.loadVideoData.bind( this ) );
+		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 
-		response.data.videoData.sort(( a, b ) => {
-			return b.creationDate - a.creationDate;
-		});
-
-		for( let video of response.data.videoData ) {
-			video.hTime = this.getTimePeriod( video.creationDate );
-
-			let videoPreview = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
-
-			videoPreview.start({
-				location:	this.id,
-				videoData:	video
-			});
-		}
+		this.loadVideoData();
 
 		return this;
 	}
@@ -70,6 +48,63 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
+	}
+
+	async inViewport() {
+		this.fire( 'aboutMe.launchModule' );
+	}
+
+	async onDisconnect() {
+		let link;
+
+		this.createModalOverlay({
+			at:		this.nodes.root
+		});
+
+		this.modalOverlay.log( 'Server connection lost.', 0 );
+
+		while( link = this.previewLinks.shift() ) {
+			await link.destroy();
+			link = null;
+		}
+	}
+
+	async loadVideoData() {
+		try {
+			let response;
+
+			response = await this.send({
+				type:		'getPublishedVideos'
+			});
+
+			if( this.modalOverlay ) {
+				await this.modalOverlay.fulfill();
+			}
+
+			response.data.videoData.sort(( a, b ) => {
+				return b.creationDate - a.creationDate;
+			});
+
+			for( let video of response.data.videoData ) {
+				video.hTime = this.getTimePeriod( video.creationDate );
+
+				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
+
+				let videoPreviewInstance = await videoPreviewPromise.start({
+					location:	this.id,
+					videoData:	video
+				});
+
+				this.previewLinks.push( videoPreviewInstance );
+			}
+		} catch( ex ) {
+			this.createModalOverlay({
+				at:		this.nodes.root
+			});
+
+			await this.modalOverlay.log( ex || 'Fehler', 125000 );
+			await this.modalOverlay.fulfill();
+		}
 	}
 
 	onVideoPlayerLaunch( module ) {
@@ -83,7 +118,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 		}
 	}
 
-	async onVideoPlayerDestruction( module ) {
+	onVideoPlayerDestruction( module ) {
 		if( module.id === 'videoPlayerDialog' ) {
 			this.modalOverlay.cleanup();
 		}
@@ -129,15 +164,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new videoSection( ...args );
+	return await new videoSection( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

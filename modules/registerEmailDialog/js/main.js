@@ -7,8 +7,6 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-let instance		= null;
-
 /*****************************************************************************************************
  *  registerEmailDialog is a dialog which allows the user to enter his/her email-address which then
  *	gets transfered to the backend
@@ -118,13 +116,7 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new registerEmailDialog( ...args );
+	return await new registerEmailDialog( ...args );
 }
 
-function stop() {
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

@@ -12,7 +12,7 @@ div.quickScrollUp {
 	display:flex;
 	box-shadow:0 0 14px 1px white;
 	cursor:pointer;
-	z-index:10;
+	z-index:1000;
 	transition:all 100ms linear;
 	animation:fadeInScroll 500ms linear 1;
 

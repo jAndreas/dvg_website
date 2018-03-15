@@ -10,10 +10,9 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-let		instance		= null;
-
 /*****************************************************************************************************
- *  "description here"
+ *  videoPlayer Dialog creates an overlay dialog to playback the passed in video based on the data
+ *	It also displays all the information and is responsible for handling clicks/views
  *****************************************************************************************************/
 class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
@@ -110,6 +109,8 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 				payload:	{
 					id:	this.videoData.id
 				}
+			}, {
+				simplex:	true
 			});
 		} catch( ex ) {
 			console.log( ex );
@@ -127,7 +128,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	showFullDescription() {
 		this.removeNodes( 'div.expand', true );
 		this.nodes[ 'span.description' ].classList.remove( 'folded' );
-		this.nodes[ 'span.description' ].scrollIntoView();
+		this.scrollElementIntoView( 'span.description' );
 		this.centerOverlay();
 	}
 
@@ -149,15 +150,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	instance = await new videoPlayerDialog( ...args );
+	return await new videoPlayerDialog( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };

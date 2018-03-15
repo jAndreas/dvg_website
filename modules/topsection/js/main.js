@@ -15,8 +15,6 @@ import transforms from '../style/transforms.scss';
 const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 		fallbackPath	= '/fallback/_video/intro_480.mp4';
 
-let instance = null;
-
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
@@ -58,7 +56,6 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
 
 		this.on( 'slideUp.videoSection', this.onSlideUp, this );
-		this.on( 'centerScroll.appEvents', this.onCenterScroll, this );
 
 		return this;
 	}
@@ -91,37 +88,33 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		});
 	}
 
-	async onCenterScroll( data ) {
-		if( data.offsetTop >= data.innerHeight/2 && this.outOfViewport === false ) {
-			this.outOfViewport = true;
+	async inViewport() {
+		await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
+		this.removeNodes( 'div.quickScrollUp', true );
 
-			await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
-			this.addNodes({
-				htmlData:	scrollUpMarkup,
-				reference:	{
-					node:		'root',
-					position:	'beforeend'
-				}
-			});
-
-			if(!this._dialogMode ) {
-				if( this.isTheaterMode ) {
-					this.returnToMenu();
-				}
-
-				this.stopVideoPlayback();
+		if(!this._dialogMode ) {
+			if( this.backgroundVideo.stopped ) {
+				await this.startVideoPlayback();
 			}
-		} else if( data.offsetTop < data.innerHeight/2 && this.outOfViewport ) {
-			this.outOfViewport = false;
+		}
+	}
 
-			await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
-			this.removeNodes( 'div.quickScrollUp', true );
-
-			if(!this._dialogMode ) {
-				if( this.backgroundVideo.stopped ) {
-					await this.startVideoPlayback();
-				}
+	async offViewport() {
+		await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
+		this.addNodes({
+			htmlData:	scrollUpMarkup,
+			reference:	{
+				node:		'root',
+				position:	'beforeend'
 			}
+		});
+
+		if(!this._dialogMode ) {
+			if( this.isTheaterMode ) {
+				this.returnToMenu();
+			}
+
+			this.stopVideoPlayback();
 		}
 	}
 
@@ -193,7 +186,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async startVideoPlayback() {
-		if( this.backgroundVideo && !this.outOfViewport ) {
+		if( this.backgroundVideo && this._insightViewport ) {
 			this.nodes.myVideo.style.display = 'block';
 
 			this.backgroundVideo.play( this.lastPlaybackTime );
@@ -414,15 +407,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 async function start( ...args ) {
 	[ transforms, style, scrollUpStyle ].forEach( style => style.use() );
 
-	instance = await new TopSection( ...args );
+	return await new TopSection( ...args );
 }
 
-function stop() {
-	[ style ].forEach( style => style.unuse() );
-
-	if( instance ) {
-		instance.destroy();
-	}
-}
-
-export { start, stop };
+export { start };
