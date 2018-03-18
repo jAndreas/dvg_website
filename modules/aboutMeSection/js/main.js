@@ -2,15 +2,18 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend } from 'barfoos2.0/toolkit.js';
+import { extend, mix } from 'barfoos2.0/toolkit.js';
+import Swipe from 'barfoos2.0/swipe.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
+import background from '../images/aboutMebackground_static.jpg';
+
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class aboutMeSection extends Component {
+class aboutMeSection extends mix( Component ).with( Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -20,7 +23,7 @@ class aboutMeSection extends Component {
 		super( options );
 
 		/*this.runtimeDependencies.push(
-			this.fire( 'SomeEvent.appEvents' ) // or any promise
+
 		);*/
 
 		return this.init();
@@ -28,12 +31,57 @@ class aboutMeSection extends Component {
 
 	async init() {
 		// any component related declarations, bindings, listeners etc. which can get executed immediately, before we wait for possible dependencies
-
 		await super.init();
+
+		this.on( 'slideDownGesture.videoSection slideToAboutMeSection.appEvents', this.onSiblingSlideDownGesture, this );
+
+		this.createModalOverlay({
+			opts:	{
+				spinner: true
+			}
+		});
+
+		let backgroundImageURL = await this.loadImage( background );
+
+		this.nodes.root.style.backgroundImage = `url( ${ backgroundImageURL } )`;
+		this.modalOverlay.fulfill();
 
 		// any component related stuff which should wait on dependencies resolve before executing (waitForDOM at least or additional async data)
 
 		return this;
+	}
+
+	onDialogModeChange( active ) {
+	}
+
+	onSiblingSlideDownGesture() {
+		this.fire( 'slideDownTo.appEvents', this.nodes.root );
+	}
+
+	async inViewport() {
+		let {
+			'h1.topTitle':topTitle,
+			'div.sectionOne':sectionOne,
+			'div.sectionTwo':sectionTwo,
+			'div.sectionThree':sectionThree } = this.nodes;
+
+		this.fire( 'requestFullBlur.core' );
+
+		[ topTitle, sectionTwo ].forEach( e => e.classList.remove( 'hiddenRight' ) );
+		[ sectionOne, sectionThree ].forEach( e => e.classList.remove( 'hiddenLeft' ) );
+	}
+
+	async offViewport() {
+		let {
+			'h1.topTitle':topTitle,
+			'div.sectionOne':sectionOne,
+			'div.sectionTwo':sectionTwo,
+			'div.sectionThree':sectionThree } = this.nodes;
+
+		this.fire( 'removeFullBlur.core' );
+
+		[ topTitle, sectionTwo ].forEach( e => e.classList.add( 'hiddenRight' ) );
+		[ sectionOne, sectionThree ].forEach( e => e.classList.add( 'hiddenLeft' ) );
 	}
 
 	async destroy() {

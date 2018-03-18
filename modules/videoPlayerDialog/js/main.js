@@ -94,6 +94,12 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 				videoElement:	this.nodes[ 'video.mainPlayer' ],
 				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
 			});
+
+			if( this.video.hlsJS ) {
+				this.video.hlsJS.on( this.video.hlsEvents.LEVEL_SWITCHED, ( id, data ) => {
+					this.nodes[ 'span.quality' ].textContent = `${ this.video.hlsJS.levels[ data.level ].height }p`;
+				});
+			}
 		} catch( ex ) {
 			this.createModalOverlay({
 				at:		this.nodes[ 'div.playerWrapper' ]

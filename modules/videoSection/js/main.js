@@ -33,14 +33,21 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	async init() {
 		await super.init();
 
-		this.on( 'slideDown.topSection', this.onSlideDown, this );
+		this.on( 'slideDownGesture.topSection', this.onSiblingSlideDownGesture, this );
+		this.on( 'slideUpGesture.aboutMeSection', this.onSiblingSlideUpGesture, this );
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
-		this.on( 'reconnect.server', this.loadVideoData.bind( this ) );
+		this.on( 'connect.server', this.loadVideoData.bind( this ) );
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 
-		this.loadVideoData();
+		let isConnected = await this.fire( 'isConnected.server');
+
+		if( isConnected ) {
+			this.loadVideoData();
+		} else {
+			this.onDisconnect();
+		}
 
 		return this;
 	}
@@ -75,6 +82,8 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 			response = await this.send({
 				type:		'getPublishedVideos'
+			}, {
+				noTimeout:	true
 			});
 
 			if( this.modalOverlay ) {
@@ -120,16 +129,16 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 	onVideoPlayerDestruction( module ) {
 		if( module.id === 'videoPlayerDialog' ) {
-			this.modalOverlay.cleanup();
+			this.modalOverlay && this.modalOverlay.cleanup();
 		}
 	}
 
-	onSwipeUp() {
-		this.fire( 'slideUp.videoSection' );
+	onSiblingSlideDownGesture() {
+		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 
-	onSlideDown() {
-		this.fire( 'slideDownTo.appEvents', this.nodes.root );
+	onSiblingSlideUpGesture() {
+		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
 	getTimePeriod( timestamp ) {

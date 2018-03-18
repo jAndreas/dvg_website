@@ -18,7 +18,7 @@ const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class TopSection extends mix( Component ).with( Swipe ) {
+class topSection extends mix( Component ).with( Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -54,8 +54,9 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
+		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
 
-		this.on( 'slideUp.videoSection', this.onSlideUp, this );
+		this.on( 'slideUpGesture.videoSection', this.onSiblingSlideUpGesture, this );
 
 		return this;
 	}
@@ -73,8 +74,16 @@ class TopSection extends mix( Component ).with( Swipe ) {
 				fallbackPath:	fallbackPath,
 				silenced:		true
 			});
+
+			let res = await this.backgroundVideo.play();
+
+			if( res === -1 ) {
+				throw new Error( 'Unable to playback video, most likely because of webkit video security.' );
+			}
 		} catch( ex ) {
-			/* silent error */
+			this.mobileSafariMode = true;
+			this.backgroundVideo.stop();
+			this.nodes[ 'li.WatchIntroContainer' ].style.visibility = 'hidden';
 		}
 
 		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
@@ -93,7 +102,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		this.removeNodes( 'div.quickScrollUp', true );
 
 		if(!this._dialogMode ) {
-			if( this.backgroundVideo.stopped ) {
+			if( this.backgroundVideo && this.backgroundVideo.stopped ) {
 				await this.startVideoPlayback();
 			}
 		}
@@ -122,12 +131,8 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
-	onSlideUp() {
+	onSiblingSlideUpGesture() {
 		this.fire( 'slideUpTo.appEvents', this.nodes.root );
-	}
-
-	onSwipeDown() {
-		this.fire( 'slideDown.topSection' );
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -135,6 +140,15 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async onDialogModeChange( active ) {
+		if( this.mobileSafariMode ) {
+			if(!active ) {
+				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+			}
+
+			super.onDialogModeChange && super.onDialogModeChange( active );
+			return;
+		}
+
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
 		if( active ) {
@@ -200,7 +214,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async slideDownArrowClick() {
-		this.fire( 'slideDown.topSection' );
+		this.onSwipeDown();
 	}
 
 	async followMeClick( event ) {
@@ -213,6 +227,16 @@ class TopSection extends mix( Component ).with( Swipe ) {
 		registerEmailDialog.start({
 			location:	this.id
 		});
+
+		event.stopPropagation();
+		event.preventDefault();
+	}
+
+	async slideToAboutMeSection( event ) {
+		await this.fire( 'aboutMe.launchModule' );
+
+		this.fire( 'slideToAboutMeSection.appEvents' );
+
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -376,7 +400,6 @@ class TopSection extends mix( Component ).with( Swipe ) {
 			title.style.visibility = 'visible';
 
 			myVideo.classList.add( 'darken' );
-			myVideo.controls	= false;
 
 			if( this.backgroundVideo ) {
 				this.backgroundVideo.fadeVolumeOut();
@@ -407,7 +430,7 @@ class TopSection extends mix( Component ).with( Swipe ) {
 async function start( ...args ) {
 	[ transforms, style, scrollUpStyle ].forEach( style => style.use() );
 
-	return await new TopSection( ...args );
+	return await new topSection( ...args );
 }
 
 export { start };

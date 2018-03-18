@@ -59,13 +59,15 @@ module.exports = {
 					{ loader:		'raw-loader' }
 				]
 			},
+
 			{
-				test:		/\.jpg$|.png$/,
+				test:		/\.(jpg|png|gif)$/,
 				use: [
 					{
 						loader:		'url-loader',
 						options:	{
-							limit:	8192
+							limit:				20000,
+							useRelativePath:	true
 						}
 					}
 				]

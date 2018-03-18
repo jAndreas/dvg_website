@@ -103,6 +103,18 @@ div.videoPlayerDialog {
 				}
 			}
 
+			> span.quality {
+				width:5%;
+				font-size:2vh;
+				display:none;
+				color:rgba(155,215,255,0.5);
+				text-shadow:none;
+
+				@media screen and (min-width:870px) {
+					display:block;
+				}
+			}
+
 			> div.videoViewsWrapper {
 				display:none;
 				flex-direction:column;

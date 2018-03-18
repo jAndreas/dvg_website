@@ -76,7 +76,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 
 	async launchAboutMe() {
 		let aboutMeSection = await import( /* webpackChunkName: "aboutMeSection" */ 'aboutMeSection/js/main.js' );
-		aboutMeSection.start();
+		await aboutMeSection.start();
 	}
 }
 

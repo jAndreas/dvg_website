@@ -5,6 +5,75 @@ div.aboutMeSection {
 
 	width:100vw;
 	min-height:100vh;
+	mix-blend-mode:hard-light;
 
-	background-color:red;
+	background-attachment:fixed;
+	background-size:cover;
+	background-repeat:no-repeat;
+	background-position:50% 50%;
+
+	> article.aboutMeText {
+		font-family:verdana, arial;
+		color:rgba(225,245,240,0.95);
+		background-color:rgba(0,0,0,0.2);
+		font-size:2vh;
+		mix-blend-mode:luminosity;
+		font-weight:bold;
+		padding:2vw;
+		text-shadow:0 0 5px black, 0 0 5px black, 0 0 5px black;
+
+		h1 {
+			font-size:3.5vh;
+			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
+			filter:blur(1px);
+			text-align:right;
+			margin:2vh;
+			text-shadow:0 0 5px black;
+			transition:transform 400ms ease-out;
+		}
+
+		h2 {
+			font-size:2.5vh;
+			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
+			filter:blur(1px);
+			text-align:right;
+			margin:2vh;
+			text-shadow:0 0 5px black;
+			transition:transform 400ms ease-out;
+		}
+
+		div {
+			transition:transform 800ms ease-out;
+		}
+
+		h2.leftside {
+			text-align:left;
+		}
+
+		div.leftside {
+			text-align:left;
+			width:80%;
+		}
+
+		div.rightside {
+			text-align:right;
+			width:80%;
+			margin-left:auto;
+		}
+
+		span.highlight {
+			text-shadow:0 0 4px white;
+			filter:drop-shadow(1px 1px);
+			background:lightblue;
+			color:rgba(0,0,0,0.8);
+		}
+
+		.hiddenRight {
+			transform:translateX(100vw);
+		}
+
+		.hiddenLeft {
+			transform:translateX(-100vw);
+		}
+	}
 }
