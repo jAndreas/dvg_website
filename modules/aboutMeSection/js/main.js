@@ -30,10 +30,9 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async init() {
-		// any component related declarations, bindings, listeners etc. which can get executed immediately, before we wait for possible dependencies
 		await super.init();
 
-		this.on( 'slideDownGesture.videoSection slideToAboutMeSection.appEvents', this.onSiblingSlideDownGesture, this );
+		this.on( 'slideToAboutMeSection.appEvents', this.onSlideDownToAboutMeSection, this );
 
 		this.createModalOverlay({
 			opts:	{
@@ -54,7 +53,7 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 	onDialogModeChange( active ) {
 	}
 
-	onSiblingSlideDownGesture() {
+	onSlideDownToAboutMeSection() {
 		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 
@@ -69,6 +68,8 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 
 		[ topTitle, sectionTwo ].forEach( e => e.classList.remove( 'hiddenRight' ) );
 		[ sectionOne, sectionThree ].forEach( e => e.classList.remove( 'hiddenLeft' ) );
+
+		this.fire( 'supportSection.launchModule' );
 	}
 
 	async offViewport() {

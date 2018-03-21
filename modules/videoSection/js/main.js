@@ -33,23 +33,42 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	async init() {
 		await super.init();
 
+		await this.createModalOverlay({
+			opts:	{
+				spinner: true
+			}
+		});
+
 		this.on( 'slideDownGesture.topSection', this.onSiblingSlideDownGesture, this );
-		this.on( 'slideUpGesture.aboutMeSection', this.onSiblingSlideUpGesture, this );
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
-		this.on( 'connect.server', this.loadVideoData.bind( this ) );
-		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
+		let retVal;
 
-		let isConnected = await this.fire( 'isConnected.server');
+		try {
+			retVal = this.loadVideoData();
 
-		if( isConnected ) {
-			this.loadVideoData();
-		} else {
-			this.onDisconnect();
+			await retVal;
+		} catch( ex ) {
+			await this.createModalOverlay({
+				opts:	{
+					spinner:	true
+				}
+			});
+
+			this.modalOverlay.log( ex || 'Fehler', 0 );
+
+			await this.fire( 'waitForConnection.server' );
+
+			retVal = this.loadVideoData();
 		}
 
-		return this;
+		this.on( 'connect.server', this.onConnect.bind( this ) );
+		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
+
+		await this.modalOverlay.fulfill();
+
+		return retVal;
 	}
 
 	async destroy() {
@@ -58,14 +77,25 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	async inViewport() {
-		this.fire( 'aboutMe.launchModule' );
+		this.fire( 'aboutMeSection.launchModule' );
+		this.inViewport = () => {};
+	}
+
+	async onConnect() {
+		if( this.modalOverlay ) {
+			await this.modalOverlay.fulfill();
+		}
+
+		this.loadVideoData();
 	}
 
 	async onDisconnect() {
 		let link;
 
 		this.createModalOverlay({
-			at:		this.nodes.root
+			opts:	{
+				spinner:	true
+			}
 		});
 
 		this.modalOverlay.log( 'Server connection lost.', 0 );
@@ -77,48 +107,41 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	async loadVideoData() {
-		try {
-			let response;
+		return new Promise(async ( res, rej ) => {
+			try {
+				let response;
 
-			response = await this.send({
-				type:		'getPublishedVideos'
-			}, {
-				noTimeout:	true
-			});
-
-			if( this.modalOverlay ) {
-				await this.modalOverlay.fulfill();
-			}
-
-			response.data.videoData.sort(( a, b ) => {
-				return b.creationDate - a.creationDate;
-			});
-
-			for( let video of response.data.videoData ) {
-				video.hTime = this.getTimePeriod( video.creationDate );
-
-				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
-
-				let videoPreviewInstance = await videoPreviewPromise.start({
-					location:	this.id,
-					videoData:	video
+				response = await this.send({
+					type:		'getPublishedVideos'
 				});
 
-				this.previewLinks.push( videoPreviewInstance );
-			}
-		} catch( ex ) {
-			this.createModalOverlay({
-				at:		this.nodes.root
-			});
+				response.data.videoData.sort(( a, b ) => {
+					return b.creationDate - a.creationDate;
+				});
 
-			await this.modalOverlay.log( ex || 'Fehler', 125000 );
-			await this.modalOverlay.fulfill();
-		}
+				for( let video of response.data.videoData ) {
+					video.hTime = this.getTimePeriod( video.creationDate );
+
+					let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
+
+					let videoPreviewInstance = await videoPreviewPromise.start({
+						location:	this.id,
+						videoData:	video
+					});
+
+					this.previewLinks.push( videoPreviewInstance );
+				}
+
+				res();
+			} catch( ex ) {
+				rej( ex );
+			}
+		});
 	}
 
-	onVideoPlayerLaunch( module ) {
+	async onVideoPlayerLaunch( module ) {
 		if( module.id === 'videoPlayerDialog' ) {
-			this.createModalOverlay({
+			await this.createModalOverlay({
 				at:		this.nodes.root,
 				opts:	{
 					inheritBackground:	true
@@ -135,10 +158,6 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 
 	onSiblingSlideDownGesture() {
 		this.fire( 'slideDownTo.appEvents', this.nodes.root );
-	}
-
-	onSiblingSlideUpGesture() {
-		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
 	getTimePeriod( timestamp ) {

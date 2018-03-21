@@ -93,5 +93,10 @@ module.exports = {
 			ENV_PROD: true,
 			ENV_LEGACY: true
 		})
-	]
+	],
+	optimization:	{
+		splitChunks:	{
+			minSize:	4000
+		}
+	}
 };

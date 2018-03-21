@@ -1,1 +1,138 @@
 @import '~barfoos2.0/css/viewportDefinitions';
+
+div.supportSection {
+	position:relative;
+
+	width:100vw;
+	min-height:100vh;
+
+	> div.container {
+		width:100vw;
+		height:100vh;
+		display:flex;
+		flex-direction:row;
+		justify-content:center;
+		align-items:flex-end;
+		background-color:rgba(0,0,0,0.6);
+
+		> video.supportMeSequence {
+			mix-blend-mode:screen;
+			width:auto;
+			height:50vh;
+			z-index:5;
+
+			&.mobile {
+				height:auto;
+				width:100vw;
+			}
+		}
+
+		> div.header {
+			position:absolute;
+			width:100vw;
+			height:100vh;
+
+			display:flex;
+			flex-direction:column;
+			justify-content:flex-start;
+			align-items:flex-start;
+
+			> div.left {
+				margin:5vh;
+				display:flex;
+				flex-direction:column;
+				justify-content:flex-start;
+				align-items:flex-start;
+				border-right:1px dashed rgba(200,200,200,0.3);
+				font-family:Verdana, Arial;
+
+				> div.title {
+					font-size:3vw;
+					font-weight:bold;
+					color:rgba(220,220,240,0.7);
+					text-shadow:0 0 1vw white, 1vw 1vw 1vw black;
+					margin-bottom:2vh;
+				}
+
+				> div.description {
+					width:50vw;
+					font-size:1.7vh;
+					color:rgba(220,220,240,0.9);
+
+					> a {
+						font-weight:bold;
+						color:rgba(131, 184, 253, 0.9);
+					}
+
+					> span.inlineBitcoin {
+						font-weight:bold;
+						color:rgba(195,195,100,0.9);
+						margin-left:10px;
+					}
+
+					@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+						font-size:1.7vw;
+					}
+				}
+			}
+
+			> div.right {
+				position:absolute;
+				display:flex;
+				flex-direction:column;
+				justify-content:center;
+				align-items:flex-end;
+				align-self:flex-end;
+				margin-top:20vh;
+
+				> a > div {
+					background-size:contain;
+					background-repeat:no-repeat;
+					filter:drop-shadow(1px 1px white);
+					transition:all 400ms ease-in-out;
+				}
+
+				> a.paypalLink {
+					> div.paypal {
+						width:20vw;
+						height:10vw;
+						margin-right:2vw;
+						background-image:url(../images/paypal.png);
+
+						&.highlight {
+							transform:translateX(-15vw) translateY(35vh);
+
+							@media screen and (max-width:$iPhone6Landscape) {
+								transform:translateX(-15vw) translateY(35vh);
+							}
+
+							@media screen and (max-width:$iPhone6Portrait) {
+								transform:translateX(0vw) translateY(48vh);
+							}
+						}
+					}
+				}
+
+				> a.amazonLink {
+					> div.amazon {
+						width:30vw;
+						height:10vw;
+						background-image:url(../images/amazon.png);
+
+						&.highlight {
+							transform:translateX(-5vw) translateY(40vh);
+
+							@media screen and (max-width:$iPhone6Landscape) {
+								transform:translateX(-5vw) translateY(35vh);
+							}
+
+							@media screen and (max-width:$iPhone6Portrait) {
+								transform:translateX(2vw) translateY(53vh);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

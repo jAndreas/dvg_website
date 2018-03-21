@@ -94,5 +94,10 @@ module.exports = {
 		new webpack.DefinePlugin({
 			ENV_PROD: true
 		})
-	]
+	],
+	optimization:	{
+		splitChunks:	{
+			minSize:	4000
+		}
+	}
 };

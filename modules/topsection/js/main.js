@@ -12,8 +12,7 @@ import style from '../style/main.scss';
 import scrollUpStyle from '../style/scrollup.scss';
 import transforms from '../style/transforms.scss';
 
-const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
-		fallbackPath	= '/fallback/_video/intro_480.mp4';
+import * as videoSection from 'videoSection/js/main.js';
 
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
@@ -32,9 +31,10 @@ class topSection extends mix( Component ).with( Swipe ) {
 		);
 
 		extend( this ).with({
+			videoLink:				'/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
+			fallbackPath:			'/fallback/_video/intro_480.mp4',
 			backgroundVideo:		null,
-			isTheaterMode:			false,
-			outOfViewport:			false
+			isTheaterMode:			false
 		});
 
 		return this.init();
@@ -55,8 +55,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
-
-		this.on( 'slideUpGesture.videoSection', this.onSiblingSlideUpGesture, this );
+		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
 
 		return this;
 	}
@@ -69,9 +68,9 @@ class topSection extends mix( Component ).with( Swipe ) {
 	async onBackgroundImageLoaded() {
 		try {
 			this.backgroundVideo = await loadVideo({
-				videoLink:		videoLink,
+				videoLink:		this.videoLink,
 				videoElement:	this.nodes[ 'video.introduction' ],
-				fallbackPath:	fallbackPath,
+				fallbackPath:	this.fallbackPath,
 				silenced:		true
 			});
 
@@ -127,11 +126,8 @@ class topSection extends mix( Component ).with( Swipe ) {
 		}
 	}
 
-	async onQuickScrollUpClick() {
-		this.fire( 'slideUpTo.appEvents', this.nodes.root );
-	}
-
-	onSiblingSlideUpGesture() {
+	// referenced via html markup, interpretated and linked by cacheNodes
+	onQuickScrollUpClick() {
 		this.fire( 'slideUpTo.appEvents', this.nodes.root );
 	}
 
@@ -233,10 +229,18 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async slideToAboutMeSection( event ) {
-		await this.fire( 'aboutMe.launchModule' );
+		await this.fire( 'aboutMeSection.launchModule' );
 
 		this.fire( 'slideToAboutMeSection.appEvents' );
 
+		event.stopPropagation();
+		event.preventDefault();
+	}
+
+	async slideToSupportSection( event ) {
+		await this.fire( 'supportSection.launchModule' );
+
+		this.fire( 'slideToSupportSection.appEvents' );
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -430,7 +434,10 @@ class topSection extends mix( Component ).with( Swipe ) {
 async function start( ...args ) {
 	[ transforms, style, scrollUpStyle ].forEach( style => style.use() );
 
-	return await new topSection( ...args );
+	let topSectionLoading		= new topSection( ...args ),
+		videoSectionLoading		= videoSection.start();
+
+	return Promise.all([ topSectionLoading, videoSectionLoading ]);
 }
 
 export { start };
