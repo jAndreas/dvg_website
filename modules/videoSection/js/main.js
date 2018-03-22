@@ -77,8 +77,13 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 	}
 
 	async inViewport() {
+		super.inViewport && super.inViewport( ...arguments );
+
 		this.fire( 'aboutMeSection.launchModule' );
-		this.inViewport = () => {};
+	}
+
+	async offViewport() {
+		super.offViewport && super.offViewport( ...arguments );
 	}
 
 	async onConnect() {
