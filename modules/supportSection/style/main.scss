@@ -134,5 +134,20 @@ div.supportSection {
 				}
 			}
 		}
+
+		> div.impressum {
+			position:absolute;
+			left:4vw;
+			bottom:2vh;
+			cursor:pointer;
+			color:rgba(220,220,220,0.95);
+			font-family:verdana, arial;
+			font-size:1.2vh;
+			z-index:5;
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				font-size:1.5vh;
+			}
+		}
 	}
 }

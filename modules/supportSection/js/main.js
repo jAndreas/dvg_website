@@ -42,7 +42,7 @@ class supportSection extends Component {
 		this._boundCheckTime	= this.checkVideoTime.bind( this );
 		this._boundPlayHandler	= this.play.bind( this );
 
-		this.on( 'slideToSupportSection.appEvents', this.onSlideToSupportSection, this );
+		this.addNodeEvent( 'div.impressum', 'click touchstart', this.onImpressumClick );
 
 		this.createModalOverlay({
 			opts:	{
@@ -70,10 +70,15 @@ class supportSection extends Component {
 		[ style ].forEach( s => s.unuse() );
 	}
 
-	async inViewport() {
+	async onImpressumClick() {
+		await this.fire( 'impressumSection.launchModule' );
+		this.fire( 'slideDownTo.impressumSection' );
+	}
+
+	async inViewport({ enteredFrom }) {
 		let result;
 
-		if( this.video ) {
+		if( this.video && enteredFrom === 'top' ) {
 			this.video.seek( this.mobileVideo ? 3 : 0 );
 			result = await this.video.play();
 
@@ -97,10 +102,6 @@ class supportSection extends Component {
 
 		this.video && this.video.node.removeEventListener( 'timeupdate', this._boundCheckTime );
 		this.video && this.video.node.removeEventListener( 'play', this._boundPlayHandler );
-	}
-
-	async onSlideToSupportSection() {
-		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 
 	play() {

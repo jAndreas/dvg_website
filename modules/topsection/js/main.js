@@ -8,8 +8,10 @@ import { loadVideo } from 'video.js';
 
 import html from '../markup/main.html';
 import scrollUpMarkup from '../markup/scrollup.html';
+import quickNavMarkup from '../markup/quicknav.html';
 import style from '../style/main.scss';
 import scrollUpStyle from '../style/scrollup.scss';
+import quickNavStyle from '../style/quicknav.scss';
 import transforms from '../style/transforms.scss';
 
 import * as videoSection from 'videoSection/js/main.js';
@@ -57,12 +59,15 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
 		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
 
+		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
+		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
+
 		return this;
 	}
 
 	async destroy() {
 		super.destroy && super.destroy();
-		[ style, scrollUpStyle, transforms ].forEach( s => s.unuse() );
+		[ style, scrollUpStyle, quickNavStyle, transforms ].forEach( s => s.unuse() );
 	}
 
 	async onBackgroundImageLoaded() {
@@ -99,6 +104,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 	async inViewport() {
 		await Promise.all([ this.returnToMenuComplete, this.transitionToTheaterComplete, ...this.data.get( this.nodes.myVideo ).storage.animations.running ]);
 		this.removeNodes( 'div.quickScrollUp', true );
+		this.removeNodes( 'div.quickNav', true );
 
 		if(!this._dialogMode ) {
 			if( this.backgroundVideo && this.backgroundVideo.stopped ) {
@@ -117,6 +123,14 @@ class topSection extends mix( Component ).with( Swipe ) {
 			}
 		});
 
+		this.addNodes({
+			htmlData:	quickNavMarkup,
+			reference:	{
+				node:		'root',
+				position:	'beforeend'
+			}
+		});
+
 		if(!this._dialogMode ) {
 			if( this.isTheaterMode ) {
 				this.returnToMenu();
@@ -127,8 +141,15 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	// referenced via html markup, interpretated and linked by cacheNodes
-	onQuickScrollUpClick() {
-		this.fire( 'slideUpTo.appEvents', this.nodes.root );
+	async onQuickScrollUpClick() {
+		await this.fire( 'slideUpTo.appEvents', this.nodes.root );
+	}
+
+	async onQuickNavClick() {
+		this.removeNodes( 'div.quickNav', true );
+
+		await this.fire( 'mobileNavigationSection.launchModule' );
+		this.fire( 'requestMobileNavigation.core' );
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -136,6 +157,8 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async onDialogModeChange( active ) {
+		this.removeNodes( 'div.quickNav', true );
+
 		if( this.mobileSafariMode ) {
 			if(!active ) {
 				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
@@ -214,24 +237,24 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async followMeClick( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
 		this.removeNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
 		let registerEmailDialog = await import( /* webpackChunkName: "RegisterEmail Dialog" */ 'registerEmailDialog/js/main.js'  );
 
-		registerEmailDialog.start({
+		await registerEmailDialog.start({
 			location:	this.id
 		});
-
-		event.stopPropagation();
-		event.preventDefault();
 	}
 
 	async slideToAboutMeSection( event ) {
 		await this.fire( 'aboutMeSection.launchModule' );
 
-		this.fire( 'slideToAboutMeSection.appEvents' );
+		this.fire( 'slideDownTo.aboutMeSection' );
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -240,7 +263,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 	async slideToSupportSection( event ) {
 		await this.fire( 'supportSection.launchModule' );
 
-		this.fire( 'slideToSupportSection.appEvents' );
+		this.fire( 'slideDownTo.supportSection' );
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -425,6 +448,33 @@ class topSection extends mix( Component ).with( Swipe ) {
 
 		return this.returnToMenuComplete;
 	}
+
+	getSiteNavigation() {
+		let dataList = Array.from( this.nodes[ 'ul.jumpList' ].querySelectorAll( 'li > a' ) ).map( anchor => {
+			let lookup		= Object.create( null );
+			lookup.id		= 'a.'+anchor.className;
+			lookup.title	= anchor.textContent;
+			return lookup;
+		});
+
+		return dataList;
+	}
+
+	async navigateTo( data = { } ) {
+		if( Object.keys( data ).length ) {
+			this.data.get( this.nodes[ data.id ] ).events[ 'touchstart' ][ 0 ].call( this, data.event );
+		}
+
+		if(!this.nodes[ 'div.quickNav' ] ) {
+			this.addNodes({
+				htmlData:	quickNavMarkup,
+				reference:	{
+					node:		'root',
+					position:	'beforeend'
+				}
+			});
+		}
+	}
 }
 /****************************************** TopSection End ******************************************/
 
@@ -432,7 +482,7 @@ class topSection extends mix( Component ).with( Swipe ) {
  *  Entry point for this GUI Module.
  *****************************************************************************************************/
 async function start( ...args ) {
-	[ transforms, style, scrollUpStyle ].forEach( style => style.use() );
+	[ transforms, style, scrollUpStyle, quickNavStyle ].forEach( style => style.use() );
 
 	let topSectionLoading		= new topSection( ...args ),
 		videoSectionLoading		= videoSection.start();

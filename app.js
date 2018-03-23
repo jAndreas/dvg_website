@@ -23,6 +23,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
+		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
+		this.once( 'mobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
 		// dynamic routing is not enabled for now.
 		//this.on( 'hashChange.appEvents', this.routeByHash, this );
 
@@ -78,14 +80,11 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			let uploadVideo = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
 			uploadVideo.start();
 		} else {
+			// contains also videoSection
 			let topSectionLoadingPromise		= import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
-			//	videoSectionLoadingPromise		= import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
 
 			let topSection = await topSectionLoadingPromise;
 			await topSection.start();
-
-			//let videoSection = await videoSectionLoadingPromise;
-			//await videoSection.start();
 
 			if( hash.has( 'watch' ) ) {
 				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
@@ -109,6 +108,16 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 
 		let supportSection = await import( /* webpackChunkName: "supportSection" */ 'supportSection/js/main.js' );
 		await supportSection.start();
+	}
+
+	async launchImpressumSection() {
+		let impressumSection = await import( /* webpackChunkName: "impressumSection" */ 'impressumSection/js/main.js' );
+		await impressumSection.start();
+	}
+
+	async launchMobileNavigationSection() {
+		let mobileNavigationSection = await import( /* webpackChunkName: "mobileNavigationSection" */ 'mobileNavigationSection/js/main.js' );
+		await mobileNavigationSection.start();
 	}
 }
 

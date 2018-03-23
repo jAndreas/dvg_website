@@ -1,0 +1,52 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.impressumSection {
+	position:relative;
+
+	width:100vw;
+	min-height:100vh;
+
+	font-family:Verdana, Arial;
+	color:rgba(220,220,200,0.90);
+	font-size:1.5vh;
+
+	> header {
+		margin:5vh;
+
+		> h2.topTitle {
+			font-weight:bold;
+			font-size:3vh;
+		}
+
+		> span.smallTitle {
+			font-size:1.2vh;
+			margin-bottom:3vh;
+		}
+	}
+
+	> div.content {
+		background-color:rgba(0,0,0,0.35);
+		padding:5vh;
+		width:50vw;
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			width:80vw;
+			margin:auto;
+		}
+
+		> div.subTitle {
+			font-weight:bold;
+			margin-bottom:0.5vh;
+
+			&:last {
+				margin-bottom:2vh;
+			}
+		}
+
+		> div.smallTitle {
+			font-size:1vh;
+			margin-top:3vh;
+			opacity:0.5;
+		}
+	}
+}

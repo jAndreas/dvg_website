@@ -32,8 +32,6 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 	async init() {
 		await super.init();
 
-		this.on( 'slideToAboutMeSection.appEvents', this.onSlideDownToAboutMeSection, this );
-
 		this.createModalOverlay({
 			opts:	{
 				spinner: true
@@ -51,10 +49,6 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 	}
 
 	onDialogModeChange( active ) {
-	}
-
-	onSlideDownToAboutMeSection() {
-		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 
 	async inViewport() {

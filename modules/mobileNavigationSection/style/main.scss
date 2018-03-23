@@ -1,0 +1,16 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.mobileNavigationSection {
+	position:absolute;
+	display:flex;
+	flex-direction:column;
+	justify-content:flex-start;
+	align-items:stretch;
+	top:0;
+	right:0;
+	left:0;
+	bottom:0;
+	z-index:5;
+	border-left:1px solid rgba(230,230,230,0.9);
+	box-sizing:border-box;
+}
