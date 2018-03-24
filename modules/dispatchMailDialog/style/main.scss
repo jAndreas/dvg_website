@@ -1,0 +1,77 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
+
+div.dispatchMailDialog {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+
+	width:50vw;
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		width:95vw;
+	}
+
+	@media screen and (max-width:$iPhone6Landscape) {
+		width:90vw;
+	}
+
+	> form.emailData {
+		position:relative;
+		display:flex;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
+		width:100%;
+		overflow:hidden;
+
+		> input.mailSubject {
+			border:1px solid gray;
+			box-sizing:border-box;
+			font-size:4vh;
+			font-family:verdana,arial;
+			margin-top:10px;
+			padding:4px;
+			outline:none;
+			width:95%;
+			color:white;
+			background-color:rgba(0, 200, 0, 0.1);
+
+			&:invalid {
+				background-color:rgba(200, 0, 0, 0.1);
+			}
+		}
+
+		> textarea.mailBody {
+			border:1px solid gray;
+			box-sizing:border-box;
+			outline:none;
+			height:40vh;
+			width:95%;
+			font-size:3vh;
+			overflow-y:auto;
+			padding:4px;
+			background-color:rgba(0, 200, 0, 0.1);
+			color:white;
+			resize:none;
+			margin-top:2vh;
+
+			&:invalid {
+				background-color:rgba(200, 0, 0, 0.1);
+			}
+		}
+
+		> input.sendMail {
+			width:20%;
+			margin:2vh;
+			align-self:flex-start;
+			padding:1vh;
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				width:auto;
+				align-self:stretch;
+			}
+		}
+	}
+}

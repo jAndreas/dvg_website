@@ -77,8 +77,11 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 				secretKey:	hash.get( 'confirmSubscription' )
 			});
 		} else if( hash.has( 'uploadVideo' ) ) {
-			let uploadVideo = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
-			uploadVideo.start();
+			let uploadVideoDialog = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
+			uploadVideoDialog.start();
+		} else if( hash.has( 'dispatchMail' ) ) {
+			let dispatchMailDialog = await import( /* webpackChunkName: "dispatchMailDialog" */ 'dispatchMailDialog/js/main.js' );
+			dispatchMailDialog.start();
 		} else {
 			// contains also videoSection
 			let topSectionLoadingPromise		= import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );

@@ -58,6 +58,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
 		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
+		this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
@@ -150,6 +151,10 @@ class topSection extends mix( Component ).with( Swipe ) {
 
 		await this.fire( 'mobileNavigationSection.launchModule' );
 		this.fire( 'requestMobileNavigation.core' );
+	}
+
+	async onRegisterName() {
+		console.log( 'REGISTER NAME' );
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -451,9 +456,10 @@ class topSection extends mix( Component ).with( Swipe ) {
 
 	getSiteNavigation() {
 		let dataList = Array.from( this.nodes[ 'ul.jumpList' ].querySelectorAll( 'li > a' ) ).map( anchor => {
-			let lookup		= Object.create( null );
-			lookup.id		= 'a.'+anchor.className;
-			lookup.title	= anchor.textContent;
+			let lookup			= Object.create( null );
+			lookup.id			= 'a.'+anchor.className;
+			lookup.title		= anchor.textContent;
+			lookup.mobileStyle	= anchor.dataset.mobileStyle;
 			return lookup;
 		});
 
