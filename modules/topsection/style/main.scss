@@ -331,33 +331,84 @@ div#topSection {
 		}
 	}
 
-	> div.registerName {
+	> div.userOptions {
 		position:fixed;
 		left:4vw;
 		top:2vh;
-		background-color:rgba(217, 221, 255, 0.2);
-		box-sizing:border-box;
-		display:flex;
-		box-shadow:0 0 3px 0px white;
-		cursor:pointer;
 		z-index:1000;
-		border-radius:4px;
-		padding:4px;
+		display:flex;
+		flex-direction:column;
+		justify-content:flex-start;
+		filter:sepia(0.4);
 
-		&:after {
-			content:'✎ Registrieren';
-			font-size:20px;
-			font-weight:bold;
-			margin:auto;
-			color:rgba(243, 240, 255, 0.9);
-			text-shadow:0px 0px 15px white;
+		@media screen and (max-width:$iPhone6Portrait) {
+			left:2vw;
+		}
 
-			@media screen and (max-width:$iPhone6Landscape) {
-				font-size:14px;
+		> div.registerName {
+			background-color:rgba(20, 20, 40, 0.9);
+			box-sizing:border-box;
+			display:flex;
+			border:1px solid rgba(245, 245, 245, 0.8);
+			border-bottom:none;
+			cursor:pointer;
+			border-radius:4px;
+			padding:4px;
+
+			&:hover {
+				border:1px solid rgba(205, 215, 255, 0.9);
+				border-bottom:none;
+				background-color:rgba(20, 20, 60, 0.9);
+				filter:brightness(1.4);
 			}
 
-			@media screen and (max-width:$iPhone6Portrait) {
-				font-size:4vw;
+			&:after {
+				content:'✎ Registrieren';
+				font-size:16px;
+				margin:auto;
+				color:rgba(243, 240, 255, 0.9);
+				text-shadow:0px 0px 15px white;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					font-size:14px;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					font-size:4vw;
+				}
+			}
+		}
+
+		> div.login {
+			background-color:rgba(20, 20, 40, 0.9);
+			box-sizing:border-box;
+			display:flex;
+			border:1px solid rgba(245, 245, 245, 0.8);
+			cursor:pointer;
+			border-radius:4px;
+			padding:4px;
+
+			&:hover {
+				border:1px solid rgba(205, 215, 255, 0.9);
+				background-color:rgba(20, 20, 60, 0.9);
+				filter:brightness(1.4);
+			}
+
+			&:after {
+				content:'👤 Login';
+				font-size:14px;
+				font-weight:bold;
+				margin:auto;
+				color:rgba(243, 240, 255, 0.9);
+				text-shadow:0px 0px 15px white;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					font-size:14px;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					font-size:4vw;
+				}
 			}
 		}
 	}

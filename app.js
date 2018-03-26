@@ -76,6 +76,12 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			confirmSubDialog.start({
 				secretKey:	hash.get( 'confirmSubscription' )
 			});
+		} else if( hash.has( 'confirmUser' ) ) {
+			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
+			confirmSubDialog.start({
+				secretKey:		hash.get( 'confirmUser' ),
+				confirmUser:	true
+			});
 		} else if( hash.has( 'uploadVideo' ) ) {
 			let uploadVideoDialog = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
 			uploadVideoDialog.start();

@@ -1,0 +1,120 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
+
+div.loginDialog {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+	overflow:hidden;
+	width:30vw;
+
+	@media screen and (max-width:$iPhone6Landscape) {
+		width:65vw;
+	}
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		width:95vw;
+	}
+
+	> section.page1 {
+		display:flex;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
+		width:100%;
+		min-height:20vh;
+
+		> form.loginData {
+			position:relative;
+			display:flex;
+			flex-direction:column;
+			justify-content:center;
+			align-items:center;
+			width:100%;
+			overflow:hidden;
+			font-size:2vh;
+
+			@media screen and (max-width:$iPhone6Landscape) {
+				font-size:4vh;
+			}
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				font-size:2vh;
+			}
+
+			> input {
+				border:1px solid gray;
+				box-sizing:border-box;
+				font-family:verdana,arial;
+				padding:4px;
+				outline:none;
+				width:95%;
+				color:white;
+				background-color:rgba(0, 200, 0, 0.1);
+				margin-bottom:4px;
+
+				&:invalid {
+					background-color:rgba(200, 0, 0, 0.1);
+				}
+			}
+
+			> input.emailAddress {
+			}
+
+			> input.password {
+			}
+
+			> input.login {
+				width:50%;
+				margin:1vh;
+				align-self:flex-start;
+				font-size:2vh;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					align-self:center;
+					width:auto;
+					font-size:4vh;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					width:auto;
+					align-self:stretch;
+					font-size:2vh;
+				}
+			}
+		}
+	}
+
+	> section.page2 {
+		display:none;
+		flex-direction:column;
+		justify-content:center;
+		align-items:center;
+		width:100%;
+		min-height:20vh;
+
+		> span.loginInfo {
+			font-size:2vh;
+			text-shadow:0px 0px 10px white;
+			padding:1vw;
+
+			> sup.smallLetters {
+				margin-top:1vh;
+				font-size:1.3vh;
+			}
+		}
+
+		> input.okClose {
+			font-size:2vh;
+			width:50%;
+			padding:1vh;
+			margin:1vh;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				width:auto;
+				align-self:stretch;
+			}
+		}
+	}
+}

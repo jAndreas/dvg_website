@@ -59,6 +59,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
 		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
 		this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+		this.addNodeEvent( 'div.login', 'click touchstart', this.onLogin );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
@@ -112,6 +113,8 @@ class topSection extends mix( Component ).with( Swipe ) {
 				await this.startVideoPlayback();
 			}
 		}
+
+		this.nodes[ 'div.userOptions' ].style.display = 'block';
 	}
 
 	async offViewport() {
@@ -124,13 +127,15 @@ class topSection extends mix( Component ).with( Swipe ) {
 			}
 		});
 
-		this.addNodes({
-			htmlData:	quickNavMarkup,
-			reference:	{
-				node:		'root',
-				position:	'beforeend'
-			}
-		});
+		if( this.mobileSafariMode ) {
+			this.addNodes({
+				htmlData:	quickNavMarkup,
+				reference:	{
+					node:		'root',
+					position:	'beforeend'
+				}
+			});
+		}
 
 		if(!this._dialogMode ) {
 			if( this.isTheaterMode ) {
@@ -139,6 +144,8 @@ class topSection extends mix( Component ).with( Swipe ) {
 
 			this.stopVideoPlayback();
 		}
+
+		this.nodes[ 'div.userOptions' ].style.display = 'none';
 	}
 
 	// referenced via html markup, interpretated and linked by cacheNodes
@@ -153,8 +160,58 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.fire( 'requestMobileNavigation.core' );
 	}
 
-	async onRegisterName() {
-		console.log( 'REGISTER NAME' );
+	async onRegisterName( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.removeNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+		this.once( 'moduleDestruction.appEvents', module => {
+			if( module.id === instance.id ) {
+				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+			}
+		});
+
+		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
+
+		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
+			position		= Object.create( null );
+
+			position.top	= clRect.bottom+2;
+			position.left	= clRect.left;
+
+		let registerDialog	= await import( /* webpackChunkName: "legisterDialog" */  'registerDialog/js/main.js'  ),
+			instance		= await registerDialog.start({
+				location:	this.id,
+				position:	position,
+				center:		this.mobileSafariMode
+			});
+	}
+
+	async onLogin( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.removeNodeEvent( 'div.login', 'click touchstart', this.onLogin );
+		this.once( 'moduleDestruction.appEvents', module => {
+			if( module.id === instance.id ) {
+				this.addNodeEvent( 'div.login', 'click touchstart', this.onLogin );
+			}
+		});
+
+		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
+
+		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
+			position		= Object.create( null );
+
+			position.top	= clRect.bottom+2;
+			position.left	= clRect.left;
+
+		let loginDialog		= await import( /* webpackChunkName: "loginDialog" */  'loginDialog/js/main.js'  ),
+			instance		= await loginDialog.start({
+				location:	this.id,
+				position:	position,
+				center:		this.mobileSafariMode
+			});
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -162,11 +219,27 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async onDialogModeChange( active ) {
-		this.removeNodes( 'div.quickNav', true );
-
 		if( this.mobileSafariMode ) {
-			if(!active ) {
-				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+			if( active ) {
+				this.nodes[ 'div.registerName' ].style.display = 'none';
+				this.nodes[ 'div.login' ].style.display = 'none';
+
+				if( this.nodes[ 'div.quickNav' ] ) {
+					this.removeNodes( 'div.quickNav', true );
+				}
+			} else {
+				if(!this._insightViewport ) {
+					this.addNodes({
+						htmlData:	quickNavMarkup,
+						reference:	{
+							node:		'root',
+							position:	'beforeend'
+						}
+					});
+				}
+
+				this.nodes[ 'div.registerName' ].style.display = 'block';
+				this.nodes[ 'div.login' ].style.display = 'block';
 			}
 
 			super.onDialogModeChange && super.onDialogModeChange( active );
@@ -188,7 +261,6 @@ class topSection extends mix( Component ).with( Swipe ) {
 			}
 		} else {
 			this.nodes[ 'a.revealIntro' ].style.visibility = 'visible';
-			this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
 
 			if( this.nodes.crossClone ) {
 				this.nodes.crossClone.style.visibility = 'visible';
@@ -246,14 +318,18 @@ class topSection extends mix( Component ).with( Swipe ) {
 		event.preventDefault();
 
 		this.removeNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+		this.once( 'moduleDestruction.appEvents', module => {
+			if( module.id === instance.id ) {
+				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+			}
+		});
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
-		let registerEmailDialog = await import( /* webpackChunkName: "RegisterEmail Dialog" */ 'registerEmailDialog/js/main.js'  );
-
-		await registerEmailDialog.start({
-			location:	this.id
-		});
+		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  ),
+			instance				= await registerEmailDialog.start({
+				location:	this.id
+			});
 	}
 
 	async slideToAboutMeSection( event ) {

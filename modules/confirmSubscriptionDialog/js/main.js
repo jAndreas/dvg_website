@@ -3,6 +3,7 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -38,13 +39,14 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 				let response = await this.send({
 					type:		'confirmAccountSecretKey',
 					payload:	{
-						secretKey:	this.secretKey
+						secretKey:		this.secretKey,
+						confirmUser:	this.confirmUser
 					}
 				});
 
-				this.nodes[ 'div.confirmSubscriptionDialog' ].innerHTML = response.msg;
+				this.nodes[ 'div.responseMsg' ].innerHTML = response.msg;
 			} catch( ex ) {
-				this.nodes[ 'div.confirmSubscriptionDialog' ].innerHTML = ex;
+				this.nodes[ 'div.responseMsg' ].innerHTML = ex;
 			}
 		}
 
