@@ -72,7 +72,7 @@ class registerDialog extends mix( Overlay ).with( GlasEffect, ServerConnection )
 		this.createModalOverlay({
 			at:		page1,
 			opts:	{
-				spinner: false
+				spinner: true
 			}
 		});
 
@@ -99,6 +99,7 @@ class registerDialog extends mix( Overlay ).with( GlasEffect, ServerConnection )
 					emailAddress.select();
 				}
 
+				this.modalOverlay.spinner.cleanup( 400 );
 				await this.modalOverlay.log( response.msg, 4000 );
 				await this.modalOverlay.fulfill();
 				this.addNodeEvent( 'form.registerData', 'submit', this.onSubmit );

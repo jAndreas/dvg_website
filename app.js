@@ -17,6 +17,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	}
 
 	async init() {
+		this.on( 'userLogin.server', this.onUserLogin, this );
+		this.on( 'userLogout.server', this.onUserLogout, this );
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
 		this.on( 'setTitle.appEvents', this.setTitle, this );
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
@@ -43,7 +45,21 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			}
 		});
 
-		this.routeByHash( await this.fire( 'getHash.appEvents' ) );
+		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
+
+		let loginData = localStorage.getItem( 'dvgLogin' );
+
+		if( loginData ) {
+			this.fire( 'sessionLogin.appEvents', JSON.parse( loginData ) );
+		}
+	}
+
+	onUserLogin( user ) {
+		localStorage.setItem( 'dvgLogin', JSON.stringify( user ) );
+	}
+
+	onUserLogout( user ) {
+		localStorage.removeItem( 'dvgLogin' );
 	}
 
 	waitForBackgroundImageLoaded() {

@@ -44,6 +44,17 @@ class mobileNavigationSection extends Component {
 
 		this.addNodeEvent( 'root', 'touchstart', this.onNavClick );
 
+		this.on( 'startNewSession.server', this.logoutMode, this );
+		this.on( 'userLogout.server', this.loginMode, this );
+
+		let session = await this.fire( 'getUserSession.server' );
+
+		if( session ) {
+			this.logoutMode();
+		} else {
+			this.loginMode();
+		}
+
 		return this;
 	}
 
@@ -61,6 +72,34 @@ class mobileNavigationSection extends Component {
 					id:		this.data.get( event.originalTarget ).storage.nodeData.id,
 					event:	event
 				});
+			}
+		}
+	}
+
+	loginMode() {
+		for( let [ name, node ] of Object.entries( this.nodes ) ) {
+			let flags = node.dataset.flags || '';
+
+			if( flags.indexOf( 'login' ) > -1 ) {
+				node.style.display = 'flex';
+			}
+
+			if( flags.indexOf( 'logout' ) > -1 ) {
+				node.style.display = 'none';
+			}
+		}
+	}
+
+	logoutMode() {
+		for( let [ name, node ] of Object.entries( this.nodes ) ) {
+			let flags = node.dataset.flags || '';
+
+			if( flags.indexOf( 'login' ) > -1 ) {
+				node.style.display = 'none';
+			}
+
+			if( flags.indexOf( 'logout' ) > -1 ) {
+				node.style.display = 'flex';
 			}
 		}
 	}

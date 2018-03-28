@@ -78,12 +78,13 @@ module.exports = {
 				]
 			},
 			{
-				test:		/\.jpg$|.png$/,
+				test:		/\.(jpg|png|gif)$/,
 				use: [
 					{
 						loader:		'url-loader',
 						options:	{
-							limit:	8192
+							limit:				32000,
+							useRelativePath:	true
 						}
 					}
 				]

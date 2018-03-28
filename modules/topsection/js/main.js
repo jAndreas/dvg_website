@@ -1,10 +1,10 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import Swipe from 'barfoos2.0/swipe.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import scrollUpMarkup from '../markup/scrollup.html';
@@ -19,7 +19,7 @@ import * as videoSection from 'videoSection/js/main.js';
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class topSection extends mix( Component ).with( Swipe ) {
+class topSection extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,
@@ -55,14 +55,18 @@ class topSection extends mix( Component ).with( Swipe ) {
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
 		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
-		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.onSwipeDown );
+		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.slideDownArrowClick );
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
 		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
 		this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
-		this.addNodeEvent( 'div.login', 'click touchstart', this.onLogin );
+		this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
+		this.on( 'userLogin.server', this.onUserLogin, this );
+		this.on( 'sessionLogin.appEvents', this.onSessionLogin, this );
+		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 
 		return this;
 	}
@@ -165,11 +169,6 @@ class topSection extends mix( Component ).with( Swipe ) {
 		event.preventDefault();
 
 		this.removeNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
-		this.once( 'moduleDestruction.appEvents', module => {
-			if( module.id === instance.id ) {
-				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
-			}
-		});
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
@@ -179,26 +178,22 @@ class topSection extends mix( Component ).with( Swipe ) {
 			position.top	= clRect.bottom+2;
 			position.left	= clRect.left;
 
-		let registerDialog	= await import( /* webpackChunkName: "legisterDialog" */  'registerDialog/js/main.js'  ),
-			instance		= await registerDialog.start({
-				location:	this.id,
-				position:	position,
-				center:		this.mobileSafariMode
-			});
+		let registerDialog	= await import( /* webpackChunkName: "registerDialog" */  'registerDialog/js/main.js'  );
+
+		await registerDialog.start({
+			location:	this.id,
+			position:	position,
+			center:		this.mobileSafariMode
+		});
 	}
 
-	async onLogin( event ) {
+	async onLoginClick( event ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.removeNodeEvent( 'div.login', 'click touchstart', this.onLogin );
-		this.once( 'moduleDestruction.appEvents', module => {
-			if( module.id === instance.id ) {
-				this.addNodeEvent( 'div.login', 'click touchstart', this.onLogin );
-			}
-		});
+		this.removeNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
 
-		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
+		//await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
 		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
 			position		= Object.create( null );
@@ -206,12 +201,44 @@ class topSection extends mix( Component ).with( Swipe ) {
 			position.top	= clRect.bottom+2;
 			position.left	= clRect.left;
 
-		let loginDialog		= await import( /* webpackChunkName: "loginDialog" */  'loginDialog/js/main.js'  ),
-			instance		= await loginDialog.start({
-				location:	this.id,
-				position:	position,
-				center:		this.mobileSafariMode
+		let loginDialog		= await import( /* webpackChunkName: "loginDialog" */  'loginDialog/js/main.js'  );
+
+		await loginDialog.start({
+			location:	this.id,
+			position:	position,
+			center:		this.mobileSafariMode
+		});
+	}
+
+	async onLogoutClick( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.removeNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
+
+		try {
+			let response = await this.send({
+				type:		'logoutUser',
+				payload:	{ }
 			});
+
+			if( response.data.sessionDestroyed ) {
+				this.fire( 'userLogout.server', response.data.session );
+
+				this.nodes[ 'div.logout' ].style.display = 'none';
+				this.nodes[ 'div.logout' ].removeAttribute( 'title' );
+
+				this.nodes[ 'div.login' ].style.display = 'flex';
+				this.nodes[ 'div.registerName' ].style.display = 'flex';
+
+				this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+			}
+		} catch( ex ) {
+			 this.log( 'logoutUser error: ', ex );
+		}
+
+		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -221,9 +248,6 @@ class topSection extends mix( Component ).with( Swipe ) {
 	async onDialogModeChange( active ) {
 		if( this.mobileSafariMode ) {
 			if( active ) {
-				this.nodes[ 'div.registerName' ].style.display = 'none';
-				this.nodes[ 'div.login' ].style.display = 'none';
-
 				if( this.nodes[ 'div.quickNav' ] ) {
 					this.removeNodes( 'div.quickNav', true );
 				}
@@ -237,9 +261,6 @@ class topSection extends mix( Component ).with( Swipe ) {
 						}
 					});
 				}
-
-				this.nodes[ 'div.registerName' ].style.display = 'block';
-				this.nodes[ 'div.login' ].style.display = 'block';
 			}
 
 			super.onDialogModeChange && super.onDialogModeChange( active );
@@ -310,7 +331,7 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	async slideDownArrowClick() {
-		this.onSwipeDown();
+		this.fire( 'slideDownArrayClicked.topSection' );
 	}
 
 	async followMeClick( event ) {
@@ -318,18 +339,14 @@ class topSection extends mix( Component ).with( Swipe ) {
 		event.preventDefault();
 
 		this.removeNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
-		this.once( 'moduleDestruction.appEvents', module => {
-			if( module.id === instance.id ) {
-				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
-			}
-		});
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
-		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  ),
-			instance				= await registerEmailDialog.start({
-				location:	this.id
-			});
+		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
+
+		await registerEmailDialog.start({
+			location:	this.id
+		});
 	}
 
 	async slideToAboutMeSection( event ) {
@@ -531,18 +548,30 @@ class topSection extends mix( Component ).with( Swipe ) {
 	}
 
 	getSiteNavigation() {
-		let dataList = Array.from( this.nodes[ 'ul.jumpList' ].querySelectorAll( 'li > a' ) ).map( anchor => {
+		let dataList = Array.from( this.nodes[ 'ul.jumpList' ].querySelectorAll( 'li > a' ) ).map( elem => {
 			let lookup			= Object.create( null );
-			lookup.id			= 'a.'+anchor.className;
-			lookup.title		= anchor.textContent;
-			lookup.mobileStyle	= anchor.dataset.mobileStyle;
+			lookup.id			= `${ elem.nodeName.toLowerCase() }.`+elem.className;
+			lookup.title		= elem.textContent;
+			lookup.mobileStyle	= elem.dataset.mobileStyle;
+			lookup.mobileFlags	= elem.dataset.mobileFlags;
+			lookup.mobileTitle	= elem.dataset.mobileTitle;
 			return lookup;
 		});
 
-		return dataList;
+		let loginList = Array.from( this.nodes[ 'div.userOptions' ].querySelectorAll( 'div' ) ).map( elem => {
+			let lookup			= Object.create( null );
+			lookup.id			= `${ elem.nodeName.toLowerCase() }.`+elem.className;
+			lookup.title		= elem.textContent;
+			lookup.mobileStyle	= elem.dataset.mobileStyle;
+			lookup.mobileFlags	= elem.dataset.mobileFlags;
+			lookup.mobileTitle	= elem.dataset.mobileTitle;
+			return lookup;
+		});
+
+		return [ ...dataList, ...loginList ];
 	}
 
-	async navigateTo( data = { } ) {
+	async navigateTo( data = { } ) {
 		if( Object.keys( data ).length ) {
 			this.data.get( this.nodes[ data.id ] ).events[ 'touchstart' ][ 0 ].call( this, data.event );
 		}
@@ -555,6 +584,45 @@ class topSection extends mix( Component ).with( Swipe ) {
 					position:	'beforeend'
 				}
 			});
+		}
+	}
+
+	async onUserLogin( user ) {
+		this.log('login data: ', user);
+
+		this.fire( 'startNewSession.server', user );
+		this.nodes[ 'div.login' ].style.display = 'none';
+		this.nodes[ 'div.registerName' ].style.display = 'none';
+		this.nodes[ 'div.logout' ].style.display = 'flex';
+		this.nodes[ 'div.logout' ].setAttribute( 'title', `${ user.__username } ausloggen...` );
+	}
+
+	async onSessionLogin( user ) {
+		try {
+			let response = await this.send({
+				type:		'verifySession',
+				payload:	user
+			});
+
+			if( response.data.verified ) {
+				this.onUserLogin( user );
+			}
+		} catch( ex ) {
+			/* unhandled exception so far */
+		}
+	}
+
+	onModuleDestruction( module ) {
+		if( module.id === 'registerEmailDialog' ) {
+			this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+		}
+
+		if( module.id === 'loginDialog' ) {
+			this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+		}
+
+		if( module.id === 'registerDialog' ) {
+			this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
 		}
 	}
 }

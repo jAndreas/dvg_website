@@ -39,7 +39,7 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 			}
 		});
 
-		this.on( 'slideDownGesture.topSection', this.onSiblingSlideDownGesture, this );
+		this.on( 'slideDownArrayClicked.topSection', this.slideIntoView, this );
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
@@ -161,10 +161,6 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 		}
 	}
 
-	onSiblingSlideDownGesture() {
-		this.fire( 'slideDownTo.appEvents', this.nodes.root );
-	}
-
 	getTimePeriod( timestamp ) {
 		let diff 			= Date.now() - timestamp,
 			diffSeconds		= Math.round( diff / 1000 ),
@@ -190,6 +186,10 @@ class videoSection extends mix( Component ).with( ServerConnection, Swipe ) {
 		} else {
 			return diffSeconds + ' Sekunde' + (diffSeconds > 1 ? 'n' : '');
 		}
+	}
+
+	slideIntoView() {
+		this.fire( 'slideDownTo.appEvents', this.nodes.root );
 	}
 }
 /****************************************** videoSection End ******************************************/

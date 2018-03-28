@@ -48,15 +48,12 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 			'input.emailAddress':emailAddress,
 			'input.password':password,
 			'input.login':loginBtn,
-			'span.loginInfo':infoText,
-			'input.okClose':closeBtn,
-			'section.page1':page1,
-			'section.page2':page2 } = this.nodes;
+			'section.page1':page1 } = this.nodes;
 
 		this.createModalOverlay({
 			at:		page1,
 			opts:	{
-				spinner: false
+				spinner: true
 			}
 		});
 
@@ -69,20 +66,16 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 					emailAddress:	emailAddress.value,
 					pass:			password.value
 				}
-			});
+			})
 
-			infoText.innerHTML = response.msg;
+			this.fire( 'userLogin.server', response.data );
 
-			this.addNodeEventOnce( closeBtn, 'click', () => {
-				this.destroy();
-				return false;
-			});
-
+			this.modalOverlay.spinner.cleanup( 400 );
+			await this.modalOverlay.log( response.msg, 2000 );
 			this.modalOverlay.cleanup();
-
-			page1.style.display = 'none';
-			page2.style.display = 'flex';
+			this.destroy();
 		} catch( ex ) {
+			this.modalOverlay.spinner.cleanup( 400 );
 			await this.modalOverlay.log( ex, 4000 );
 			await this.modalOverlay.fulfill();
 			this.addNodeEvent( 'form.loginData', 'submit', this.onSubmit );

@@ -62,7 +62,6 @@ div#topSection {
 			bottom:0;
 			z-index:2;
 			background-color:transparent;
-			mix-blend-mode:lighten;
 
 			user-select:none;
 			-moz-user-select:none;
@@ -93,7 +92,7 @@ div#topSection {
 				flex-grow:1;
 
 				> a.home {
-					background-image:url(../images/dvg.jpg);
+					background-image:url(../images/dvg.png);
 					background-size:100% 100%;
 					width:33vh;
 					height:33vh;
@@ -228,8 +227,8 @@ div#topSection {
 					overflow:hidden;
 
 					white-space:nowrap;
-					color:rgba(0, 0, 0, 1);
-					text-shadow:0px 0px 14px white;
+					color:rgba(0,0,0,0.8);
+					text-shadow:0px 0px 14px rgba(255,255,255,0.7);
 
 					cursor:pointer;
 
@@ -336,7 +335,7 @@ div#topSection {
 		left:4vw;
 		top:2vh;
 		z-index:1000;
-		display:flex;
+		display:none;
 		flex-direction:column;
 		justify-content:flex-start;
 		filter:sepia(0.4);
@@ -396,6 +395,39 @@ div#topSection {
 
 			&:after {
 				content:'👤 Login';
+				font-size:14px;
+				font-weight:bold;
+				margin:auto;
+				color:rgba(243, 240, 255, 0.9);
+				text-shadow:0px 0px 15px white;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					font-size:14px;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					font-size:4vw;
+				}
+			}
+		}
+
+		> div.logout {
+			background-color:rgba(20, 20, 40, 0.9);
+			box-sizing:border-box;
+			display:none;
+			border:1px solid rgba(245, 245, 245, 0.8);
+			cursor:pointer;
+			border-radius:4px;
+			padding:4px;
+
+			&:hover {
+				border:1px solid rgba(205, 215, 255, 0.9);
+				background-color:rgba(20, 20, 60, 0.9);
+				filter:brightness(1.4);
+			}
+
+			&:after {
+				content:'👤 Logout';
 				font-size:14px;
 				font-weight:bold;
 				margin:auto;
