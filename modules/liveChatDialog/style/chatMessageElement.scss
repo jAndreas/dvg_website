@@ -1,0 +1,17 @@
+div.chatMessageElement {
+	margin:4px;
+	display:flex;
+	flex-direction:column;
+	flex-wrap:nowrap;
+	flex-shrink:0;
+	flex-grow:0;
+
+	> div.chatUserName {
+		filter:brightness(2);
+		margin-right:4px;
+	}
+
+	> div.chatUserContent {
+
+	}
+}

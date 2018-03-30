@@ -23,6 +23,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 		this.on( 'setTitle.appEvents', this.setTitle, this );
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
+		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
 		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
 		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
@@ -45,13 +46,9 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			}
 		});
 
+		this.sessionLoginData = localStorage.getItem( 'dvgLogin' );
+
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
-
-		let loginData = localStorage.getItem( 'dvgLogin' );
-
-		if( loginData ) {
-			this.fire( 'sessionLogin.appEvents', JSON.parse( loginData ) );
-		}
 	}
 
 	onUserLogin( user ) {
@@ -60,6 +57,12 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 
 	onUserLogout( user ) {
 		localStorage.removeItem( 'dvgLogin' );
+	}
+
+	onReconnect() {
+		if( this.sessionLoginData ) {
+			this.fire( 'sessionLogin.appEvents', JSON.parse( this.sessionLoginData ) );
+		}
 	}
 
 	waitForBackgroundImageLoaded() {
@@ -106,9 +109,7 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			dispatchMailDialog.start();
 		} else {
 			// contains also videoSection
-			let topSectionLoadingPromise		= import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
-
-			let topSection = await topSectionLoadingPromise;
+			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
 			await topSection.start();
 
 			if( hash.has( 'watch' ) ) {

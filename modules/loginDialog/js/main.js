@@ -8,10 +8,8 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-
-
 /*****************************************************************************************************
- *  "description here"
+ *  Logs in a user and dispatches session data
  *****************************************************************************************************/
 class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {

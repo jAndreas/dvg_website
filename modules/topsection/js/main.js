@@ -29,7 +29,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		super( options );
 
 		this.runtimeDependencies.push(
-			this.fire( 'waitforHLSSupport.appEvents' )
+			this.fire( 'waitforHLSSupport.appEvents' ),
+			this.fire( 'waitForConnection.server' )
 		);
 
 		extend( this ).with({
@@ -61,12 +62,15 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
 		this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
 		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
+		this.addNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
 		this.on( 'userLogin.server', this.onUserLogin, this );
 		this.on( 'sessionLogin.appEvents', this.onSessionLogin, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
+
+		this.fire( 'checkSession.appEvents' );
 
 		return this;
 	}
@@ -118,7 +122,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			}
 		}
 
-		this.nodes[ 'div.userOptions' ].style.display = 'block';
+		//this.nodes[ 'div.userOptions' ].style.display = 'block';
 	}
 
 	async offViewport() {
@@ -149,7 +153,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			this.stopVideoPlayback();
 		}
 
-		this.nodes[ 'div.userOptions' ].style.display = 'none';
+		//this.nodes[ 'div.userOptions' ].style.display = 'none';
 	}
 
 	// referenced via html markup, interpretated and linked by cacheNodes
@@ -167,7 +171,6 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	async onRegisterName( event ) {
 		event.stopPropagation();
 		event.preventDefault();
-
 		this.removeNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
@@ -239,6 +242,26 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		}
 
 		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
+	}
+
+	async startLiveChat( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.removeNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
+
+		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
+			position		= Object.create( null );
+
+			position.top	= clRect.bottom+2;
+			position.left	= clRect.left;
+
+		let liveChatDialog	= await import( /* webpackChunkName: "liveChatDialog" */  'liveChatDialog/js/main.js'  );
+
+		await liveChatDialog.start({
+			position:	position,
+			center:		this.mobileSafariMode
+		});
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -603,26 +626,29 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				type:		'verifySession',
 				payload:	user
 			});
-
+			this.log('response.data.verified: ', response.data.verified);
 			if( response.data.verified ) {
 				this.onUserLogin( user );
 			}
 		} catch( ex ) {
-			/* unhandled exception so far */
+			this.log( 'onSessionLogin: ', ex );
 		}
 	}
 
 	onModuleDestruction( module ) {
-		if( module.id === 'registerEmailDialog' ) {
-			this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
-		}
-
-		if( module.id === 'loginDialog' ) {
-			this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
-		}
-
-		if( module.id === 'registerDialog' ) {
-			this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+		switch( module.id ) {
+			case 'registerEmailDialog':
+				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+				break;
+			case 'loginDialog':
+				this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+				break;
+			case 'registerDialog':
+				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+				break;
+			case 'liveChatDialog':
+				this.addNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
+				break;
 		}
 	}
 }
@@ -634,7 +660,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ transforms, style, scrollUpStyle, quickNavStyle ].forEach( style => style.use() );
 
-	let topSectionLoading		= new topSection( ...args ),
+	let topSectionLoading		= await new topSection( ...args ),
 		videoSectionLoading		= videoSection.start();
 
 	return Promise.all([ topSectionLoading, videoSectionLoading ]);
