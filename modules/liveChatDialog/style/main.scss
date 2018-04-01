@@ -213,11 +213,13 @@ div.liveChatDialog {
 		width:12vw;
 		background:linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,200,0.6));
 		transition:width 100ms linear;
+		overflow-x:hidden;
+		overflow-y:auto;
 
 		display:flex;
 		flex-direction:column;
 		justify-content:flex-start;
-		align-items:flex-start;
+		align-items:stretch;
 
 		@media screen and (max-width:$iPhone6Landscape) {
 			display:none;

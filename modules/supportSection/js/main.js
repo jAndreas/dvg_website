@@ -92,6 +92,15 @@ class supportSection extends Component {
 
 			this.video.node.addEventListener( 'timeupdate', this._boundCheckTime );
 		}
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id,
+				ref:		this.id
+			}
+		});
+
+		super.inViewport && super.inViewport( ...arguments );
 	}
 
 	async offViewport() {
@@ -102,6 +111,8 @@ class supportSection extends Component {
 
 		this.video && this.video.node.removeEventListener( 'timeupdate', this._boundCheckTime );
 		this.video && this.video.node.removeEventListener( 'play', this._boundPlayHandler );
+
+		super.offViewport && super.offViewport( ...arguments );
 	}
 
 	play() {

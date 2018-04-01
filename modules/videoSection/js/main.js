@@ -79,6 +79,12 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		super.inViewport && super.inViewport( ...arguments );
 
 		this.fire( 'aboutMeSection.launchModule' );
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id,
+				ref:		this.id
+			}
+		});
 	}
 
 	async offViewport() {

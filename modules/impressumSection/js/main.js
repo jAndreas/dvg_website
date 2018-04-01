@@ -32,6 +32,21 @@ class impressumSection extends Component {
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
 	}
+
+	async inViewport() {
+		super.inViewport && super.inViewport( ...arguments );
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id,
+				ref:		this.id
+			}
+		});
+	}
+
+	async offViewport() {
+		super.offViewport && super.offViewport( ...arguments );
+	}
 }
 /****************************************** impressumSection End ******************************************/
 

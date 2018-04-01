@@ -44,6 +44,8 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		this.addNodeEvent( 'div.expand', 'click touchstart', this.showFullDescription );
 		this.addNodeEvent( 'div.donate', 'click touchstart', this.onDonateClick );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
+		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusin', this.onDonateAmountFocus );
+		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
 		this.addNodeEvent( 'input.donateNow', 'click touchstart', this.onDonateNowClick );
 
 		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
@@ -138,8 +140,13 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 				payload:	{
 					id:	this.videoData.id
 				}
-			}, {
-				simplex:	true
+			});
+
+			this.fire( 'updateHash.appEvents', {
+				data:	{
+					action:		this.id
+				},
+				extra:		this.videoData.id
 			});
 		} catch( ex ) {
 			console.log( ex );
@@ -171,6 +178,23 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 
 	onRangeSlide() {
 		this.nodes[ 'input.donateAmount' ].value = this.nodes[ 'input.donateRange' ].value + '€';
+	}
+
+	onDonateAmountFocus() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'donation'
+			}
+		});
+	}
+
+	onDonateAmountBlur() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id
+			},
+			extra:		this.videoData.id
+		});
 	}
 
 	onDonateNowClick() {

@@ -214,12 +214,11 @@ div.videoPlayerDialog {
 				border-radius:4px;
 				width:28vh;
 				background-size:100% 100%;
-				border:1px solid gray;
+				border:1px solid rgba(20,20,80,1);
 				height:3vh;
-				opacity:0.7;
 
 				&:hover {
-					opacity:1;
+					filter:brightness(1.4) contrast(1.6);
 				}
 			}
 

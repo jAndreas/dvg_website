@@ -64,6 +64,14 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 		[ sectionOne, sectionThree ].forEach( e => e.classList.remove( 'hiddenLeft' ) );
 
 		this.fire( 'supportSection.launchModule' );
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id,
+				ref:		this.id
+			}
+		});
+
+		super.inViewport && super.inViewport( ...arguments );
 	}
 
 	async offViewport() {
@@ -77,6 +85,8 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 
 		[ topTitle, sectionTwo ].forEach( e => e.classList.add( 'hiddenRight' ) );
 		[ sectionOne, sectionThree ].forEach( e => e.classList.add( 'hiddenLeft' ) );
+
+		super.offViewport && super.offViewport( ...arguments );
 	}
 
 	async destroy() {

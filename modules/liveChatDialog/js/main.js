@@ -40,6 +40,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.checkVideoPlayerStatus();
 
 		this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
+		this.addNodeEvent( 'textarea.inputChatMessage', 'focusin', this.onInputChatFocus );
+		this.addNodeEvent( 'textarea.inputChatMessage', 'focusout', this.onInputChatBlur );
 		this.addNodeEvent( 'input.sendChatMessage', win.innerWidth <= 768 ? 'touchstart' : 'click', this.sendMessage );
 		this.addNodeEvent( 'div.toggleUserList', win.innerWidth <= 768 ? 'touchstart' : 'click', this.toggleUserList );
 
@@ -47,6 +49,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.recv( 'newUserLogin', this.newUserLogin.bind( this ) );
 		this.recv( 'userLogout', this.userLogout.bind( this ) );
 		this.recv( 'userConnectionUpdate', this.userConnectionUpdate.bind( this ) );
+		this.recv( 'userActionUpdate', this.userActionUpdate.bind( this ) );
 
 		this.on( 'startNewSession.server', this.onNewSession.bind( this ) );
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
@@ -56,7 +59,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		this.userList	= {
 			add:		this.addUserToUserList.bind( this ),
-			remove:		this.removeUserFromUserList.bind( this )
+			remove:		this.removeUserFromUserList.bind( this ),
+			update:		this.updateUserFromUserList.bind( this )
 		};
 
 		return this;
@@ -69,9 +73,27 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		super.destroy && super.destroy();
 	}
 
-	onTyping( event ) {
-		//this.nodes[ 'div.charactersLeft' ].textContent = `${ } Zeichen übrig.`;
+	onDialogModeChange() {
+		/* noop */
+	}
 
+	onInputChatFocus() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id
+			}
+		});
+	}
+
+	onInputChatBlur() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'',
+			}
+		});
+	}
+
+	onTyping( event ) {
 		if( event.which === VK.RETURN && !event.shiftKey ) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -189,8 +211,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			}
 
 			if( Array.isArray( result.data.loggedInUsers ) ) {
-				for( let name of result.data.loggedInUsers ) {
-					this.userList.add( name );
+				for( let user of result.data.loggedInUsers ) {
+					this.userList.add( user.name, user.action );
 				}
 			}
 
@@ -242,7 +264,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	}
 
 	async newUserLogin( data ) {
-		this.userList.add( data.username );
+		this.userList.add( data.username, 'Hat sich gerade angemeldet...' );
 
 		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
@@ -251,6 +273,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	async userConnectionUpdate( data ) {
 		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+	}
+
+	async userActionUpdate( data ) {
+		this.userList.update( data );
 	}
 
 	async userLogout( data ) {
@@ -297,11 +323,12 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.timeOffsetTimer = win.setTimeout( this.updateTimeOffsets.bind( this ), (Math.random()*60) * 1000 );
 	}
 
-	addUserToUserList( name ) {
+	addUserToUserList( name, action ) {
 		this.removeUserFromUserList( name );
 
 		let nodeHash = this.render({ htmlData:	userInListMarkup, standalone: true }).with({
-			name:	name
+			name:		name,
+			status:		action
 		}).at({
 			node:		'div.userListSection',
 			position:	'beforeend'
@@ -313,6 +340,16 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		if( match ) {
 			match.remove();
+		}
+	}
+
+	updateUserFromUserList( updateData ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ updateData.from }` );
+
+		if( match ) {
+			if( updateData.action ) {
+				match.querySelector( 'div.status' ).textContent = updateData.action;
+			}
 		}
 	}
 

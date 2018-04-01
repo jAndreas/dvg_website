@@ -123,7 +123,14 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			}
 		}
 
-		//this.nodes[ 'div.userOptions' ].style.display = 'block';
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id,
+				ref:		this.id
+			}
+		});
+
+		super.inViewport && super.inViewport( ...arguments );
 	}
 
 	async offViewport() {
@@ -154,7 +161,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			this.stopVideoPlayback();
 		}
 
-		//this.nodes[ 'div.userOptions' ].style.display = 'none';
+		super.offViewport && super.offViewport( ...arguments );
 	}
 
 	// referenced via html markup, interpretated and linked by cacheNodes
@@ -619,6 +626,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.nodes[ 'div.registerName' ].style.display = 'none';
 		this.nodes[ 'div.logout' ].style.display = 'flex';
 		this.nodes[ 'div.logout' ].setAttribute( 'title', `${ user.__username } ausloggen...` );
+
+		this.inViewport();
 	}
 
 	async onSessionLogin( user ) {
@@ -627,7 +636,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				type:		'verifySession',
 				payload:	user
 			});
-			this.log('response.data.verified: ', response.data.verified);
+
 			if( response.data.verified ) {
 				this.onUserLogin( user );
 			}

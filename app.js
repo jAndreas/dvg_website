@@ -3,6 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc } from 'barfoos2.0/domkit.js';
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
@@ -10,7 +11,7 @@ import BrowserKit from 'barfoos2.0/browserkit.js';
 const	Browser		= new BrowserKit(),
 		bgImagePath	= '/images/background.jpg';
 
-class DVGWebsite extends Composition( Mediator, LogTools ) {
+class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	constructor() {
 		super( ...arguments );
 		this.init();
@@ -29,7 +30,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
 		this.once( 'mobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
 		// dynamic routing is not enabled for now.
-		//this.on( 'hashChange.appEvents', this.routeByHash, this );
+		this.on( 'hashChange.appEvents', this.navigateByHash, this );
+		this.on( 'updateHash.appEvents', this.updateHash, this );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
@@ -46,7 +48,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 			}
 		});
 
-		this.sessionLoginData = localStorage.getItem( 'dvgLogin' );
+		this.sessionLoginData	= localStorage.getItem( 'dvgLogin' );
+		this.extraInfo			= new Map();
 
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
 	}
@@ -78,7 +81,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	onModuleLaunch( module ) {
 		switch( module.id ) {
 			case 'videoPlayerDialog':
-				doc.location.hash = `watch=${ module.state.videoData.internalId }`;
+				this.currentHash.set( 'watch', module.state.videoData.internalId );
+				doc.location.hash = this.currentHash.toString();
 				break;
 		}
 	}
@@ -86,12 +90,16 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	onModuleDestruction( module ) {
 		switch( module.id ) {
 			case 'videoPlayerDialog':
-				doc.location.hash = '';
+				this.currentHash.delete( 'watch' );
+				this.currentHash.delete( 'action' );
+				doc.location.hash = this.currentHash.toString();
 				break;
 		}
 	}
 
 	async routeByHash( hash ) {
+		this.currentHash = hash;
+
 		if( hash.has( 'confirmSubscription' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
 			confirmSubDialog.start({
@@ -118,6 +126,32 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
 			}
 		}
+	}
+
+	async navigateByHash( hash ) {
+		this.currentHash = hash;
+
+		if( hash.has( 'action' ) || hash.has( 'ref' ) ) {
+			this.send({
+				type:		'userAction',
+				payload:	{
+					id:			hash.get( 'action' ) || hash.get( 'ref' ) || '',
+					extra:		this.extraInfo.get( hash.get( 'action' ) ) || this.extraInfo.get( hash.get( 'ref' ) ) || ''
+				}
+			}, {
+				simplex:	true
+			});
+		}
+	}
+
+	async updateHash( hashUpdate = { data: { }, extra: '' } ) {
+		for( let [ key, value ] of Object.entries( hashUpdate.data ) ) {
+			this.currentHash.set( key, value );
+			this.extraInfo.set( value, hashUpdate.extra );
+		}
+
+		location.hash = '';
+		location.hash = this.currentHash.toString();
 	}
 
 	async launchAboutMeSection() {
