@@ -31,11 +31,11 @@
 		"node-sass": "^4.8.3",
 		"raw-loader": "^0.5.1",
 		"sass-loader": "^6.0.6",
-		"socket.io": "^2.0.4",
+		"socket.io": "^2.1.0",
 		"style-loader": "^0.20.3",
 		"uglify-js": "^3.3.16",
 		"url-loader": "^1.0.1",
-		"webpack": "^4.2.0",
+		"webpack": "^4.4.1",
 		"webpack-cli": "^2.0.13",
 		"webpack-sources": "^1.0.1"
 	},

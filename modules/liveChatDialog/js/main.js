@@ -2,13 +2,16 @@
 
 import { Overlay, Dialog, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
-import { extend, mix, intToRGB, hashCode } from 'barfoos2.0/toolkit.js';
+import { extend, mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import chatMessageElementMarkup from '../markup/chatMessageElement.html';
+import userInListMarkup from '../markup/userInListElement.html';
 import style from '../style/main.scss';
 import chatMessageElementStyle from '../style/chatMessageElement.scss';
+import userInListStyle from '../style/userInListElement.scss';
 
 
 /*****************************************************************************************************
@@ -34,19 +37,36 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	async init() {
 		await super.init();
 
+		this.checkVideoPlayerStatus();
+
 		this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
-		this.addNodeEvent( 'input.sendChatMessage', 'click touchstart', this.sendMessage );
+		this.addNodeEvent( 'input.sendChatMessage', win.innerWidth <= 768 ? 'touchstart' : 'click', this.sendMessage );
+		this.addNodeEvent( 'div.toggleUserList', win.innerWidth <= 768 ? 'touchstart' : 'click', this.toggleUserList );
 
 		this.recv( 'dispatchedChatMessage', this.receivedDispatchedChatMessage.bind( this ) );
+		this.recv( 'newUserLogin', this.newUserLogin.bind( this ) );
+		this.recv( 'userLogout', this.userLogout.bind( this ) );
+		this.recv( 'userConnectionUpdate', this.userConnectionUpdate.bind( this ) );
+
+		this.on( 'startNewSession.server', this.onNewSession.bind( this ) );
+		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
+		this.on( 'userLogout.server', this.onSelfLogout.bind( this ) );
 
 		this.getInitialChatData();
+
+		this.userList	= {
+			add:		this.addUserToUserList.bind( this ),
+			remove:		this.removeUserFromUserList.bind( this )
+		};
 
 		return this;
 	}
 
 	async destroy() {
+		win.clearTimeout( this.timeOffsetTimer );
+		[ style, chatMessageElementStyle, userInListStyle ].forEach( s => s.unuse() );
+
 		super.destroy && super.destroy();
-		[ style, chatMessageElementStyle ].forEach( s => s.unuse() );
 	}
 
 	onTyping( event ) {
@@ -59,19 +79,132 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		}
 	}
 
+	async checkVideoPlayerStatus() {
+		let videoPlayerDialog = await this.fire( 'getModuleState.core', 'videoPlayerDialog' );
+
+		if( videoPlayerDialog ) {
+			this.setLiveChatMode();
+		}
+
+		this.on( 'moduleLaunch.appEvents', module => {
+			if( module.id === 'videoPlayerDialog' ) {
+				this.setLiveChatMode();
+			}
+		});
+
+		this.on( 'moduleDestruction.appEvents', module => {
+			if( module.id === 'videoPlayerDialog' ) {
+				this.removeLiveChatMode();
+			}
+		});
+	}
+
+	async setLiveChatMode() {
+		this._liveChatMode = true;
+
+		this.nodes.dialogRoot.style.right		= '';
+		this.nodes.dialogRoot.style.left		= '';
+		this.nodes.dialogRoot.style.top			= '';
+		this.nodes.dialogRoot.style.alignSelf	= '';
+
+
+		let rect = await this.fire( `getModuleDimensions.videoPlayerDialog` );
+
+		if( win.innerWidth < 450 ) {
+			this.nodes.root.style.height = '42vh';
+			this.nodes.dialogRoot.style.top = rect.bottom + 'px';
+			this.nodes.dialogRoot.style.left = rect.left + 'px';
+			this.nodes.root.style.width = rect.width + 'px';
+		} else {
+			this.nodes.dialogRoot.classList.add( 'videoPlayerMode' );
+			this.nodes.root.style.height = `${ rect.height }px`;
+
+			if(!this.nodes.root.classList.contains( 'compact' ) ) {
+				this.toggleUserList();
+			}
+		}
+	}
+
+	removeLiveChatMode() {
+		this._liveChatMode = false;
+		this.nodes.dialogRoot.classList.remove( 'videoPlayerMode' );
+		this.nodes.root.style.height = '';
+
+		if( this.nodes.root.classList.contains( 'compact' ) ) {
+			this.toggleUserList();
+		}
+
+		this.centerOverlay();
+	}
+
+	toggleUserList() {
+		this.nodes.root.classList.toggle( 'compact' );
+	}
+
+	async onNewSession( user ) {
+		this.log('new session: ', user);
+
+		this.username = user.__username;
+		this.nodes[ 'div.username' ].textContent = this.username + ':';
+
+		await this.getInitialChatData();
+
+		this.putLine({
+			from:				'Client',
+			content:			`Verbindung hergestellt`,
+			serverNotification:	true
+		});
+	}
+
+	onDisconnect( reason ) {
+		this.putLine({
+			from:				'Client',
+			content:			`Verbindung unterbrochen: ${ reason }`,
+			serverNotification:	true
+		});
+
+		this.username = '';
+		this.nodes[ 'div.username' ].textContent = '';
+		this.nodes[ 'div.userListSection' ].innerHTML = '';
+		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = '';
+		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = '';
+	}
+
+	onSelfLogout( session ) {
+		this.onDisconnect( 'Logout' );
+	}
+
 	async getInitialChatData() {
 		try {
 			let result = await this.send({
 				type:		'getInitialChatData'
 			});
 
+			this.nodes[ 'div.chatMessages' ].innerHTML = '';
+
 			if( Array.isArray( result.data.history ) ) {
 				for( let entry of result.data.history ) {
-					this.putLine( entry.from, entry.content );
+					this.putLine( entry );
 				}
 			}
+
+			if( Array.isArray( result.data.loggedInUsers ) ) {
+				for( let name of result.data.loggedInUsers ) {
+					this.userList.add( name );
+				}
+			}
+
+			this.username = result.data.username || 'anonym';
+
+			this.nodes[ 'div.username' ].textContent = this.username + ':';
+			this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = result.data.totalUsersCount;
+			this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = result.data.loggedInUsersCount;
 		} catch( ex ) {
-			this.log( 'getInitialChatData: ', ex.message );
+			this.putLine({
+				from:				'Server',
+				content:			ex.message,
+				serverNotification:	true
+			});
 		}
 	}
 
@@ -91,29 +224,57 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 					}
 				});
 
-				console.log('result: ', result);
-				if( result.data.serverMessage ) {
-					this.putLine( 'Server', result.data.serverMessage );
-
-				}
-
 				this.nodes[ 'textarea.inputChatMessage' ].value = '';
 			} else {
 				throw new Error( 'Du hast wohl nicht viel zu sagen...?' );
 			}
 		} catch( ex ) {
-			this.putLine( 'Server', ex.message, true );
+			this.putLine({
+				from:				'Server',
+				content:			ex.message,
+				serverNotification:	true
+			});
 		}
 	}
 
 	async receivedDispatchedChatMessage( data ) {
-		this.putLine( data.from, data.content );
+		this.putLine( data );
 	}
 
-	putLine( from, msg, highlight ) {
+	async newUserLogin( data ) {
+		this.userList.add( data.username );
+
+		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
+		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+	}
+
+	async userConnectionUpdate( data ) {
+		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
+		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+	}
+
+	async userLogout( data ) {
+		this.userList.remove( data.username );
+
+		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
+		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+	}
+
+	putLine({ from, content, time, type, serverNotification }) {
+		let chatMessageElements = this.nodes[ 'div.chatMessages' ].children;
+
+		if( chatMessageElements.length > 50 ) {
+			chatMessageElements[ 0 ].remove();
+		}
+
+		this.updateTimeOffsets();
+
 		let nodeHash = this.render({ htmlData:	chatMessageElementMarkup, standalone: true }).with({
-			from:		this.paint( from + ': ' ),
-			content:	msg
+			time:				time,
+			timeDiff:			time ? `[Vor ${ getTimePeriod( time ) }]` : '',
+			from:				this.paint( from + ': ' ),
+			content:			content,
+			extraClasses:		serverNotification ? 'serverNotification' : ''
 		}).at({
 			node:		'div.chatMessages',
 			position:	'beforeend'
@@ -122,9 +283,42 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.scrollToEnd();
 	}
 
+	updateTimeOffsets() {
+		if( this.timeOffsetTimer ) {
+			win.clearTimeout( this.timeOffsetTimer );
+			this.timeOffsetTimer = null;
+		}
+
+		Array.from( this.nodes[ 'div.chatMessages' ].querySelectorAll( 'div.timeDiff' ) ).forEach( timeDiffNode => {
+			let timestamp = timeDiffNode.dataset.timestamp;
+			timeDiffNode.textContent = timestamp ? `[Vor ${ getTimePeriod( timestamp ) }]` : '';
+		});
+
+		this.timeOffsetTimer = win.setTimeout( this.updateTimeOffsets.bind( this ), (Math.random()*60) * 1000 );
+	}
+
+	addUserToUserList( name ) {
+		this.removeUserFromUserList( name );
+
+		let nodeHash = this.render({ htmlData:	userInListMarkup, standalone: true }).with({
+			name:	name
+		}).at({
+			node:		'div.userListSection',
+			position:	'beforeend'
+		});
+	}
+
+	removeUserFromUserList( name ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name }` );
+
+		if( match ) {
+			match.remove();
+		}
+	}
+
 	paint( input ) {
 		let hashColor = intToRGB( hashCode( input ) );
-		return `<div class="chatUserNamePainted" style="color: #${ hashColor }">${ input }</div>`;
+		return `<div class="chatUserNamePainted" title="${ input }" style="color: #${ hashColor }">${ input }</div>`;
 	}
 
 	scrollToEnd() {
@@ -134,7 +328,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 /****************************************** liveChatDialog End ******************************************/
 
 async function start( ...args ) {
-	[ style, chatMessageElementStyle ].forEach( style => style.use() );
+	[ style, chatMessageElementStyle, userInListStyle ].forEach( style => style.use() );
 
 	return await new liveChatDialog( ...args );
 }

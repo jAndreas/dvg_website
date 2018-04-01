@@ -17,10 +17,13 @@ import style from '../style/main.scss';
 class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			tmpl:				html,
-			renderData:			extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
-			centerToViewport:	true,
-			topMost:			true
+			tmpl:					html,
+			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
+			centerToViewport:		true,
+			topMost:				true,
+			avoidOutsideClickClose:	true,
+			hoverOverlay:			true,
+			title:					input.videoData.videoTitle
 		}).and( input );
 
 		super( options );
@@ -35,10 +38,9 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	async init() {
 		await super.init();
 
-		this._boundMediaChange = this.mediaChanged.bind( this );
-
-		this.setupMediaQueryWatchers();
 		this.initVideo();
+		this.checkLiveChatStatus();
+
 		this.addNodeEvent( 'div.expand', 'click touchstart', this.showFullDescription );
 		this.addNodeEvent( 'div.donate', 'click touchstart', this.onDonateClick );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
@@ -55,7 +57,6 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		this.video && this.video.destroy();
 		this.video = null;
 
-		this.destroyMediaQueryWatchers();
 		this.modalOverlay && this.modalOverlay.cleanup();
 
 		super.destroy && super.destroy();
@@ -63,28 +64,50 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	setupMediaQueryWatchers() {
-		extend( this ).with({
-			res360:			win.matchMedia( '(min-width:415px) and (min-height:370px)' ),
-			res480:			win.matchMedia( '(min-width:736px) and (min-height:490px)' ),
-			res480wide:		win.matchMedia( '(min-width:870px)' ),
-			res720:			win.matchMedia( '(min-width:1300px) and (min-height:900px)' )
-		});
 
-		[ this.res360, this.res480, this.res480wide, this.res720 ].forEach( res => {
-			res.addListener( this._boundMediaChange );
-		});
-	}
-
-	destroyMediaQueryWatchers() {
-		[ this.res360, this.res480, this.res480wide, this.res720 ].forEach( res => {
-			res.removeListener( this._boundMediaChange );
-		});
-	}
 
 	mediaChanged() {
+		super.mediaChanged && super.mediaChanged( ...arguments );
+
 		this.scrollContainerIntoView();
-		win.setTimeout( this.centerOverlay.bind( this ), 100 );
+
+		if(!this._liveChatMode ) {
+			win.setTimeout( this.centerOverlay.bind( this ), 100 );
+		}
+	}
+
+	async checkLiveChatStatus() {
+		let liveChatDialog = await this.fire( 'getModuleState.core', 'liveChatDialog' );
+
+		if( liveChatDialog ) {
+			this.setLiveChatMode();
+		}
+
+		this.on( 'moduleLaunch.appEvents', module => {
+			if( module.id === 'liveChatDialog' ) {
+				this.setLiveChatMode();
+			}
+		});
+
+		this.on( 'moduleDestruction.appEvents', module => {
+			if( module.id === 'liveChatDialog' ) {
+				this.removeLiveChatMode();
+			}
+		});
+	}
+
+	setLiveChatMode() {
+		this._liveChatMode = true;
+		this.nodes.dialogRoot.style.left		= '';
+		this.nodes.dialogRoot.style.top			= '';
+		this.nodes.dialogRoot.style.alignSelf	= '';
+		this.nodes.dialogRoot.classList.add( 'liveChatMode' );
+	}
+
+	removeLiveChatMode() {
+		this._liveChatMode = false;
+		this.nodes.dialogRoot.classList.remove( 'liveChatMode' );
+		this.centerOverlay();
 	}
 
 	async initVideo() {
@@ -135,7 +158,10 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		this.removeNodes( 'div.expand', true );
 		this.nodes[ 'span.description' ].classList.remove( 'folded' );
 		this.scrollElementIntoView( 'span.description' );
-		this.centerOverlay();
+
+		if(!this._liveChatMode ) {
+			this.centerOverlay();
+		}
 	}
 
 	onDonateClick() {

@@ -1,17 +1,99 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
 div.chatMessageElement {
-	margin:4px;
+	padding-top:5px;
+	padding-bottom:5px;
+	margin-bottom:4px;
 	display:flex;
-	flex-direction:column;
+	flex-direction:row;
 	flex-wrap:nowrap;
 	flex-shrink:0;
 	flex-grow:0;
+	align-items:center;
+	width:100%;
+	border-bottom:1px dotted rgba(255,255,255,0.2);
 
-	> div.chatUserName {
-		filter:brightness(2);
+	&.serverNotification {
+		font-size:1.2vh;
+		font-weight:bold;
+		color:white;
+		text-shadow:none;
+		font-family:monospace;
+		background-color:rgba(0,0,0,0.5);
+		border:1px solid rgba(200,200,200,0.5);
+		padding:2px;
+		filter:sepia(1);
+		opacity:0.7;
+
+		@media screen and (max-width:$iPhone6Landscape) {
+			font-size:1.7vw;
+			filter:none;
+			background-color:black;
+		}
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			font-size:1.7vh;
+			filter:none;
+			background-color:black;
+		}
+	}
+
+	&:last-child:not(.serverNotification) {
+		border-bottom:none;
+	}
+
+	> div.chatUser {
+		filter:brightness(2.2);
 		margin-right:4px;
+		opacity:0.7;
+		width:25%;
+
+		@media screen and (max-width:$iPhone6Landscape) {
+			filter:brightness(4.2);
+			opacity:1;
+		}
+
+		> div.shortInfo {
+			> div.timeDiff {
+				font-size:1vh;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					font-size:1.3vw;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					font-size:1.5vh;
+				}
+			}
+
+			> div.name {
+				font-weight:bold;
+				font-size:1.4vh;
+
+				> div.chatUserNamePainted {
+					overflow:hidden;
+					text-overflow:ellipsis;
+					white-space:nowrap;
+				}
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					font-size:1.5vw;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					font-size:1.5vh;
+				}
+			}
+
+			> div.status {
+
+			}
+		}
 	}
 
 	> div.chatUserContent {
-
+		color:white;
+		font-weight:bold;
+		width:75%;
 	}
 }

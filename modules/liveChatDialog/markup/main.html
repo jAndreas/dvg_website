@@ -1,12 +1,20 @@
-<div class="liveChatDialog">
-	<div class="OutputSection">
-		<div class="chatMessages">
+<div class="liveChatDialog stopPropagation">
+	<div class="chatSection">
+		<div class="OutputSection">
+			<div class="chatMessages">
+			</div>
+		</div>
+		<div class="commandSection">
+			<div class="username"></div>
+			<div class="usersOnlineTotal">online:<div class="usersOnlineTotalNumber"></div></div>
+			<div class="usersOnlineLoggedIn">angemeldet:<div class="usersOnlineLoggedInNumber"></div></div>
+			<div class="toggleUserList" title="Benutzerliste ein-/ausblenden"></div>
+		</div>
+		<div class="interactionSection noPropagation">
+			<textarea class="inputChatMessage" type="text" maxlength="128"></textarea>
+			<input class="sendChatMessage bfButton" type="button" value="Senden"/>
 		</div>
 	</div>
-	<div class="commandSection">
-	</div>
-	<div class="interactionSection noPropagation">
-		<textarea class="inputChatMessage" type="text" maxlength="128"></textarea>
-		<input class="sendChatMessage bfButton" type="button" value="Senden"/>
+	<div class="userListSection">
 	</div>
 </div>

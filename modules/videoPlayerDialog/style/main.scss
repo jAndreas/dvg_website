@@ -15,6 +15,16 @@ div.videoPlayerDialog {
 	/*@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
 		width:100vw;
 	}*/
+	@media screen and (max-width:$iPhone6Landscape) {
+		filter:none !important;
+		box-shadow:none !important;
+		text-shadow:none !important;
+	}
+
+	.liveChatMode {
+		top:1vh;
+		right:1vh;
+	}
 
 	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
 		width:95vw;
@@ -183,6 +193,11 @@ div.videoPlayerDialog {
 					color:white;
 					text-shadow:0 0 6px white;
 					outline:none;
+
+					@media screen and (max-width:$iPhone6Landscape) {
+						filter:none;
+						box-shadow:none;
+					}
 				}
 
 				> input.donateNow {

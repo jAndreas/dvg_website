@@ -60,6 +60,8 @@ class DVGWebsite extends Composition( Mediator, LogTools ) {
 	}
 
 	onReconnect() {
+		this.sessionLoginData = localStorage.getItem( 'dvgLogin' );
+
 		if( this.sessionLoginData ) {
 			this.fire( 'sessionLogin.appEvents', JSON.parse( this.sessionLoginData ) );
 		}

@@ -3,6 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -31,7 +32,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 	async init() {
 		await super.init();
 
-		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', 'click, touchstart', this.launchVideoModule );
+		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', win.innerWidth <= 768 ? 'touchstart' : 'click', this.launchVideoModule );
 		this.on( 'openVideoPlayer.appEvents', this.onOpenVideoPlayer, this );
 		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 

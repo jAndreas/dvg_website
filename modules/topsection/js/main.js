@@ -3,6 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
+import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -52,17 +53,17 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			this.log( 'Error on initializing, module might not be fully available -> ', ex );
 		}
 
-		this.addNodeEventOnce( 'a.revealIntro', 'click touchstart', this.showIntro );
+		this.addNodeEventOnce( 'a.revealIntro', win.innerWidth <= 768 ? 'touchstart' : 'click', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
-		this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
-		this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
-		this.addNodeEvent( 'a.jumpToVideoSection', 'click touchstart', this.slideDownArrowClick );
-		this.addNodeEvent( 'a.jumpToAboutSection', 'click touchstart', this.slideToAboutMeSection );
-		this.addNodeEvent( 'a.jumpToSupportSection', 'click touchstart', this.slideToSupportSection );
-		this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
-		this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
-		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
-		this.addNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
+		this.addNodeEvent( 'a.slideDownArrow', win.innerWidth <= 768 ? 'touchstart' : 'mousedown', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.followMe', win.innerWidth <= 768 ? 'touchstart' : 'click', this.followMeClick );
+		this.addNodeEvent( 'a.jumpToVideoSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.jumpToAboutSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideToAboutMeSection );
+		this.addNodeEvent( 'a.jumpToSupportSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideToSupportSection );
+		this.addNodeEvent( 'div.registerName', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onRegisterName );
+		this.addNodeEvent( 'div.login', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onLoginClick );
+		this.addNodeEvent( 'div.logout', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onLogoutClick );
+		this.addNodeEvent( 'div.startLiveChat', win.innerWidth <= 768 ? 'touchstart' : 'click', this.startLiveChat );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
