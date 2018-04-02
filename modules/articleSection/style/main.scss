@@ -1,0 +1,28 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.articleSection {
+	position:relative;
+
+	width:100vw;
+	min-height:100vh;
+
+	> div.container {
+		width:100vw;
+		height:100vh;
+		display:flex;
+		flex-direction:row;
+		justify-content:center;
+		align-items:center;
+		background-color:rgba(0,0,0,0.6);
+
+		> div.title {
+			font-size:3vw;
+			font-weight:bold;
+			color:rgba(220, 220, 240, 0.8);
+			text-shadow:0 0 10px white;
+			margin-bottom:2vh;
+			filter:brightness(2);
+			-webkit-box-reflect:below -16px linear-gradient(45deg, rgba(0,0,0,0), rgba(255,255,255,0.4));
+		}
+	}
+}

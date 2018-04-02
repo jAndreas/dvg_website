@@ -41,12 +41,12 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		this.initVideo();
 		this.checkLiveChatStatus();
 
-		this.addNodeEvent( 'div.expand', 'click touchstart', this.showFullDescription );
-		this.addNodeEvent( 'div.donate', 'click touchstart', this.onDonateClick );
+		this.addNodeEvent( 'div.expand', 'click', this.showFullDescription );
+		this.addNodeEvent( 'div.donate', 'click', this.onDonateClick );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusin', this.onDonateAmountFocus );
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
-		this.addNodeEvent( 'input.donateNow', 'click touchstart', this.onDonateNowClick );
+		this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
 
 		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 

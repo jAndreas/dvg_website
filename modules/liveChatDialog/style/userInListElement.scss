@@ -9,6 +9,9 @@ div.userListElement {
 	> div.userName {
 		font-weight:bold;
 		font-size:2vh;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
 	}
 
 	> div.status {

@@ -42,7 +42,7 @@ class mobileNavigationSection extends Component {
 			});
 		}
 
-		this.addNodeEvent( 'root', 'touchstart', this.onNavClick );
+		this.addNodeEvent( 'root', 'click', this.onNavClick );
 
 		this.on( 'startNewSession.server', this.logoutMode, this );
 		this.on( 'userLogout.server', this.loginMode, this );

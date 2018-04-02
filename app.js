@@ -25,6 +25,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
+		this.once( 'articleSection.launchModule', this.launchArticleSection, this );
 		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
 		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
@@ -152,6 +153,16 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 		location.hash = '';
 		location.hash = this.currentHash.toString();
+	}
+	async launchArticleSection() {
+		let state = await this.fire( 'getModuleState.core', 'articleSection' );
+
+		if( state === undefined ) {
+			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
+			await articleSection.start();
+		} else {
+			this.log( 'aboutMeSection already online, aborting launch.' );
+		}
 	}
 
 	async launchAboutMeSection() {

@@ -32,7 +32,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 	async init() {
 		await super.init();
 
-		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', win.innerWidth <= 768 ? 'touchstart' : 'click', this.launchVideoModule );
+		this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', 'click', this.launchVideoModule );
 		this.on( 'openVideoPlayer.appEvents', this.onOpenVideoPlayer, this );
 		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 

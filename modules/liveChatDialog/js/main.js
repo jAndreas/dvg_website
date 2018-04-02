@@ -42,8 +42,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
 		this.addNodeEvent( 'textarea.inputChatMessage', 'focusin', this.onInputChatFocus );
 		this.addNodeEvent( 'textarea.inputChatMessage', 'focusout', this.onInputChatBlur );
-		this.addNodeEvent( 'input.sendChatMessage', win.innerWidth <= 768 ? 'touchstart' : 'click', this.sendMessage );
-		this.addNodeEvent( 'div.toggleUserList', win.innerWidth <= 768 ? 'touchstart' : 'click', this.toggleUserList );
+		this.addNodeEvent( 'input.sendChatMessage', 'click', this.sendMessage );
+		this.addNodeEvent( 'div.toggleUserList', 'click', this.toggleUserList );
 
 		this.recv( 'dispatchedChatMessage', this.receivedDispatchedChatMessage.bind( this ) );
 		this.recv( 'newUserLogin', this.newUserLogin.bind( this ) );

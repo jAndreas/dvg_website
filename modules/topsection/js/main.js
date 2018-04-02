@@ -53,17 +53,18 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			this.log( 'Error on initializing, module might not be fully available -> ', ex );
 		}
 
-		this.addNodeEventOnce( 'a.revealIntro', win.innerWidth <= 768 ? 'touchstart' : 'click', this.showIntro );
+		this.addNodeEventOnce( 'a.revealIntro', 'click', this.showIntro );
 		this.addNodeEventOnce( 'a.slideDownArrow', 'animationend', this.slideDownArrowAnimationEnd );
-		this.addNodeEvent( 'a.slideDownArrow', win.innerWidth <= 768 ? 'touchstart' : 'mousedown', this.slideDownArrowClick );
-		this.addNodeEvent( 'a.followMe', win.innerWidth <= 768 ? 'touchstart' : 'click', this.followMeClick );
-		this.addNodeEvent( 'a.jumpToVideoSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideDownArrowClick );
-		this.addNodeEvent( 'a.jumpToAboutSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideToAboutMeSection );
-		this.addNodeEvent( 'a.jumpToSupportSection', win.innerWidth <= 768 ? 'touchstart' : 'click', this.slideToSupportSection );
-		this.addNodeEvent( 'div.registerName', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onRegisterName );
-		this.addNodeEvent( 'div.login', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onLoginClick );
-		this.addNodeEvent( 'div.logout', win.innerWidth <= 768 ? 'touchstart' : 'click', this.onLogoutClick );
-		this.addNodeEvent( 'div.startLiveChat', win.innerWidth <= 768 ? 'touchstart' : 'click', this.startLiveChat );
+		this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
+		this.addNodeEvent( 'a.jumpToVideoSection','click', this.slideDownArrowClick );
+		this.addNodeEvent( 'a.jumpToArticleSection','click', this.slideToArticleSection );
+		this.addNodeEvent( 'a.jumpToAboutSection', 'click', this.slideToAboutMeSection );
+		this.addNodeEvent( 'a.jumpToSupportSection', 'click', this.slideToSupportSection );
+		this.addNodeEvent( 'div.registerName', 'click', this.onRegisterName );
+		this.addNodeEvent( 'div.login', 'click', this.onLoginClick );
+		this.addNodeEvent( 'div.logout', 'click', this.onLogoutClick );
+		this.addNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
@@ -179,7 +180,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	async onRegisterName( event ) {
 		event.stopPropagation();
 		event.preventDefault();
-		this.removeNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+		this.removeNodeEvent( 'div.registerName', 'click', this.onRegisterName );
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
@@ -202,7 +203,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.removeNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+		this.removeNodeEvent( 'div.login', 'click', this.onLoginClick );
 
 		//await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
@@ -225,7 +226,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.removeNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
+		this.removeNodeEvent( 'div.logout', 'click', this.onLogoutClick );
 
 		try {
 			let response = await this.send({
@@ -242,21 +243,21 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				this.nodes[ 'div.login' ].style.display = 'flex';
 				this.nodes[ 'div.registerName' ].style.display = 'flex';
 
-				this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
-				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+				this.addNodeEvent( 'div.login', 'click', this.onLoginClick );
+				this.addNodeEvent( 'div.registerName', 'click', this.onRegisterName );
 			}
 		} catch( ex ) {
 			 this.log( 'logoutUser error: ', ex );
 		}
 
-		this.addNodeEvent( 'div.logout', 'click touchstart', this.onLogoutClick );
+		this.addNodeEvent( 'div.logout', 'click', this.onLogoutClick );
 	}
 
 	async startLiveChat( event ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.removeNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
+		this.removeNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 
 		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
 			position		= Object.create( null );
@@ -369,7 +370,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		this.removeNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+		this.removeNodeEvent( 'a.followMe', 'click', this.followMeClick );
 
 		await Promise.all( this.data.get( this.nodes.myVideo ).storage.animations.running );
 
@@ -380,22 +381,31 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		});
 	}
 
+	async slideToArticleSection( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		await this.fire( 'articleSection.launchModule' );
+
+		this.fire( 'slideDownTo.articleSection' );
+	}
+
 	async slideToAboutMeSection( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
 		await this.fire( 'aboutMeSection.launchModule' );
 
 		this.fire( 'slideDownTo.aboutMeSection' );
-
-		event.stopPropagation();
-		event.preventDefault();
 	}
 
 	async slideToSupportSection( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
 		await this.fire( 'supportSection.launchModule' );
 
 		this.fire( 'slideDownTo.supportSection' );
-
-		event.stopPropagation();
-		event.preventDefault();
 	}
 
 	async showIntro() {
@@ -404,6 +414,12 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		}
 
 		this.isTheaterMode = true;
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'watchIntro'
+			}
+		});
 
 		this.transitionToTheaterComplete = new Promise(async ( completeRes, completeRej ) => {
 			let {	myVideo,
@@ -416,7 +432,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 					'li.titleContainer':title,
 					'div.gridOverlay':gridOverlay } = this.nodes;
 
-			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 
 			if( this.backgroundVideo ) {
 				this.backgroundVideo.fadeVolumeIn();
@@ -522,8 +538,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 			await Promise.all([ logoTransition, crossTransition, crossCloneTransition, gridTransition, menuTransition, word1Transition, word2Transition, word3Transition ]);
 
-			this.addNodeEventOnce( 'a.revealIntro', 'click touchstart', this.returnToMenu );
-			this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
+			this.addNodeEventOnce( 'a.revealIntro', 'click', this.returnToMenu );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 
 			completeRes();
 		});
@@ -535,6 +551,12 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		if(!this.isTheaterMode ) {
 			return;
 		}
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.id
+			}
+		});
 
 		this.isTheaterMode = false;
 
@@ -550,7 +572,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 					'li.titleContainer':title,
 					'div.gridOverlay':gridOverlay } = this.nodes;
 
-			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
+			this.removeNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 			this.removeNodeEvent( crossClone, 'click' );
 
 			title.style.visibility = 'visible';
@@ -570,7 +592,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 			this.removeNodes( 'crossClone', true );
 			this.addNodeEventOnce( revealIntro, 'click', this.showIntro );
-			this.addNodeEvent( 'a.slideDownArrow', 'mousedown touchstart', this.slideDownArrowClick );
+			this.addNodeEvent( 'a.slideDownArrow', 'mousedown', this.slideDownArrowClick );
 
 			completeRes();
 		});
@@ -648,16 +670,16 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	onModuleDestruction( module ) {
 		switch( module.id ) {
 			case 'registerEmailDialog':
-				this.addNodeEvent( 'a.followMe', 'click touchstart', this.followMeClick );
+				this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
 				break;
 			case 'loginDialog':
-				this.addNodeEvent( 'div.login', 'click touchstart', this.onLoginClick );
+				this.addNodeEvent( 'div.login', 'click', this.onLoginClick );
 				break;
 			case 'registerDialog':
-				this.addNodeEvent( 'div.registerName', 'click touchstart', this.onRegisterName );
+				this.addNodeEvent( 'div.registerName', 'click', this.onRegisterName );
 				break;
 			case 'liveChatDialog':
-				this.addNodeEvent( 'div.startLiveChat', 'click touchstart', this.startLiveChat );
+				this.addNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 				break;
 		}
 	}

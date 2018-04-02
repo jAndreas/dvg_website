@@ -42,7 +42,7 @@ class supportSection extends Component {
 		this._boundCheckTime	= this.checkVideoTime.bind( this );
 		this._boundPlayHandler	= this.play.bind( this );
 
-		this.addNodeEvent( 'div.impressum', 'click touchstart', this.onImpressumClick );
+		this.addNodeEvent( 'div.impressum', 'click', this.onImpressumClick );
 
 		this.createModalOverlay({
 			opts:	{
