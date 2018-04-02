@@ -1,7 +1,6 @@
 'use strict';
 
 import { Overlay, GlasEffect, Draggable } from 'barfoos2.0/dialog.js';
-import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
@@ -15,8 +14,9 @@ import style from '../style/main.scss';
  *	It also displays all the information and is responsible for handling clicks/views
  *****************************************************************************************************/
 class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:					'videoPlayerDialog',
 			tmpl:					html,
 			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 			centerToViewport:		true,
@@ -79,20 +79,20 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	}
 
 	async checkLiveChatStatus() {
-		let liveChatDialog = await this.fire( 'getModuleState.core', 'liveChatDialog' );
+		let liveChatDialog = await this.fire( 'findModule.liveChatDialog' );
 
 		if( liveChatDialog ) {
 			this.setLiveChatMode();
 		}
 
 		this.on( 'moduleLaunch.appEvents', module => {
-			if( module.id === 'liveChatDialog' ) {
+			if( module.name === 'liveChatDialog' ) {
 				this.setLiveChatMode();
 			}
 		});
 
 		this.on( 'moduleDestruction.appEvents', module => {
-			if( module.id === 'liveChatDialog' ) {
+			if( module.name === 'liveChatDialog' ) {
 				this.removeLiveChatMode();
 			}
 		});
@@ -144,12 +144,12 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 
 			this.fire( 'updateHash.appEvents', {
 				data:	{
-					action:		this.id
+					action:		this.name
 				},
 				extra:		this.videoData.id
 			});
 		} catch( ex ) {
-			console.log( ex );
+			this.log( ex );
 		}
 	}
 
@@ -191,7 +191,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	onDonateAmountBlur() {
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id
+				action:		this.name
 			},
 			extra:		this.videoData.id
 		});

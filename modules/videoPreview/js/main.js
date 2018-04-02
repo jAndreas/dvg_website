@@ -1,9 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
-import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -14,8 +12,9 @@ import style from '../style/main.scss';
  *	videoPlayer Module
  *****************************************************************************************************/
 class videoPreview extends mix( Component ).with( ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'videoPreview',
 			tmpl:			html,
 			renderData:		input.videoData
 		}).and( input );
@@ -67,7 +66,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	onDialogModeChange( active ) {
+	onDialogModeChange() {
 	}
 }
 /****************************************** videoPreview End ******************************************/

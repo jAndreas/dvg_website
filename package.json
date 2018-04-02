@@ -72,6 +72,9 @@
 			"ecmaVersion": 7,
 			"sourceType": "module",
 			"allowImportExportEverywhere": true
+		},
+		"globals": {
+			"ENV_PROD": false
 		}
 	},
 	"devDependencies": {

@@ -14,8 +14,9 @@ import background from '../images/aboutMebackground_static.jpg';
  *  "description here"
  *****************************************************************************************************/
 class aboutMeSection extends mix( Component ).with( Swipe ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'aboutMeSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -48,7 +49,7 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 		return this;
 	}
 
-	onDialogModeChange( active ) {
+	onDialogModeChange() {
 	}
 
 	async inViewport() {
@@ -66,8 +67,8 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 		this.fire( 'supportSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 

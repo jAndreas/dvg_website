@@ -15,8 +15,9 @@ import navElementStyle from '../style/navElement.scss';
  *	quick navigation on mobile devices respectively devices with a small viewport
  *****************************************************************************************************/
 class mobileNavigationSection extends Component {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'mobileNavigationSection',
 			location:		moduleLocations.right,
 			tmpl:			html
 		}).and( input );

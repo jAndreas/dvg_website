@@ -16,6 +16,7 @@ import style from '../style/main.scss';
 class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:					'confirmSubscriptionDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,

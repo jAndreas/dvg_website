@@ -14,6 +14,7 @@ import style from '../style/main.scss';
 class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend(	options	).with({
+			name:			'registerEmailDialog',
 			tmpl:			html,
 			center:			true
 		}).and( input );

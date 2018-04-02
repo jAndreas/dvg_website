@@ -12,8 +12,9 @@ import style from '../style/main.scss';
  *  "description here"
  *****************************************************************************************************/
 class registerDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'registerDialog',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );

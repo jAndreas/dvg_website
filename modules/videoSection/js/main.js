@@ -15,6 +15,7 @@ import style from '../style/main.scss';
 class videoSection extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'videoSection',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			previewLinks:	[ ]
@@ -81,8 +82,8 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		this.fire( 'articleSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 	}
@@ -110,7 +111,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 		this.modalOverlay.log( 'Server connection lost.', 0 );
 
-		while( link = this.previewLinks.shift() ) {
+		while( (link = this.previewLinks.shift()) ) {
 			await link.destroy();
 			link = null;
 		}
@@ -150,7 +151,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async onVideoPlayerLaunch( module ) {
-		if( module.id === 'videoPlayerDialog' ) {
+		if( module.name === 'videoPlayerDialog' ) {
 			await this.createModalOverlay({
 				at:		this.nodes.root,
 				opts:	{
@@ -161,7 +162,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	onVideoPlayerDestruction( module ) {
-		if( module.id === 'videoPlayerDialog' ) {
+		if( module.name === 'videoPlayerDialog' ) {
 			this.modalOverlay && this.modalOverlay.cleanup();
 		}
 	}

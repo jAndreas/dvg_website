@@ -9,15 +9,13 @@ import { loadVideo } from 'video.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-const	videoLink		= '/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
-		fallbackPath	= '/fallback/_video/intro_480.mp4';
-
 /*****************************************************************************************************
  *  supportSection shows basic options how to support the dvg project
  *****************************************************************************************************/
 class supportSection extends Component {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'supportSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -95,8 +93,8 @@ class supportSection extends Component {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 
@@ -122,7 +120,7 @@ class supportSection extends Component {
 		}, 1000);
 	}
 
-	checkVideoTime( event ) {
+	checkVideoTime() {
 		switch( Math.round( this.video.getTime ) ) {
 			case 78: {
 				this.nodes[ 'div.paypal' ].classList.add( 'highlight' );

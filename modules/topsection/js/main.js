@@ -3,7 +3,6 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -23,6 +22,7 @@ import * as videoSection from 'videoSection/js/main.js';
 class topSection extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'topSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -30,8 +30,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		super( options );
 
 		this.runtimeDependencies.push(
-			this.fire( 'waitforHLSSupport.appEvents' ),
-			this.fire( 'waitForConnection.server' )
+			this.fire( 'waitforHLSSupport.appEvents' )
 		);
 
 		extend( this ).with({
@@ -126,8 +125,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 
@@ -177,7 +176,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.fire( 'requestMobileNavigation.core' );
 	}
 
-	async onRegisterName( event ) {
+	async onRegisterName( event ) {
 		event.stopPropagation();
 		event.preventDefault();
 		this.removeNodeEvent( 'div.registerName', 'click', this.onRegisterName );
@@ -247,7 +246,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				this.addNodeEvent( 'div.registerName', 'click', this.onRegisterName );
 			}
 		} catch( ex ) {
-			 this.log( 'logoutUser error: ', ex );
+			this.log( 'logoutUser error: ', ex );
 		}
 
 		this.addNodeEvent( 'div.logout', 'click', this.onLogoutClick );
@@ -554,7 +553,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id
+				action:		this.name
 			}
 		});
 

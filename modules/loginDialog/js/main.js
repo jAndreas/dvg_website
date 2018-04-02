@@ -12,8 +12,9 @@ import style from '../style/main.scss';
  *  Logs in a user and dispatches session data
  *****************************************************************************************************/
 class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'loginDialog',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -45,7 +46,6 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 		let {
 			'input.emailAddress':emailAddress,
 			'input.password':password,
-			'input.login':loginBtn,
 			'section.page1':page1 } = this.nodes;
 
 		this.createModalOverlay({
@@ -64,7 +64,7 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 					emailAddress:	emailAddress.value,
 					pass:			password.value
 				}
-			})
+			});
 
 			this.fire( 'userLogin.server', response.data );
 

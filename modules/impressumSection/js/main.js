@@ -11,8 +11,9 @@ import style from '../style/main.scss';
  *  Impressum, 'nuff said
  *****************************************************************************************************/
 class impressumSection extends Component {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'impressumSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -38,8 +39,8 @@ class impressumSection extends Component {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 	}

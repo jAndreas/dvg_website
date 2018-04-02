@@ -12,8 +12,9 @@ import style from '../style/main.scss';
  *  "description here"
  *****************************************************************************************************/
 class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:					'dispatchMailDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,

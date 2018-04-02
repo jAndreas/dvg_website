@@ -1,6 +1,6 @@
 'use strict';
 
-import { Overlay, Dialog, Draggable } from 'barfoos2.0/dialog.js';
+import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
 import { extend, mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
@@ -18,8 +18,9 @@ import userInListStyle from '../style/userInListElement.scss';
  *  The live chat user interaction interface
  *****************************************************************************************************/
 class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:					'liveChatDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			title:					'Live Chat',
@@ -80,7 +81,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	onInputChatFocus() {
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id
+				action:		this.name
 			}
 		});
 	}
@@ -102,20 +103,20 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	}
 
 	async checkVideoPlayerStatus() {
-		let videoPlayerDialog = await this.fire( 'getModuleState.core', 'videoPlayerDialog' );
+		let videoPlayerDialog = await this.fire( 'findModule.videoPlayerDialog' );
 
 		if( videoPlayerDialog ) {
 			this.setLiveChatMode();
 		}
 
 		this.on( 'moduleLaunch.appEvents', module => {
-			if( module.id === 'videoPlayerDialog' ) {
+			if( module.name === 'videoPlayerDialog' ) {
 				this.setLiveChatMode();
 			}
 		});
 
 		this.on( 'moduleDestruction.appEvents', module => {
-			if( module.id === 'videoPlayerDialog' ) {
+			if( module.name === 'videoPlayerDialog' ) {
 				this.removeLiveChatMode();
 			}
 		});
@@ -130,7 +131,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.nodes.dialogRoot.style.alignSelf	= '';
 
 
-		let rect = await this.fire( `getModuleDimensions.videoPlayerDialog` );
+		let rect = await this.fire( 'getModuleDimensionsByName.videoPlayerDialog' );
 
 		if( win.innerWidth < 450 ) {
 			this.nodes.root.style.height = '42vh';
@@ -173,7 +174,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		this.putLine({
 			from:				'Client',
-			content:			`Verbindung hergestellt`,
+			content:			'Verbindung hergestellt',
 			serverNotification:	true
 		});
 	}
@@ -192,7 +193,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = '';
 	}
 
-	onSelfLogout( session ) {
+	onSelfLogout() {
 		this.onDisconnect( 'Logout' );
 	}
 
@@ -247,6 +248,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				});
 
 				this.nodes[ 'textarea.inputChatMessage' ].value = '';
+
+				if( result.data.messageDelivered ) {
+					// show some approval symbol?!
+				}
 			} else {
 				throw new Error( 'Du hast wohl nicht viel zu sagen...?' );
 			}
@@ -295,7 +300,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		this.updateTimeOffsets();
 
-		let nodeHash = this.render({ htmlData:	chatMessageElementMarkup, standalone: true }).with({
+		this.render({ htmlData:	chatMessageElementMarkup, standalone: true }).with({
 			time:				time,
 			timeDiff:			time ? `[Vor ${ getTimePeriod( time ) }]` : '',
 			from:				this.paint( from + ': ' ),
@@ -326,7 +331,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	addUserToUserList( name, action ) {
 		this.removeUserFromUserList( name );
 
-		let nodeHash = this.render({ htmlData:	userInListMarkup, standalone: true }).with({
+		this.render({ htmlData:	userInListMarkup, standalone: true }).with({
 			name:		name,
 			status:		action
 		}).at({

@@ -80,7 +80,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	onModuleLaunch( module ) {
-		switch( module.id ) {
+		switch( module.name ) {
 			case 'videoPlayerDialog':
 				this.currentHash.set( 'watch', module.state.videoData.internalId );
 				doc.location.hash = this.currentHash.toString();
@@ -89,7 +89,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	onModuleDestruction( module ) {
-		switch( module.id ) {
+		switch( module.name ) {
 			case 'videoPlayerDialog':
 				this.currentHash.delete( 'watch' );
 				this.currentHash.delete( 'action' );
@@ -154,10 +154,11 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		location.hash = '';
 		location.hash = this.currentHash.toString();
 	}
-	async launchArticleSection() {
-		let state = await this.fire( 'getModuleState.core', 'articleSection' );
 
-		if( state === undefined ) {
+	async launchArticleSection() {
+		let state = await this.fire( 'findModule.articleSection' );
+window['console'].log( 'launchArticleSection state: ', state);
+		if( state === null ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
 			await articleSection.start();
 		} else {
@@ -166,9 +167,11 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async launchAboutMeSection() {
-		let state = await this.fire( 'getModuleState.core', 'aboutMeSection' );
+		await this.launchArticleSection();
 
-		if( state === undefined ) {
+		let state = await this.fire( 'findModule.aboutMeSection' );
+
+		if( state === null ) {
 			let aboutMeSection = await import( /* webpackChunkName: "aboutMeSection" */ 'aboutMeSection/js/main.js' );
 			await aboutMeSection.start();
 		} else {

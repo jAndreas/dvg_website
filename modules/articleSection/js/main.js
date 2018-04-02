@@ -11,8 +11,9 @@ import style from '../style/main.scss';
  *  articleSection is the host of articles
  *****************************************************************************************************/
 class articleSection extends Component {
-	constructor( input = { }, options = { } ) {
+	constructor( input = { }, options = { } ) {
 		extend( options ).with({
+			name:			'articleSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -43,8 +44,8 @@ class articleSection extends Component {
 		this.fire( 'aboutMeSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.id,
-				ref:		this.id
+				action:		this.name,
+				ref:		this.name
 			}
 		});
 	}

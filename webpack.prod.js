@@ -6,6 +6,8 @@ const	webpack			= require( 'webpack' ),
 		websitePath		= `/var/www/html/${websiteName}/`,
 		buildTime		= Date.now();
 
+//const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
 console.log( `\nRemoving old files in target ${websitePath}:\n` );
 fs.readdirSync( websitePath ).forEach( file  => {
 	if( /\.js$|\.map$/.test( file ) ) {
@@ -27,7 +29,7 @@ console.log( 'Done.\n' );
 
 module.exports = {
 	context:	__dirname,
-	entry:		[ './compatibility.js' ],
+	entry:		[ './app.js' ],
 	output:		{
 		path:		websitePath,
 		filename:	'[name]-bundle.js'
@@ -99,6 +101,23 @@ module.exports = {
 	optimization:	{
 		splitChunks:	{
 			minSize:	4000
-		}
+		}/*,
+		minimizer: [
+			new UglifyJSPlugin({
+				cache: true,
+				parallel: true,
+				uglifyOptions: {
+					compress: {
+						warnings: false,
+						keep_classnames: true
+					},
+					ecma: 6,
+					mangle: {
+						keep_classnames: true
+					}
+				},
+				sourceMap: false
+			})
+		]*/
 	}
 };
