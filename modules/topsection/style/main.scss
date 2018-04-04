@@ -431,5 +431,16 @@ div#topSection {
 				}
 			}
 		}
+
+		> div.startLiveChat.omgItsHim {
+			&:before {
+				content:'✠';
+				position:absolute;
+				right: -1vh;
+				bottom: 1.5vh;
+				color:white;
+				font-size:4vh;
+			}
+		}
 	}
 }

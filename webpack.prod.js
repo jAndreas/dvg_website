@@ -31,8 +31,9 @@ module.exports = {
 	context:	__dirname,
 	entry:		[ './app.js' ],
 	output:		{
-		path:		websitePath,
-		filename:	'[name]-bundle.js'
+		path:			websitePath,
+		filename:		'[name]-bundle.js',
+		chunkFilename:	'[id].[chunkhash].js'
 	},
 	resolve:	{
 		modules:	[

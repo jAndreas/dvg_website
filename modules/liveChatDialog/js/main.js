@@ -105,7 +105,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	async checkVideoPlayerStatus() {
 		let videoPlayerDialog = await this.fire( 'findModule.videoPlayerDialog' );
 
-		if( videoPlayerDialog ) {
+		if( videoPlayerDialog === true ) {
 			this.setLiveChatMode();
 		}
 
@@ -333,7 +333,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		this.render({ htmlData:	userInListMarkup, standalone: true }).with({
 			name:		name,
-			status:		action
+			status:		action,
+			admin:		name === 'DerVeganeGermane' ? 'admin' : ''
 		}).at({
 			node:		'div.userListSection',
 			position:	'beforeend'

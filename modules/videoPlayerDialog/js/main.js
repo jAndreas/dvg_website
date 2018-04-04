@@ -81,7 +81,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	async checkLiveChatStatus() {
 		let liveChatDialog = await this.fire( 'findModule.liveChatDialog' );
 
-		if( liveChatDialog ) {
+		if( liveChatDialog === true ) {
 			this.setLiveChatMode();
 		}
 

@@ -61,7 +61,7 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 			let response = await this.send({
 				type:		'loginUser',
 				payload:	{
-					emailAddress:	emailAddress.value,
+					username:		emailAddress.value,
 					pass:			password.value
 				}
 			});

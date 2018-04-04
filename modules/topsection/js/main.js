@@ -73,6 +73,17 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		this.fire( 'checkSession.appEvents' );
 
+		this.recv( 'heArrived', this.heArrived.bind( this ) );
+		this.recv( 'heLeft', this.heLeft.bind( this ) );
+
+		let conn = this.fire( 'waitForConnection.server' );
+
+		if( conn === true ) {
+			this.checkAdmin();
+		} else {
+			conn.then( this.checkAdmin.bind( this ) );
+		}
+
 		return this;
 	}
 
@@ -250,6 +261,24 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		}
 
 		this.addNodeEvent( 'div.logout', 'click', this.onLogoutClick );
+	}
+
+	async checkAdmin() {
+		let isHe = await this.send({ type: 'isHeOnline'  });
+
+		if( isHe.online ) {
+			this.nodes[ 'div.startLiveChat' ].classList.add( 'omgItsHim' );
+		}
+	}
+
+	async heArrived() {
+		this.nodes[ 'div.startLiveChat' ].classList.add( 'omgItsHim' );
+		this.nodes[ 'div.startLiveChat' ].setAttribute( 'title', 'Der Vegane Germane ist gerade online!' );
+	}
+
+	async heLeft() {
+		this.nodes[ 'div.startLiveChat' ].classList.remove( 'omgItsHim' );
+		this.nodes[ 'div.startLiveChat' ].setAttribute( 'title', 'Live Chat' );
 	}
 
 	async startLiveChat( event ) {
@@ -667,7 +696,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	onModuleDestruction( module ) {
-		switch( module.id ) {
+		switch( module.name ) {
 			case 'registerEmailDialog':
 				this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
 				break;

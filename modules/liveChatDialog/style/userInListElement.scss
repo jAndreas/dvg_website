@@ -6,6 +6,12 @@ div.userListElement {
 	display:flex;
 	flex-direction:column;
 
+	&.admin {
+		background-color: rgba(20,150,55,0.2);
+		color: green;
+		text-shadow: none;
+	}
+
 	> div.userName {
 		font-weight:bold;
 		font-size:2vh;

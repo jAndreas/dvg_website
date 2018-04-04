@@ -1,5 +1,6 @@
 'use strict';
 
+/* fuck eslint, we need to load the core.js here */
 import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc } from 'barfoos2.0/domkit.js';
@@ -14,6 +15,11 @@ const	Browser		= new BrowserKit(),
 class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	constructor() {
 		super( ...arguments );
+
+		Object.assign(this, {
+			currentHash:	Object.create( null )
+		});
+
 		this.init();
 	}
 
@@ -53,6 +59,16 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.extraInfo			= new Map();
 
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
+
+		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', this.appFocusChange, this );
+	}
+
+	appFocusChange( active ) {
+		if( active && this.currentHash ) {
+			this.changeUserAction( this.currentHash.get( 'action' ) || this.currentHash.get( 'ref' ) || '' );
+		} else {
+			this.changeUserAction( 'blur' );
+		}
 	}
 
 	onUserLogin( user ) {
@@ -129,19 +145,23 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		}
 	}
 
+	async changeUserAction( action ) {
+		this.send({
+			type:		'userAction',
+			payload:	{
+				id:			action,
+				extra:		this.extraInfo.get( this.currentHash.get( 'action' ) ) || this.extraInfo.get( this.currentHash.get( 'ref' ) ) || ''
+			}
+		}, {
+			simplex:	true
+		});
+	}
+
 	async navigateByHash( hash ) {
 		this.currentHash = hash;
 
 		if( hash.has( 'action' ) || hash.has( 'ref' ) ) {
-			this.send({
-				type:		'userAction',
-				payload:	{
-					id:			hash.get( 'action' ) || hash.get( 'ref' ) || '',
-					extra:		this.extraInfo.get( hash.get( 'action' ) ) || this.extraInfo.get( hash.get( 'ref' ) ) || ''
-				}
-			}, {
-				simplex:	true
-			});
+			this.changeUserAction( hash.get( 'action' ) || hash.get( 'ref' ) || '' );
 		}
 	}
 
@@ -157,8 +177,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	async launchArticleSection() {
 		let state = await this.fire( 'findModule.articleSection' );
-window['console'].log( 'launchArticleSection state: ', state);
-		if( state === null ) {
+
+		if( state !== true ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
 			await articleSection.start();
 		} else {
@@ -171,7 +191,7 @@ window['console'].log( 'launchArticleSection state: ', state);
 
 		let state = await this.fire( 'findModule.aboutMeSection' );
 
-		if( state === null ) {
+		if( state !== true ) {
 			let aboutMeSection = await import( /* webpackChunkName: "aboutMeSection" */ 'aboutMeSection/js/main.js' );
 			await aboutMeSection.start();
 		} else {

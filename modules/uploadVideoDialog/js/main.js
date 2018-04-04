@@ -52,7 +52,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 		[ style, progressStyle, progressConvertStyle ].forEach( s => s.unuse() );
 	}
 
-	onGlobalChange( event ) {
+	onGlobalChange() {
 		if( this.selectedVideoFile ) {
 			this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
 		}
@@ -144,22 +144,22 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 		size = size / 1024 / 1024;
 
 		if( size < 10 ) {
-			return mb * 0.5;
+			return mb * 0.25;
 		}
 		if( size < 100 ) {
-			return mb * 1;
+			return mb * 0.75;
 		}
 		if( size < 500 ) {
 			return mb * 1.5;
 		}
 		if( size < 1000 ) {
-			return mb * 3;
+			return mb * 2.5;
 		}
 		if( size < 2000 ) {
-			return mb * 5;
+			return mb * 3.5;
 		}
 
-		return mb * 7;
+		return mb * 4.5;
 	}
 
 	async onSubmit( event ) {
@@ -167,8 +167,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 		event.stopPropagation();
 
 		let	{
-			'section.tab1':tab1,
-			'section.tab2':tab2,
 			'input.videoTitle':title,
 			'label.uploadStyle':fileSelect,
 			'textarea.videoDescription':desc,
@@ -262,7 +260,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 						start = Date.now();
 						currentChunk = blob.slice( seek, seek + chunkSize );
 
-						let response = await this.send({
+						await this.send({
 							type:		'fileUpload',
 							payload:	{
 								chunk:		currentChunk,
@@ -297,7 +295,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
 					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
 
-					let response = await this.send({
+					await this.send({
 						type:		'fileUpload',
 						payload:	{
 							complete:	true,
@@ -373,9 +371,13 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 					await this.modalOverlay.fulfill();
 				}
 			} catch( ex ) {
-				this.log( ex );
-				await this.modalOverlay.log( ex || 'Fehler' );
-				this.modalOverlay.fulfill();
+				window[ 'console' ].log( ex );
+
+				if( this.modalOverlay ) {
+					await this.modalOverlay.log( ex || 'Fehler' );
+					this.modalOverlay.fulfill();
+				}
+
 				uploadButton.removeAttribute( 'disabled' );
 
 				if( typeof this.progressAnimation !== 'undefined' ) {
