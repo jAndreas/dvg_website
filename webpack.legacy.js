@@ -3,7 +3,8 @@ const	webpack			= require( 'webpack' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
 		websiteName		= 'legacy.der-vegane-germane.de',
-		websitePath		= `/var/www/html/${websiteName}/`;
+		websitePath		= `/var/www/html/${websiteName}/`,
+		buildTime		= Date.now();
 
 console.log( `\nRemoving old files in target ${websitePath}:\n` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -15,7 +16,9 @@ fs.readdirSync( websitePath ).forEach( file  => {
 console.log( '\nDone.\n' );
 
 console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
-fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${websitePath}index.html` ) );
+let indexHTML = fs.readFileSync( path.resolve( `${__dirname}/index.html` ), 'utf-8' );
+indexHTML = indexHTML.replace( /%build%/, buildTime );
+fs.writeFileSync( `${websitePath}index.html`, indexHTML );
 console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
@@ -24,10 +27,11 @@ console.log( 'Done.\n' );
 
 module.exports = {
 	context:	__dirname,
-	entry:		[ 'babel-polyfill', './app.js' ],
+	entry:		[ './appLegacy.js' ],
 	output:		{
-		path:		websitePath,
-		filename:	'[name]-bundle.js'
+		path:			websitePath,
+		filename:		'[name]-bundle.js',
+		chunkFilename:	'[id].js'
 	},
 	resolve:	{
 		modules:	[
@@ -81,7 +85,8 @@ module.exports = {
 					{
 						loader:		'url-loader',
 						options:	{
-							limit:	8192
+							limit:	32000,
+							useRelativePath:	true
 						}
 					}
 				]

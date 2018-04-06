@@ -3,13 +3,14 @@ div.userListElement {
 	margin-bottom:2px;
 	border-bottom:1px solid #ffffff29;
 	margin-top:2px;
-	display:flex;
-	flex-direction:column;
+	display:block;
+	order:2;
 
 	&.admin {
 		background-color: rgba(20,150,55,0.2);
 		color: green;
 		text-shadow: none;
+		order:1;
 	}
 
 	> div.userName {

@@ -235,8 +235,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		try {
 			let sendData = this.nodes[ 'textarea.inputChatMessage' ].value;
 
-			if( sendData.trim().length > 128 ) {
-				throw new Error( 'Es sind maximal 128 Zeichen pro Nachricht erlaubt.' );
+			if( sendData.trim().length > 256 ) {
+				throw new Error( 'Es sind maximal 256 Zeichen pro Nachricht erlaubt.' );
 			}
 
 			if( sendData.trim().length ) {

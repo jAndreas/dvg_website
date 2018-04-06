@@ -1,6 +1,11 @@
 'use strict';
 
 /* fuck eslint, we need to load the core.js here */
+import nodePolyfill from 'babel-polyfill/node.js';
+import babelPolyfill from 'babel-polyfill';
+import proxyPolyfill from 'proxy-polyfill/proxy.min.js';
+import urlPolyfill from 'url-search-params-polyfill';
+
 import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc } from 'barfoos2.0/domkit.js';
@@ -19,7 +24,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		Object.assign(this, {
 			currentHash:	Object.create( null )
 		});
-		
+
 		this.init();
 	}
 

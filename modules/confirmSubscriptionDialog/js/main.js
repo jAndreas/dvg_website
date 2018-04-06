@@ -35,7 +35,7 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 		await super.init();
 
 		await this.fire( 'waitForConnection.server' );
-		
+
 		if( this.secretKey ) {
 			try {
 				this.createModalOverlay({
@@ -59,6 +59,8 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 				this.nodes[ 'div.responseMsg' ].innerHTML = response.msg;
 			} catch( ex ) {
 				this.nodes[ 'div.responseMsg' ].innerHTML = ex;
+
+				this.modalOverlay && this.modalOverlay.fulfill();
 			}
 		}
 

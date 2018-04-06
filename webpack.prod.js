@@ -29,7 +29,7 @@ console.log( 'Done.\n' );
 
 module.exports = {
 	context:	__dirname,
-	entry:		[ './app.js' ],
+	entry:		[ './compatibility.js' ],
 	output:		{
 		path:			websitePath,
 		filename:		'[name]-bundle.js',
