@@ -120,6 +120,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			if(!active && !this.backgroundVideo.paused) {
 				this.backgroundVideo.pause();
 			}
+
+			return false;
 		});
 	}
 

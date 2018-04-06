@@ -3,7 +3,7 @@
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
 import { extend, mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
-import { win } from 'barfoos2.0/domkit.js';
+import { win, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -49,6 +49,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.recv( 'dispatchedChatMessage', this.receivedDispatchedChatMessage.bind( this ) );
 		this.recv( 'newUserLogin', this.newUserLogin.bind( this ) );
 		this.recv( 'userLogout', this.userLogout.bind( this ) );
+		this.recv( 'userIsTyping', this.userIsTyping.bind( this ) );
 		this.recv( 'userConnectionUpdate', this.userConnectionUpdate.bind( this ) );
 		this.recv( 'userActionUpdate', this.userActionUpdate.bind( this ) );
 
@@ -59,9 +60,11 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.getInitialChatData();
 
 		this.userList	= {
-			add:		this.addUserToUserList.bind( this ),
-			remove:		this.removeUserFromUserList.bind( this ),
-			update:		this.updateUserFromUserList.bind( this )
+			add:				this.addUserToUserList.bind( this ),
+			remove:				this.removeUserFromUserList.bind( this ),
+			update:				this.updateUserFromUserList.bind( this ),
+			typing:				this.setUserAsTyping.bind( this ),
+			removeTyping:		this.removeAsTyping.bind( this )
 		};
 
 		return this;
@@ -78,12 +81,17 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		/* noop */
 	}
 
-	onInputChatFocus() {
+	onInputChatFocus( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		this.name
 			}
 		});
+
+		return false;
 	}
 
 	onInputChatBlur() {
@@ -99,6 +107,17 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			event.preventDefault();
 			event.stopPropagation();
 			this.sendMessage();
+			return;
+		}
+
+		if( this[ `removeTyping-${ name }` ] === undef ) {
+			if( event.which >= 48 && event.which <= 90 && !event.ctrlKey && !event.metaKey ) {
+				this.send({
+					type:		'userInputNotification'
+				}, {
+					simplex:	true
+				});
+			}
 		}
 	}
 
@@ -248,6 +267,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				});
 
 				this.nodes[ 'textarea.inputChatMessage' ].value = '';
+				this.nodes[ 'textarea.inputChatMessage' ].focus();
 
 				if( result.data.messageDelivered ) {
 					// show some approval symbol?!
@@ -265,6 +285,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	}
 
 	async receivedDispatchedChatMessage( data ) {
+		this.userList.removeTyping( data.from );
 		this.putLine( data );
 	}
 
@@ -289,6 +310,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+	}
+
+	async userIsTyping( data ) {
+		this.userList.typing( data.username );
 	}
 
 	putLine({ from, content, time, type, serverNotification }) {
@@ -356,6 +381,29 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			if( updateData.action ) {
 				match.querySelector( 'div.status' ).textContent = updateData.action;
 			}
+		}
+	}
+
+	setUserAsTyping( name ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name } > div.wrapper > div.typingStatus` );
+
+		if( match ) {
+			match.classList.add( 'isTyping' );
+
+			this[ `removeTyping-${ name }` ] = win.setTimeout(() => {
+				this.removeAsTyping( name );
+			}, 1000 * 30);
+		}
+	}
+
+	removeAsTyping( name ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name } > div.wrapper > div.typingStatus` );
+
+		if( match ) {
+			win.clearTimeout( this[ `removeTyping-${ name }` ] );
+			delete this[ `removeTyping-${ name }` ];
+
+			match.classList.remove( 'isTyping' );
 		}
 	}
 

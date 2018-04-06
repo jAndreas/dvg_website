@@ -19,7 +19,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		Object.assign(this, {
 			currentHash:	Object.create( null )
 		});
-		
+
 		this.init();
 	}
 
@@ -60,15 +60,29 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
 
-		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', this.appFocusChange, this );
+		this.on( 'appFocusChange.appEvents appVisibilityChange.appEvents', this.appFocusChange, this );
 	}
 
 	appFocusChange( active ) {
 		if( active ) {
-			this.changeUserAction( this.currentHash.get( 'action' ) || this.currentHash.get( 'ref' ) || '' );
+			this.updateHash({
+				data:	{
+					action:	this.extraInfo.get( 'beforeBlur' ) || this.currentHash.get( 'action' ) || this.currentHash.get( 'ref' ) || '',
+				},
+				extra:	this.extraInfo.get( this.extraInfo.get( 'beforeBlur' ) )
+			});
 		} else {
-			this.changeUserAction( 'blur' );
+			if( this.currentHash.get( 'action' ) !== 'blur' ) {
+				this.extraInfo.set( 'beforeBlur', this.currentHash.get( 'action' ) || '' );
+				this.updateHash({
+					data:	{
+						action: 'blur'
+					}
+				});
+			}
 		}
+
+		return false;
 	}
 
 	onUserLogin( user ) {
@@ -150,7 +164,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			type:		'userAction',
 			payload:	{
 				id:			action,
-				extra:		this.extraInfo.get( this.currentHash.get( 'action' ) ) || this.extraInfo.get( this.currentHash.get( 'ref' ) ) || ''
+				extra:		this.extraInfo.get( this.currentHash.get( 'action' ) ) || ''
 			}
 		}, {
 			simplex:	true
@@ -165,10 +179,13 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		}
 	}
 
-	async updateHash( hashUpdate = { data: { }, extra: '' } ) {
+	async updateHash( hashUpdate = { data: { }, extra } ) {
 		for( let [ key, value ] of Object.entries( hashUpdate.data ) ) {
 			this.currentHash.set( key, value );
-			this.extraInfo.set( value, hashUpdate.extra );
+			
+			if( hashUpdate.extra ) {
+				this.extraInfo.set( value, hashUpdate.extra );
+			}
 		}
 
 		location.hash = '';
