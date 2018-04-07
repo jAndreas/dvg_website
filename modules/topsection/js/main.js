@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -37,7 +37,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			videoLink:				'/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
 			fallbackPath:			'/fallback/_video/intro_480.mp4',
 			backgroundVideo:		null,
-			isTheaterMode:			false
+			isTheaterMode:			false,
+			_waitingUsers:			[ ]
 		});
 
 		return this.init();
@@ -70,6 +71,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.on( 'userLogin.server', this.onUserLogin, this );
 		this.on( 'sessionLogin.appEvents', this.onSessionLogin, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
+		this.on( 'notifyUserAboutMessage.chat', this.personalChatMessage, this );
 
 		this.fire( 'checkSession.appEvents' );
 
@@ -289,6 +291,9 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		this.removeNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 
+		this.nodes[ 'div.startLiveChat' ].classList.remove( 'shake' );
+		this.nodes[ 'div.startLiveChat' ].removeEventListener('animationiteration', this._boundShakeAnimationStart, false );
+
 		let clRect			= this.nodes[ 'div.userOptions' ].getBoundingClientRect(),
 			position		= Object.create( null );
 
@@ -298,9 +303,12 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		let liveChatDialog	= await import( /* webpackChunkName: "liveChatDialog" */  'liveChatDialog/js/main.js'  );
 
 		await liveChatDialog.start({
-			position:	position,
-			center:		this.mobileSafariMode
+			position:		position,
+			center:			this.mobileSafariMode,
+			pingMessages:	this._waitingUsers
 		});
+
+		this._waitingUsers = [ ];
 	}
 
 	slideDownArrowAnimationEnd( event ) {
@@ -695,6 +703,42 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		} catch( ex ) {
 			this.log( 'onSessionLogin: ', ex );
 		}
+	}
+
+	async personalChatMessage( data ) {
+		let isChatAvailable = await this.fire( 'findModule.liveChatDialog' );
+
+		if( isChatAvailable !== true ) {
+			this._waitingUsers.push( data );
+
+			this._boundShakeAnimationStart = this.shakeAnimationStart.bind( this );
+
+			if( this.nodes[ 'div.startLiveChat' ].classList.contains( 'shake' ) === false ) {
+				this.nodes[ 'div.startLiveChat' ].classList.add( 'shake' );
+				this.nodes[ 'div.startLiveChat' ].addEventListener('animationiteration', this._boundShakeAnimationStart, false );
+			}
+		}
+	}
+
+	shakeAnimationStart( event ) {
+		/* create element, animate fade fly-away from chat shaking button with messages */
+		let len		= this._waitingUsers.length,
+			rndMsg	= this._waitingUsers[ ~~(Math.random() * len) ];
+
+		let hash	= this.render({ htmlData: '<div class="rndPreviewMessage">%from% schrieb vor %time%: <div class="content">%content%</div></div>', standalone: true }).with({
+			from:		rndMsg.from,
+			time:		getTimePeriod( rndMsg.time ),
+			content:	rndMsg.content
+		}).at({
+			node:		'div.startLiveChat',
+			position:	'beforeend'
+		});
+
+		hash.localRoot.addEventListener('animationend', () => {
+			hash.localRoot.remove();
+			hash.localRoot = null;
+			hash = null;
+		}, false);
 	}
 
 	onModuleDestruction( module ) {

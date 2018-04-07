@@ -17,7 +17,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		super( ...arguments );
 
 		Object.assign(this, {
-			currentHash:	Object.create( null )
+			currentHash:	Object.create( null ),
+			localUser:		Object.create( null )
 		});
 
 		this.init();
@@ -39,6 +40,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		// dynamic routing is not enabled for now.
 		this.on( 'hashChange.appEvents', this.navigateByHash, this );
 		this.on( 'updateHash.appEvents', this.updateHash, this );
+
+		this.recv( 'dispatchedChatMessage', this.onChatMessage.bind( this ) );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
@@ -85,7 +88,14 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		return false;
 	}
 
+	onChatMessage( data ) {
+		if( data.from !== this.localUser.__username && data.content.indexOf( `@${ this.localUser.__username }` ) > -1 ) {
+			this.fire( 'notifyUserAboutMessage.chat', data );
+		}
+	}
+
 	onUserLogin( user ) {
+		Object.assign( this.localUser, user );
 		localStorage.setItem( 'dvgLogin', JSON.stringify( user ) );
 	}
 
@@ -97,7 +107,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.sessionLoginData = localStorage.getItem( 'dvgLogin' );
 
 		if( this.sessionLoginData ) {
-			this.fire( 'sessionLogin.appEvents', JSON.parse( this.sessionLoginData ) );
+			let user = JSON.parse( this.sessionLoginData );
+
+			Object.assign( this.localUser, user );
+			this.fire( 'sessionLogin.appEvents', user );
 		}
 	}
 
@@ -179,10 +192,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		}
 	}
 
-	async updateHash( hashUpdate = { data: { }, extra } ) {
+	async updateHash( hashUpdate = { data: { }, extra: null } ) {
 		for( let [ key, value ] of Object.entries( hashUpdate.data ) ) {
 			this.currentHash.set( key, value );
-			
+
 			if( hashUpdate.extra ) {
 				this.extraInfo.set( value, hashUpdate.extra );
 			}

@@ -38,6 +38,24 @@ div.chatMessageElement {
 		}
 	}
 
+	&.pingMessage {
+		font-weight:bold;
+		color:rgba(220,220,20,1);
+		text-shadow:0 0 12px red;
+		background-color:rgba(0,0,0,0.2);
+		filter:drop-shadow(0px 0px 15px red);
+
+		@media screen and (max-width:$iPhone6Landscape) {
+			font-size:1.7vw;
+			filter:none;
+		}
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			font-size:1.7vh;
+			filter:none;
+		}
+	}
+
 	&:last-child:not(.serverNotification) {
 		border-bottom:none;
 	}

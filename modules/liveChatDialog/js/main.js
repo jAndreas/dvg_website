@@ -38,6 +38,14 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	async init() {
 		await super.init();
 
+		this.userList	= {
+			add:				this.addUserToUserList.bind( this ),
+			remove:				this.removeUserFromUserList.bind( this ),
+			update:				this.updateUserFromUserList.bind( this ),
+			typing:				this.setUserAsTyping.bind( this ),
+			removeTyping:		this.removeAsTyping.bind( this )
+		};
+
 		this.checkVideoPlayerStatus();
 
 		this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
@@ -57,15 +65,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 		this.on( 'userLogout.server', this.onSelfLogout.bind( this ) );
 
-		this.getInitialChatData();
-
-		this.userList	= {
-			add:				this.addUserToUserList.bind( this ),
-			remove:				this.removeUserFromUserList.bind( this ),
-			update:				this.updateUserFromUserList.bind( this ),
-			typing:				this.setUserAsTyping.bind( this ),
-			removeTyping:		this.removeAsTyping.bind( this )
-		};
+		await this.getInitialChatData();
+		this.getPingMessages();
 
 		return this;
 	}
@@ -194,7 +195,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.putLine({
 			from:				'Client',
 			content:			'Verbindung hergestellt',
-			serverNotification:	true
+			extraClasses:		'serverNotification'
 		});
 	}
 
@@ -202,7 +203,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.putLine({
 			from:				'Client',
 			content:			`Verbindung unterbrochen: ${ reason }`,
-			serverNotification:	true
+			extraClasses:		'serverNotification'
 		});
 
 		this.username = '';
@@ -245,7 +246,15 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			this.putLine({
 				from:				'Server',
 				content:			ex.message,
-				serverNotification:	true
+				extraClasses:		'serverNotification'
+			});
+		}
+	}
+
+	async getPingMessages() {
+		if( Array.isArray( this.pingMessages ) && this.pingMessages.length ) {
+			this.pingMessages.forEach( data => {
+				this.putLine( Object.assign( { extraClasses: 'pingMessage' }, data ) );
 			});
 		}
 	}
@@ -279,7 +288,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			this.putLine({
 				from:				'Server',
 				content:			ex.message,
-				serverNotification:	true
+				extraClasses:		'serverNotification'
 			});
 		}
 	}
@@ -316,7 +325,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.userList.typing( data.username );
 	}
 
-	putLine({ from, content, time, type, serverNotification }) {
+	putLine({ from, content, time, type, extraClasses }) {
 		let chatMessageElements = this.nodes[ 'div.chatMessages' ].children;
 
 		if( chatMessageElements.length > 50 ) {
@@ -330,7 +339,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			timeDiff:			time ? `[Vor ${ getTimePeriod( time ) }]` : '',
 			from:				this.paint( from + ': ' ),
 			content:			content,
-			extraClasses:		serverNotification ? 'serverNotification' : ''
+			extraClasses:		extraClasses || ''
 		}).at({
 			node:		'div.chatMessages',
 			position:	'beforeend'
