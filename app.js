@@ -17,8 +17,9 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		super( ...arguments );
 
 		Object.assign(this, {
-			currentHash:	Object.create( null ),
-			localUser:		Object.create( null )
+			currentHash:			Object.create( null ),
+			localUser:				Object.create( null ),
+			lastPostedHashString:	''
 		});
 
 		this.init();
@@ -173,15 +174,18 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async changeUserAction( action ) {
-		this.send({
-			type:		'userAction',
-			payload:	{
-				id:			action,
-				extra:		this.extraInfo.get( this.currentHash.get( 'action' ) ) || ''
-			}
-		}, {
-			simplex:	true
-		});
+		if( this.lastPostedHashString !== this.currentHash.toString() ) {
+			this.lastPostedHashString = this.currentHash.toString();
+			this.send({
+				type:		'userAction',
+				payload:	{
+					id:			action,
+					extra:		this.extraInfo.get( this.currentHash.get( 'action' ) ) || ''
+				}
+			}, {
+				simplex:	true
+			});
+		}
 	}
 
 	async navigateByHash( hash ) {

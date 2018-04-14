@@ -62,7 +62,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 		if( data.videoId === this.videoData.id ) {
 			this.videoData.views						= data.count;
 			this.videoData.uniqueViews					= data.uniqueCount;
-			this.nodes[ 'span.videoViews' ].textContent	= `${ data.count } Aufrufe`;
+			this.nodes[ 'span.videoViews' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, "," ) } Aufrufe`;
 		}
 	}
 

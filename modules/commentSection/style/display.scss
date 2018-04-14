@@ -1,0 +1,128 @@
+div.commentWrapper {
+	display:flex;
+	flex-direction:column;
+	justify-content:flex-start;
+	align-items:stretch;
+	font-family:verdana,arial;
+	font-size:12px;
+	margin-bottom:4vh;
+
+	&.subComment {
+		font-size:11px;
+		margin-bottom:2vh;
+		filter:sepia(0.5);
+
+		> div.content {
+			font-size:12px;
+		}
+	}
+
+	div.separator {
+		margin-left:4px;
+		margin-right:4px;
+
+		&:after {
+			content:'▪'
+		}
+	}
+
+	> div.topInfo {
+		display:flex;
+		flex-direction:row;
+		justify-content:flex-start;
+		align-items:center;
+		margin-bottom:6px;
+
+		> div.author {
+			font-weight:bold;
+			text-decoration:underline;
+			color:#5bb8ff;
+		}
+
+		> div.timePeriod {
+			text-decoration:underline;
+			font-size:9px;
+			color:rgba(250,250,250,0.75);
+		}
+	}
+
+	> div.content {
+		color:white;
+	}
+
+	> div.actionsLine {
+		display:flex;
+		flex-direction:row;
+		justify-content:flex-start;
+		align-items:center;
+		margin-top:8px;
+		color:#5bb8ff;
+
+		> div.thumbsUp {
+			cursor:pointer;
+		}
+
+		> div.thumbsDown {
+			margin-left:4px;
+			cursor:pointer;
+		}
+
+		> div.voting {
+			font-size:10px;
+			color:rgba(255,255,255,1);
+			font-weight:bold;
+
+			&.positive {
+				color:#2ba92b;
+			}
+
+			&.negative {
+				color:#b91e1e;
+			}
+		}
+
+		> div.reply {
+			font-weight:bold;
+			font-size:10px;
+			cursor:pointer;
+			user-select:none;
+		}
+
+		> div.report {
+			font-weight:bold;
+			font-size:10px;
+			cursor:pointer;
+			user-select:none;
+		}
+	}
+
+	> div.responseWrapper {
+		display:flex;
+		flex-direction:column;
+
+		> div.responseContainer {
+			display:none;
+			margin-left:2vw;
+			margin-top:2vh;
+			order:2;
+
+			&:empty ~ div.showLocalResponses {
+				display:none;
+			}
+
+			&.show {
+				display:block;
+			}
+		}
+
+		> div.showLocalResponses {
+			display:flex;
+			order:1;
+			font-weight:bold;
+			color:#5bb8ff;
+			cursor:pointer;
+			margin-top:2px;
+			user-select:none;
+		}
+	}
+}

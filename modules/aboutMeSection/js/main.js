@@ -23,9 +23,9 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 
 		super( options );
 
-		/*this.runtimeDependencies.push(
-
-		);*/
+		this.runtimeDependencies.push(
+			this.loadImage( background )
+		);
 
 		return this.init();
 	}
@@ -33,18 +33,7 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 	async init() {
 		await super.init();
 
-		this.createModalOverlay({
-			opts:	{
-				spinner: true
-			}
-		});
-
-		let backgroundImageURL = await this.loadImage( background );
-
-		this.nodes.root.style.backgroundImage = `url( ${ backgroundImageURL } )`;
-		this.modalOverlay.fulfill();
-
-		// any component related stuff which should wait on dependencies resolve before executing (waitForDOM at least or additional async data)
+		this.nodes.root.style.backgroundImage = `url( ${ this._depsResolve[ 1 ] } )`;
 
 		return this;
 	}

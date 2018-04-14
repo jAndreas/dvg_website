@@ -5,6 +5,7 @@ import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
+import * as commentSection from 'commentSection/js/main.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -40,9 +41,9 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 
 		this.initVideo();
 		this.checkLiveChatStatus();
+		this.initComments();
 
 		this.addNodeEvent( 'div.expand', 'click', this.showFullDescription );
-		this.addNodeEvent( 'div.donate', 'click', this.onDonateClick );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusin', this.onDonateAmountFocus );
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
@@ -153,18 +154,24 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 		}
 	}
 
+	async initComments() {
+		await commentSection.start({
+			location:	this.id,
+			context:	this.videoData.id
+		});
+	}
+
 	updateViewCount( data ) {
 		if( data.videoId === this.videoData.id ) {
 			this.videoData.views					= data.count;
 			this.videoData.uniqueViews				= data.uniqueCount;
-			this.nodes[ 'span.views' ].textContent	= `${ data.count } Aufrufe`;
+			this.nodes[ 'span.views' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, "," ) } Aufrufe`;
 		}
 	}
 
 	showFullDescription() {
 		this.removeNodes( 'div.expand', true );
 		this.nodes[ 'span.description' ].classList.remove( 'folded' );
-		this.scrollElementIntoView( 'span.description' );
 
 		if(!this._liveChatMode ) {
 			this.centerOverlay();

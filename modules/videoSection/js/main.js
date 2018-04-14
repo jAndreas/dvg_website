@@ -17,29 +17,25 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		extend( options ).with({
 			name:			'videoSection',
 			location:		moduleLocations.center,
+			loadingMessage:	'Warte auf Serververbindung...',
 			tmpl:			html,
 			previewLinks:	[ ]
 		}).and( input );
 
 		super( options );
 
-		/*this.runtimeDependencies.push(
-			this.fire( 'SomeEvent.appEvents' ) // or any promise
-		);*/
+		this.runtimeDependencies.push(
+			this.fire( 'waitForConnection.server' )
+		);
 
 		return this.init();
 	}
 
 	async init() {
+		this.on( 'slideDownArrayClicked.topSection', this.slideIntoView, this );
+		
 		await super.init();
 
-		await this.createModalOverlay({
-			opts:	{
-				spinner: true
-			}
-		});
-
-		this.on( 'slideDownArrayClicked.topSection', this.slideIntoView, this );
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 
@@ -50,13 +46,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 			await retVal;
 		} catch( ex ) {
-			await this.createModalOverlay({
-				opts:	{
-					spinner:	true
-				}
-			});
-
-			this.modalOverlay.log( ex || 'Fehler', 0 );
+			this.modalOverlay && this.modalOverlay.log( ex || 'Fehler', 0 );
 
 			await this.fire( 'waitForConnection.server' );
 
@@ -66,7 +56,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		this.on( 'connect.server', this.onConnect.bind( this ) );
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 
-		await this.modalOverlay.fulfill();
+		this.modalOverlay && await this.modalOverlay.fulfill();
 
 		return retVal;
 	}
@@ -109,7 +99,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 			}
 		});
 
-		this.modalOverlay.log( 'Server connection lost.', 0 );
+		this.modalOverlay.log( 'Warte auf Serververbindung...', 0 );
 
 		while( (link = this.previewLinks.shift()) ) {
 			await link.destroy();

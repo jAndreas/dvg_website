@@ -32,6 +32,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 		super( options );
 
+		extend( this ).with({
+			usersTyping:			Object.create( null )
+		});
+
 		return this.init();
 	}
 
@@ -73,6 +77,13 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 	async destroy() {
 		win.clearTimeout( this.timeOffsetTimer );
+
+		for( let [ name, timeoutId ] of Object.entries( this.usersTyping ) ) {
+			win.clearTimeout( timeoutId );
+		}
+
+		this.usersTyping = null;
+
 		[ style, chatMessageElementStyle, userInListStyle ].forEach( s => s.unuse() );
 
 		super.destroy && super.destroy();
@@ -111,7 +122,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			return;
 		}
 
-		if( this[ `removeTyping-${ name }` ] === undef ) {
+		if( this.usersTyping[ this.username ] === undef ) {
 			if( event.which >= 48 && event.which <= 90 && !event.ctrlKey && !event.metaKey ) {
 				this.send({
 					type:		'userInputNotification'
@@ -225,9 +236,15 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 			this.nodes[ 'div.chatMessages' ].innerHTML = '';
 
+			this.username = result.data.username || 'anonym';
+
 			if( Array.isArray( result.data.history ) ) {
 				for( let entry of result.data.history ) {
-					this.putLine( entry );
+					if( this.username !== entry.from && entry.content.indexOf( `@${ this.username }` ) > -1 ) {
+						this.putLine( Object.assign( { extraClasses: 'pingMessage' }, entry ) );
+					} else {
+						this.putLine( entry );
+					}
 				}
 			}
 
@@ -236,8 +253,6 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 					this.userList.add( user.name, user.action );
 				}
 			}
-
-			this.username = result.data.username || 'anonym';
 
 			this.nodes[ 'div.username' ].textContent = this.username + ':';
 			this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = result.data.totalUsersCount;
@@ -295,7 +310,12 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 	async receivedDispatchedChatMessage( data ) {
 		this.userList.removeTyping( data.from );
-		this.putLine( data );
+
+		if( this.username !== data.from && data.content.indexOf( `@${ this.username }` ) > -1 ) {
+			this.putLine( Object.assign( { extraClasses: 'pingMessage' }, data ) );
+		} else {
+			this.putLine( data );
+		}
 	}
 
 	async newUserLogin( data ) {
@@ -399,9 +419,9 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		if( match ) {
 			match.classList.add( 'isTyping' );
 
-			this[ `removeTyping-${ name }` ] = win.setTimeout(() => {
+			this.usersTyping[ name ] = win.setTimeout(() => {
 				this.removeAsTyping( name );
-			}, 1000 * 30);
+			}, 1000 * 15);
 		}
 	}
 
@@ -409,8 +429,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name } > div.wrapper > div.typingStatus` );
 
 		if( match ) {
-			win.clearTimeout( this[ `removeTyping-${ name }` ] );
-			delete this[ `removeTyping-${ name }` ];
+			win.clearTimeout( this.usersTyping[ name ] );
+			delete this.usersTyping[ name ];
 
 			match.classList.remove( 'isTyping' );
 		}

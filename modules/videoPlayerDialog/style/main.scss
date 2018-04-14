@@ -10,6 +10,10 @@ div.videoPlayerDialog {
 	justify-content:center;
 	align-items:flex-start;
 
+	overflow-x:hidden;
+	overflow-y:scroll;
+	height:90vh;
+
 	padding:1vh;
 
 	/*@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
@@ -55,6 +59,7 @@ div.videoPlayerDialog {
 		.sectionContainer {
 			border:1px solid rgba(200,200,200,0.5);
 			background-color:rgba(20,20,20,0.3);
+			margin-top:1vh;
 		}
 
 		div.playerWrapper {
@@ -169,7 +174,7 @@ div.videoPlayerDialog {
 			}
 
 			> div.donationForm {
-				display:none;
+				display:flex;
 				flex-direction:row;
 				justify-content:space-around;
 				align-items:center;
@@ -205,20 +210,6 @@ div.videoPlayerDialog {
 					min-width:2vh;
 					height:75%;
 					font-size:2vh;
-				}
-			}
-
-			> div.donate {
-				background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4)), url(../images/paypalsupport.png);
-				background-color:transparent;
-				border-radius:4px;
-				width:28vh;
-				background-size:100% 100%;
-				border:1px solid rgba(20,20,80,1);
-				height:3vh;
-
-				&:hover {
-					filter:brightness(1.4) contrast(1.6);
 				}
 			}
 
@@ -277,6 +268,11 @@ div.videoPlayerDialog {
 					background:linear-gradient(0deg, rgba(180, 180, 210, 0.3), rgba(200, 170, 250, 0.3));
 				}
 			}
+		}
+
+		> div.commentsWrapper {
+			margin-top:5vh;
+			width:100%;
 		}
 	}
 }

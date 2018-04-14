@@ -42,22 +42,14 @@ class supportSection extends Component {
 
 		this.addNodeEvent( 'div.impressum', 'click', this.onImpressumClick );
 
-		this.createModalOverlay({
-			opts:	{
-				spinner: true
-			}
-		});
-
 		try {
 			this.video = await loadVideo({
 				videoLink:		this.videoLink,
 				videoElement:	this.nodes[ 'video.supportMeSequence' ],
 				fallbackPath:	this.fallbackPath
 			});
-
-			this.modalOverlay.fulfill();
 		} catch( ex ) {
-			this.modalOverlay.log( ex );
+			this.log( ex );
 		}
 
 		return this;

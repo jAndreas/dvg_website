@@ -1,0 +1,87 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.commentSection {
+	position:relative;
+	width:100%;
+	display:flex;
+	flex-direction:column;
+	align-items:stretch;
+	justify-content:center;
+	font-family:verdana,arial;
+	font-size:12px;
+
+	&.subCommentInput > div.commentsList {
+		display:none;
+	}
+
+	> div.commentInput {
+		position:relative;
+		display:flex;
+		flex-direction:column;
+
+		> form.commentData {
+			position:relative;
+			width:100%;
+			display:flex;
+			flex-direction:row;
+			align-items:stretch;
+			justify-content:center;
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				flex-direction:column;
+				justify-content:center;
+				align-items:stretch;
+			}
+
+			> textarea.commentText {
+				width:80%;
+				height:8vh;
+				outline:none;
+				resize:none;
+				padding:4px;
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					width:auto;
+				}
+			}
+
+			> input.sendComment {
+				border:1px solid white;
+				border-radius:0;
+				width:20%;
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					width:auto;
+				}
+			}
+		}
+
+		> input.cancelComment {
+			display:none;
+			width:20%;
+			font-size:1.5vh;
+			height:3vh;
+			border:1px solid white;
+			margin-top:4px;
+
+			&.active {
+				display:block;
+			}
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				width:auto;
+			}
+		}
+	}
+
+	> div.commentsList {
+		width:100%;
+		background-color:transparent;
+		display:flex;
+		flex-direction:column;
+		width:95%;
+		margin:auto;
+		margin-top:5vh;
+		text-shadow:none;
+	}
+}
