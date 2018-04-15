@@ -33,7 +33,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 	async init() {
 		this.on( 'slideDownArrayClicked.topSection', this.slideIntoView, this );
-		
+
 		await super.init();
 
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
@@ -83,6 +83,8 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async onConnect() {
+		this._disconnected = false;
+
 		if( this.modalOverlay ) {
 			await this.modalOverlay.fulfill();
 		}
@@ -93,6 +95,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	async onDisconnect() {
 		let link;
 
+		this._disconnected = true;
 		this.createModalOverlay({
 			opts:	{
 				spinner:	true
@@ -153,7 +156,9 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 	onVideoPlayerDestruction( module ) {
 		if( module.name === 'videoPlayerDialog' ) {
-			this.modalOverlay && this.modalOverlay.cleanup();
+			if(!this._disconnected ) {
+				this.modalOverlay && this.modalOverlay.cleanup();
+			}
 		}
 	}
 

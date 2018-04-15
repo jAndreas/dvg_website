@@ -121,6 +121,10 @@ div.commentWrapper {
 			font-size:10px;
 			cursor:pointer;
 			user-select:none;
+
+			&.alreadyReported {
+				cursor:not-allowed;
+			}
 		}
 	}
 

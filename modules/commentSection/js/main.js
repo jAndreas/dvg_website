@@ -71,7 +71,9 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			}
 
 			if( event.target.classList.contains( 'report' ) ) {
-				this.reportClick( event.target.closest( 'div.commentWrapper' ) );
+				if( event.target.classList.contains( 'alreadyReported' ) === false ) {
+					this.reportClick( event.target.closest( 'div.commentWrapper' ) );
+				}
 			}
 
 			if( event.target.classList.contains( 'showLocalResponses' ) ) {
@@ -150,20 +152,22 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	reportClick( rootNode ) {
+	async reportClick( rootNode ) {
 		try {
 			let commentid;
 
 			if( rootNode ) {
 				commentid = rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
 
-				
-				this.send({
+				let result = await this.send({
 					type:		'reportComment',
 					payload:	{
 						commentid:	commentid
 					}
 				});
+
+				rootNode.querySelector( 'div.report' ).textContent = result.msg;
+				rootNode.querySelector( 'div.report' ).classList.add( 'alreadyReported' );
 			} else {
 				throw new Error( 'reportClick: wrong formal arguments' );
 			}
