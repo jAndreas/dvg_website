@@ -3,6 +3,7 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -28,6 +29,7 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 		await super.init();
 
 		this.addNodeEvent( 'form.loginData', 'submit', this.onSubmit );
+		this.addNodeEvent( 'div.forgotPassword', 'click', this.onForgotPassword );
 
 		return this;
 	}
@@ -74,9 +76,54 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 			this.destroy();
 		} catch( ex ) {
 			this.modalOverlay.spinner.cleanup( 400 );
-			await this.modalOverlay.log( ex, 4000 );
+			await this.modalOverlay.log( ex.message, 4000 );
 			await this.modalOverlay.fulfill();
 			this.addNodeEvent( 'form.loginData', 'submit', this.onSubmit );
+		}
+	}
+
+	async onForgotPassword( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.removeNodeEvent( 'div.forgotPassword', 'click', this.onForgotPassword );
+
+		let {
+			'input.emailAddress':email,
+			'section.page1':page1 } = this.nodes;
+
+		if( email.value.length === 0 ) {
+			email.setCustomValidity( 'E-Mail Adresse erforderlich...' );
+			this.nodes[ 'input.login' ].click();
+
+			win.setTimeout(() => {
+				email.setCustomValidity( '' );
+				this.addNodeEvent( 'div.forgotPassword', 'click', this.onForgotPassword );
+			}, 3000);
+		} else {
+			try {
+				this.createModalOverlay({
+					at:		page1,
+					opts:	{
+						spinner: true
+					}
+				});
+
+				let response = await this.send({
+					type:		'resetPassword',
+					payload:	{
+						email:	email.value,
+					}
+				});
+
+				this.modalOverlay.spinner.cleanup( 400 );
+				await this.modalOverlay.log( response.msg, 6000 );
+				//await this.modalOverlay.fulfill();
+			} catch( ex ) {
+				this.modalOverlay.spinner.cleanup( 400 );
+				await this.modalOverlay.log( ex.message, 4000 );
+				await this.modalOverlay.fulfill();
+			}
 		}
 	}
 }

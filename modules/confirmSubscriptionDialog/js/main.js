@@ -24,9 +24,9 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 
 		super( options );
 
-		//this.runtimeDependencies.push(
-
-		//);
+		this.runtimeDependencies.push(
+			this.fire( 'waitForConnection.server' )
+		);
 
 		return this.init();
 	}
@@ -34,25 +34,30 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 	async init() {
 		await super.init();
 
-		await this.fire( 'waitForConnection.server' );
-
 		if( this.secretKey ) {
 			try {
-				this.createModalOverlay({
-					opts:	{
-						spinner: true
-					}
-				});
+				let response = Object.create( null );
 
-				let response = await this.send({
-					type:		'confirmAccountSecretKey',
-					payload:	{
-						secretKey:		this.secretKey,
-						confirmUser:	this.confirmUser
-					}
-				}, {
-					noTimeout: true
-				});
+				if( this.confirmReset ) {
+					response = await this.send({
+						type:		'confirmReset',
+						payload:	{
+							secretKey:		this.secretKey
+						}
+					}, {
+						noTimeout: true
+					});
+				} else {
+					response = await this.send({
+						type:		'confirmAccountSecretKey',
+						payload:	{
+							secretKey:		this.secretKey,
+							confirmUser:	this.confirmUser
+						}
+					}, {
+						noTimeout: true
+					});
+				}
 
 				this.modalOverlay.fulfill();
 

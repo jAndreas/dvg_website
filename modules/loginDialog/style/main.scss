@@ -84,6 +84,14 @@ div.loginDialog {
 					font-size:4vh;
 				}
 			}
+
+			> div.forgotPassword {
+				font-size:11px;
+				align-self:flex-end;
+				margin-right:2vh;
+				text-decoration:underline;
+				cursor:pointer;
+			}
 		}
 	}
 }
