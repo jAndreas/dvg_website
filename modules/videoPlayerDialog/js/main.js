@@ -14,7 +14,7 @@ import style from '../style/main.scss';
  *  videoPlayer Dialog creates an overlay dialog to playback the passed in video based on the data
  *	It also displays all the information and is responsible for handling clicks/views
  *****************************************************************************************************/
-class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, ServerConnection ) {
+class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:					'videoPlayerDialog',
@@ -24,6 +24,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 			topMost:				true,
 			avoidOutsideClickClose:	true,
 			hoverOverlay:			true,
+			noBlur:					true,
 			title:					input.videoData.videoTitle
 		}).and( input );
 
@@ -39,6 +40,7 @@ class videoPlayerDialog extends mix( Overlay ).with( GlasEffect, Draggable, Serv
 	async init() {
 		await super.init();
 
+		this.scrollContainerIntoView();
 		this.initVideo();
 		this.checkLiveChatStatus();
 		this.initComments();

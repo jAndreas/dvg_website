@@ -42,6 +42,10 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
 
 		this.on( 'mouseup.appEvents', this.delegatedClick, this );
+
+		this.recv( 'commentWasVoted', this.commentWasVoted.bind( this ) );
+		this.recv( 'newCommentWasPosted', this.newCommentWasPosted.bind( this ) );
+
 		this.getComments();
 
 		return this;
@@ -55,11 +59,11 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 	delegatedClick( event ) {
 		if( this.nodes.root.contains( event.target ) ) {
 			if( event.target.classList.contains( 'thumbsUp' ) ) {
-				this.thumbsUpClick();
+				this.voteClick( event.target.closest( 'div.commentWrapper' ), 'castUpvote' );
 			}
 
 			if( event.target.classList.contains( 'thumbsDown' ) ) {
-				this.thumbsDownClick();
+				this.voteClick( event.target.closest( 'div.commentWrapper' ), 'castDownvote' );
 			}
 
 			if( event.target.classList.contains( 'reply' ) ) {
@@ -76,12 +80,37 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	thumbsUpClick() {
+	async voteClick( rootNode, vote ) {
+		try {
+			let commentid;
 
-	}
+			if( rootNode ) {
+				commentid = rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
 
-	thumbsDownClick() {
+				let result = await this.send({
+					type:		vote,
+					payload:	{
+						commentid:	commentid
+					}
+				});
 
+				if( result.data.upvote ) {
+					rootNode.querySelector( 'div.thumbsUp' ).classList.add( 'highlight' );
+				} else {
+					rootNode.querySelector( 'div.thumbsUp' ).classList.remove( 'highlight' );
+				}
+
+				if( result.data.downvote ) {
+					rootNode.querySelector( 'div.thumbsDown' ).classList.add( 'highlight' );
+				} else {
+					rootNode.querySelector( 'div.thumbsDown' ).classList.remove( 'highlight' );
+				}
+			} else {
+				throw new Error( 'voteClick: wrong formal arguments' );
+			}
+		} catch( ex ) {
+			this.log( ex );
+		}
 	}
 
 	async replyClick( rootNode ) {
@@ -121,8 +150,26 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	reportClick() {
+	reportClick( rootNode ) {
+		try {
+			let commentid;
 
+			if( rootNode ) {
+				commentid = rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
+
+				
+				this.send({
+					type:		'reportComment',
+					payload:	{
+						commentid:	commentid
+					}
+				});
+			} else {
+				throw new Error( 'reportClick: wrong formal arguments' );
+			}
+		} catch( ex ) {
+
+		}
 	}
 
 	showLocalResponses( rootNode ) {
@@ -148,7 +195,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			});
 
 			for( let comment of result.data.comments ) {
-				this.renderComment( comment, result.data.comments );
+				this.renderComment({ comment: comment, srcArray: result.data.comments });
 			}
 		} catch( ex ) {
 			this.createModalOverlay();
@@ -194,6 +241,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 		let root		= event.target.closest( 'div.commentSection' ),
 			sendBtn		= root.querySelector( 'input.sendComment' ),
+			cancelBtn	= root.querySelector( 'input.cancelComment' ),
 			commentArea	= root.querySelector( 'textarea.commentText' ),
 			form		= root.querySelector( 'form.commentData' ),
 			cid			= root.dataset.commentid;
@@ -212,13 +260,16 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			});
 
 			if( result.data.success ) {
-				root.closest( 'div.commentWrapper.topLevel' ).querySelector( 'div.responseContainer' ).classList.add( 'show' );
-				root.closest( 'div.commentWrapper.topLevel' ).querySelector( 'div.showLocalResponses' ).textContent = 'Antworten ausblenden';
+				let commentWrapper = root.closest( 'div.commentWrapper.topLevel' );
+
+				if( commentWrapper ) {
+					commentWrapper.querySelector( 'div.responseContainer' ).classList.add( 'show' );
+					commentWrapper.querySelector( 'div.showLocalResponses' ).textContent = 'Antworten ausblenden';
+				}
 
 				Array.from( doc.querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
 				commentArea.value = '';
-
-				this.renderComment( result.data.comment );
+				this.blurCommentText({ target: cancelBtn });
 			}
 		} catch( ex ) {
 			this.createModalOverlay({
@@ -233,12 +284,14 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		sendBtn.removeAttribute( 'disabled' );
 	}
 
-	async renderComment( comment, srcArray ) {
+	async renderComment({ comment, srcArray, fadeIn }) {
 		let targetContainer, responseCount;
 
 		// slightly extend comment data with locally calculated time offset and voting relation
-		comment.timePeriod	= `schrieb vor ${ getTimePeriod( comment.creationDate ) }`;
-		comment.voting		= (comment.upvotes - comment.downvotes) || 0;
+		comment.timePeriod		= `schrieb vor ${ getTimePeriod( comment.creationDate ) }`;
+		comment.voting			= (comment.upvotes - comment.downvotes) || 0;
+		comment.responseCount	= 0;
+		comment.fadeIn			= fadeIn ? 'fadeIn' : '';
 
 		if( Array.isArray( srcArray ) ) {
 			responseCount = srcArray.filter( cmp => {
@@ -256,8 +309,14 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 		let hash = this.render({ htmlData: displayMarkup, standalone: true }).with( comment ).at({
 			node:		targetContainer,
-			position:	'beforeend'
+			position:	'afterbegin'
 		});
+
+		if( fadeIn ) {
+			hash.localRoot.addEventListener( 'animationend', () => {
+				hash.localRoot.classList.remove( 'fadeIn' );
+			}, false);
+		}
 
 		if( comment.reference ) {
 			hash.localRoot.classList.add( 'subComment' );
@@ -265,10 +324,49 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			hash.localRoot.querySelector( 'div.responseWrapper' ).remove();
 
 			if( srcArray === undef ) {
-				let localRes = hash.localRoot.closest( 'div.commentWrapper.topLevel' ).querySelector( 'div.showLocalResponses' );
-				localRes.dataset.responsecount = win.parseInt( localRes.dataset.responsecount, 10 ) + 1;
+				let localRes			= hash.localRoot.closest( 'div.commentWrapper.topLevel' ).querySelector( 'div.showLocalResponses' ),
+					localResContainer	= hash.localRoot.closest( 'div.commentWrapper.topLevel' ).querySelector( 'div.responseContainer' );
+
+				localRes.dataset.responsecount	= win.parseInt( localRes.dataset.responsecount, 10 ) + 1;
+
+				if(!localResContainer.classList.contains( 'show' ) ) {
+					localRes.textContent			= `Antworten anzeigen (${ localRes.dataset.responsecount })`;
+				}
 			}
 		}
+
+		if( comment.wasUpvoted ) {
+			hash.localRoot.querySelector( 'div.thumbsUp' ).classList.add( 'highlight' );
+		} else if( comment.wasDownvoted ) {
+			hash.localRoot.querySelector( 'div.thumbsDown' ).classList.add( 'highlight' );
+		}
+
+		if( comment.voting < 0 ) {
+			hash.localRoot.querySelector( 'div.voting' ).classList.add( 'negative' );
+		} else if( comment.voting > 0 ) {
+			hash.localRoot.querySelector( 'div.voting' ).classList.add( 'positive' );
+		} else {
+			hash.localRoot.querySelector( 'div.voting' ).classList.remove( 'negative', 'positive' );
+		}
+	}
+
+	commentWasVoted( data ) {
+		let rootNode = doc.querySelector( `div.comment-${ data.commentid }` );
+
+		let voteResult = data.upvoteCount - data.downvoteCount;
+		rootNode.querySelector( 'div.voting' ).textContent = voteResult;
+
+		if( voteResult < 0 ) {
+			rootNode.querySelector( 'div.voting' ).classList.add( 'negative' );
+		} else if( voteResult > 0 ) {
+			rootNode.querySelector( 'div.voting' ).classList.add( 'positive' );
+		} else {
+			rootNode.querySelector( 'div.voting' ).classList.remove( 'negative', 'positive' );
+		}
+	}
+
+	newCommentWasPosted( comment ) {
+		this.renderComment({ comment: comment, fadeIn: true });
 	}
 }
 /****************************************** commentSection End ******************************************/
