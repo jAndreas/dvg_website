@@ -43,18 +43,19 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 		[ style ].forEach( s => s.unuse() );
 	}
 
-	async launchVideoModule() {
+	async launchVideoModule( at ) {
 		let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
 
 		videoPlayer.start({
 			location:	this.location,
-			videoData:	this.videoData
+			videoData:	this.videoData,
+			at:			at
 		});
 	}
 
-	onOpenVideoPlayer( internalId ) {
+	onOpenVideoPlayer({ internalId, at }) {
 		if( this.videoData.internalId === internalId ) {
-			this.launchVideoModule();
+			this.launchVideoModule( at );
 		}
 	}
 
@@ -62,7 +63,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 		if( data.videoId === this.videoData.id ) {
 			this.videoData.views						= data.count;
 			this.videoData.uniqueViews					= data.uniqueCount;
-			this.nodes[ 'span.videoViews' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, "," ) } Aufrufe`;
+			this.nodes[ 'span.videoViews' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ) } Aufrufe`;
 		}
 	}
 

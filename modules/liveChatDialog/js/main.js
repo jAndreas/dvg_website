@@ -276,6 +276,9 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 	async sendMessage() {
 		try {
+			this.removeNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
+			this.removeNodeEvent( 'input.sendChatMessage', 'click', this.sendMessage );
+
 			let sendData = this.nodes[ 'textarea.inputChatMessage' ].value;
 
 			if( sendData.trim().length > 256 ) {
@@ -294,7 +297,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				this.nodes[ 'textarea.inputChatMessage' ].focus();
 
 				if( result.data.messageDelivered ) {
-					// show some approval symbol?!
+					this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
+					this.addNodeEvent( 'input.sendChatMessage', 'click', this.sendMessage );
 				}
 			} else {
 				throw new Error( 'Du hast wohl nicht viel zu sagen...?' );
@@ -305,6 +309,9 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				content:			ex.message,
 				extraClasses:		'serverNotification'
 			});
+
+			this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
+			this.addNodeEvent( 'input.sendChatMessage', 'click', this.sendMessage );
 		}
 	}
 

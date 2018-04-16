@@ -1,11 +1,10 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { moduleLocations } from 'barfoos2.0/defs.js';
 import { mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { win, doc, undef } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js'
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import displayMarkup from '../markup/display.html';
@@ -37,6 +36,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 		this.nodes[ 'form.commentData' ].addEventListener( 'submit', this.sendComment.bind( this), false );
 		this.nodes[ 'textarea.commentText' ].addEventListener( 'focusin', this.focusCommentText.bind( this), false );
+		this.nodes[ 'textarea.commentText' ].addEventListener( 'focusout', this.focusoutCommentText.bind( this), false );
 		this.nodes[ 'textarea.commentText' ].addEventListener( 'input', this.checkInput.bind( this), false );
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'click', this.blurCommentText.bind( this), false );
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
@@ -112,6 +112,10 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			}
 		} catch( ex ) {
 			this.log( ex );
+			
+			this.createModalOverlay({ at: rootNode });
+			await this.modalOverlay.log( ex.message );
+			this.modalOverlay.fulfill();
 		}
 	}
 
@@ -139,6 +143,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 				hash.localRoot.classList.add( 'subCommentInput' );
 				hash.localRoot.querySelector( 'form.commentData' ).addEventListener( 'submit', this.sendComment.bind( this), false );
 				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focusin', this.focusCommentText.bind( this), false );
+				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focusout', this.focusoutCommentText.bind( this), false );
 				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'input', this.checkInput.bind( this), false );
 				hash.localRoot.querySelector( 'input.cancelComment' ).addEventListener( 'click', this.blurCommentText.bind( this), false );
 				hash.localRoot.querySelector( 'input.cancelComment' ).addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
@@ -172,7 +177,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 				throw new Error( 'reportClick: wrong formal arguments' );
 			}
 		} catch( ex ) {
-
+			this.log( ex );
 		}
 	}
 
@@ -213,6 +218,21 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			cancelBtn	= root.querySelector( 'input.cancelComment' );
 
 		cancelBtn.classList.add( 'active' );
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'commenting'
+			}
+		});
+	}
+
+	focusoutCommentText() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'videoPlayerDialog'
+			},
+			extra:	this.context
+		});
 	}
 
 	blurCommentText( event ) {
@@ -313,7 +333,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 		let hash = this.render({ htmlData: displayMarkup, standalone: true }).with( comment ).at({
 			node:		targetContainer,
-			position:	'afterbegin'
+			position:	comment.reference ? 'beforeend' : 'afterbegin'
 		});
 
 		if( fadeIn ) {

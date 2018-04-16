@@ -118,7 +118,7 @@ class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 
 				this.modalOverlay.spinner.cleanup( 400 );
 				await this.modalOverlay.log( response.msg, 6000 );
-				//await this.modalOverlay.fulfill();
+				await this.modalOverlay.fulfill();
 			} catch( ex ) {
 				this.modalOverlay.spinner.cleanup( 400 );
 				await this.modalOverlay.log( ex.message, 4000 );

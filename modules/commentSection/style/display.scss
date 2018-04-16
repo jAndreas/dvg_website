@@ -6,6 +6,7 @@ div.commentWrapper {
 	font-family:verdana,arial;
 	font-size:12px;
 	margin-bottom:4vh;
+	position:relative;
 
 	&.fadeIn {
 		animation-name:fadeCommentIn;

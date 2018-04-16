@@ -3,7 +3,7 @@
 /* fuck eslint, we need to load the core.js here */
 import { Component } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
-import { doc } from 'barfoos2.0/domkit.js';
+import { doc, win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
@@ -19,7 +19,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		Object.assign(this, {
 			currentHash:			Object.create( null ),
 			localUser:				Object.create( null ),
-			lastPostedHashString:	''
+			lastPostedHashString:	'',
+			id:						'app'
 		});
 
 		this.init();
@@ -43,6 +44,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'updateHash.appEvents', this.updateHash, this );
 
 		this.recv( 'dispatchedChatMessage', this.onChatMessage.bind( this ) );
+		this.recv( 'reloadPage', this.onRemotePageReload.bind( this ) );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
 		let objURL				= await this.backgroundImage;
@@ -93,6 +95,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		if( data.from !== this.localUser.__username && data.content.indexOf( `@${ this.localUser.__username }` ) > -1 ) {
 			this.fire( 'notifyUserAboutMessage.chat', data );
 		}
+	}
+
+	onRemotePageReload() {
+		win.location.reload( true );
 	}
 
 	onUserLogin( user ) {
@@ -174,7 +180,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			await topSection.start();
 
 			if( hash.has( 'watch' ) ) {
-				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
+				this.fire( 'openVideoPlayer.appEvents', {
+					internalId:	hash.get( 'watch'),
+					at:			hash.get( 'at' ) || 0
+				});
 			}
 		}
 	}
@@ -182,6 +191,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async changeUserAction( action ) {
 		if( this.lastPostedHashString !== this.currentHash.toString() ) {
 			this.lastPostedHashString = this.currentHash.toString();
+
 			this.send({
 				type:		'userAction',
 				payload:	{

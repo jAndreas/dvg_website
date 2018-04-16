@@ -145,7 +145,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			await topSection.start();
 
 			if( hash.has( 'watch' ) ) {
-				this.fire( 'openVideoPlayer.appEvents', hash.get( 'watch') );
+				this.fire( 'openVideoPlayer.appEvents', {
+					internalId:	hash.get( 'watch'),
+					at:			hash.get( 'at' ) || 0
+				});
 			}
 		}
 	}

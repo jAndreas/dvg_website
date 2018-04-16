@@ -1,6 +1,6 @@
 'use strict';
 
-import { Overlay, GlasEffect, Draggable } from 'barfoos2.0/dialog.js';
+import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
@@ -40,9 +40,27 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	async init() {
 		await super.init();
 
-		this.scrollContainerIntoView();
-		this.initVideo();
-		this.checkLiveChatStatus();
+		await this.scrollContainerIntoView();
+
+		this.createModalOverlay({
+			opts:	{ spinner: true }
+		});
+
+		try {
+			this.video = await loadVideo({
+				videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
+				videoElement:	this.nodes[ 'video.mainPlayer' ],
+				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
+			});
+		} catch( ex ) {
+			this.modalOverlay && this.modalOverlay.fulfill();
+		}
+
+		await this.initVideo();
+		await this.checkLiveChatStatus();
+
+		this.modalOverlay && this.modalOverlay.fulfill();
+
 		this.initComments();
 
 		this.addNodeEvent( 'div.expand', 'click', this.showFullDescription );
@@ -117,11 +135,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 
 	async initVideo() {
 		try {
-			this.video = await	loadVideo({
-				videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
-				videoElement:	this.nodes[ 'video.mainPlayer' ],
-				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
-			});
+			//this.video.seek( +this.at || 0 );
 
 			if( this.video.hlsJS ) {
 				this.video.hlsJS.on( this.video.hlsEvents.LEVEL_SWITCHED, ( id, data ) => {
@@ -167,7 +181,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		if( data.videoId === this.videoData.id ) {
 			this.videoData.views					= data.count;
 			this.videoData.uniqueViews				= data.uniqueCount;
-			this.nodes[ 'span.views' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, "," ) } Aufrufe`;
+			this.nodes[ 'span.views' ].textContent	= `${ data.count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ) } Aufrufe`;
 		}
 	}
 

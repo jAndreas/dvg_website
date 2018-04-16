@@ -7,9 +7,9 @@ div.userListElement {
 	order:2;
 
 	&.admin {
-		background-color: rgba(20,150,55,0.2);
-		color: green;
-		text-shadow: none;
+		background-color:rgba(0, 0, 0, 0.3);
+		color:#82ff82;
+		text-shadow:none;
 		order:1;
 	}
 
@@ -35,7 +35,7 @@ div.userListElement {
 
 			&.isTyping {
 				display:flex;
-				
+
 				> div {
 					animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 
