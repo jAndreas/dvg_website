@@ -11,20 +11,27 @@ div.aboutMeSection {
 	background-repeat:no-repeat;
 	background-position:50% 50%;
 
+	@media screen and (max-width:$iPhone6Landscape) {
+		background-attachment:scroll;
+		background-size:auto 50%;
+		background-repeat:repeat-y;
+		background-position:60% 50%;
+	}
+
 	> article.aboutMeText {
 		font-family:verdana, arial;
-		color:rgba(125, 145, 190, 0.95);
-		background-color:rgba(0,0,0,0.6);
-		font-size:2.5vh;
+		color:rgb(235, 235, 235);
+		background-color:rgba(10, 11, 29, 0.75);
+		font-size:2.2vh;
+		font-weight:bold;
 		padding:2vw;
-		text-shadow:0 0 5px black, 0 0 5px black, 0 0 5px black;
 		overflow:hidden;
 
 		h1 {
 			font-weight:bold;
 			font-size:3.5vh;
+			color:#da9999;
 			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
-			filter:blur(1px);
 			text-align:right;
 			margin:2vh;
 			text-shadow:0 0 5px black;
@@ -35,7 +42,7 @@ div.aboutMeSection {
 			font-weight:bold;
 			font-size:3vh;
 			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
-			filter:blur(1px);
+			color:#da9999;
 			text-align:right;
 			margin:2vh;
 			text-shadow:0 0 5px black;
@@ -62,8 +69,8 @@ div.aboutMeSection {
 		}
 
 		span.highlight {
-			background:#5c8dff;
-			color:#9ebaff;
+			background:#d1dcf7;
+			color:#1b2367;
 		}
 
 		.hiddenRight {

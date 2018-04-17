@@ -53,8 +53,8 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 			retVal = this.loadVideoData();
 		}
 
-		this.on( 'connect.server', this.onConnect.bind( this ) );
-		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
+		//this.on( 'connect.server', this.onConnect.bind( this ) );
+		//this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 
 		this.modalOverlay && await this.modalOverlay.fulfill();
 
@@ -82,7 +82,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		super.offViewport && super.offViewport( ...arguments );
 	}
 
-	async onConnect() {
+	/*async onConnect() {
 		this._disconnected = false;
 
 		if( this.modalOverlay ) {
@@ -108,7 +108,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 			await link.destroy();
 			link = null;
 		}
-	}
+	}*/
 
 	async loadVideoData() {
 		return new Promise(async ( res, rej ) => {

@@ -52,8 +52,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
-			version:			'0.0.9',
-			status:				'alpha',
+			version:			'0.1.0',
+			status:				'beta',
 			background:			{
 				objURL:		objURL,
 				css:	{

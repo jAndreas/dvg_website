@@ -46,15 +46,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 			opts:	{ spinner: true }
 		});
 
-		try {
-			this.video = await loadVideo({
-				videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
-				videoElement:	this.nodes[ 'video.mainPlayer' ],
-				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
-			});
-		} catch( ex ) {
-			this.modalOverlay && this.modalOverlay.fulfill();
-		}
+		this.on( 'streamInputChanged.video', this.streamInputChanged, this );
 
 		await this.initVideo();
 		await this.checkLiveChatStatus();
@@ -133,22 +125,31 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		this.centerOverlay();
 	}
 
+	streamInputChanged( resolution ) {
+		this.nodes[ 'span.quality' ].textContent = `${ resolution }p`;
+	}
+
 	async initVideo() {
 		try {
-			//this.video.seek( +this.at || 0 );
-
-			if( this.video.hlsJS ) {
-				this.video.hlsJS.on( this.video.hlsEvents.LEVEL_SWITCHED, ( id, data ) => {
-					this.nodes[ 'span.quality' ].textContent = `${ this.video.hlsJS.levels[ data.level ].height }p`;
-				});
-			}
-		} catch( ex ) {
-			this.createModalOverlay({
-				at:		this.nodes[ 'div.playerWrapper' ]
+			this.video = await loadVideo({
+				videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
+				videoElement:	this.nodes[ 'video.mainPlayer' ],
+				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
 			});
 
-			await this.modalOverlay.log( ex || 'Fehler', 125000 );
-			await this.modalOverlay.fulfill();
+			this.video.seek( +this.at || 0 );
+		} catch( ex ) {
+			if(!this.modalOverlay ) {
+				this.createModalOverlay();
+			}
+
+			if( this.modalOverlay ) {
+				await this.modalOverlay.log( ex || 'Fehler', 125000 );
+			}
+
+			if( this.modalOverlay ) {
+				await this.modalOverlay.fulfill();
+			}
 		}
 
 		try {
