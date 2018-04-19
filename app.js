@@ -135,6 +135,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 				this.currentHash.set( 'watch', module.state.videoData.internalId );
 				doc.location.hash = this.currentHash.toString();
 				break;
+			case 'liveChatDialog':
+				this.currentHash.set( 'chat', 1 );
+				doc.location.hash = this.currentHash.toString();
+				break;
 		}
 	}
 
@@ -143,6 +147,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			case 'videoPlayerDialog':
 				this.currentHash.delete( 'watch' );
 				this.currentHash.delete( 'action' );
+				doc.location.hash = this.currentHash.toString();
+				break;
+			case 'liveChatDialog':
+				this.currentHash.delete( 'chat' );
 				doc.location.hash = this.currentHash.toString();
 				break;
 		}
@@ -184,6 +192,14 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 					internalId:	hash.get( 'watch'),
 					at:			hash.get( 'at' ) || 0
 				});
+			}
+
+			if( hash.has( 'ref' ) ) {
+				// scroll section into view
+			}
+
+			if( hash.has( 'chat' ) ) {
+				this.fire( 'openLiveChat.appEvents' );
 			}
 		}
 	}

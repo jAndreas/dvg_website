@@ -112,7 +112,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			}
 		} catch( ex ) {
 			this.log( ex );
-			
+
 			this.createModalOverlay({ at: rootNode });
 			await this.modalOverlay.log( ex.message );
 			this.modalOverlay.fulfill();
@@ -311,9 +311,9 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 	async renderComment({ comment, srcArray, fadeIn }) {
 		let targetContainer, responseCount;
 
-		// slightly extend comment data with locally calculated time offset and voting relation
+		// extend comment data with locally calculated time offset and voting relation
 		comment.timePeriod		= `schrieb vor ${ getTimePeriod( comment.creationDate ) }`;
-		comment.voting			= (comment.upvotes - comment.downvotes) || 0;
+		comment.voting			= (comment.upvotesCount - comment.downvotesCount) || 0;
 		comment.responseCount	= 0;
 		comment.fadeIn			= fadeIn ? 'fadeIn' : '';
 

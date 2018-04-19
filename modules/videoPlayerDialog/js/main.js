@@ -132,7 +132,8 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	async initVideo() {
 		try {
 			this.video = await loadVideo({
-				videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
+				//videoLink:		`/_video/${ this.videoData.internalId }/complete_,108,72,48,36,0.mp4.urlset/master.m3u8`,
+				videoLink:		`/_video/${ this.videoData.internalId }/complete_,72,48,36,0.mp4.urlset/master.m3u8`,
 				videoElement:	this.nodes[ 'video.mainPlayer' ],
 				fallbackPath:	`/fallback/_video/${ this.videoData.internalId }/intro_480.mp4`
 			});

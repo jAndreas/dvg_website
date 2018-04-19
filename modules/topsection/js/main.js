@@ -34,7 +34,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		);
 
 		extend( this ).with({
-			videoLink:				'/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
+			//videoLink:				'/_video/intro_,108,72,48,36,0.mp4.urlset/master.m3u8',
+			videoLink:				'/_video/intro_,72,48,36,0.mp4.urlset/master.m3u8',
 			fallbackPath:			'/fallback/_video/intro_480.mp4',
 			backgroundVideo:		null,
 			isTheaterMode:			false,
@@ -72,6 +73,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.on( 'sessionLogin.appEvents', this.onSessionLogin, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'notifyUserAboutMessage.chat', this.personalChatMessage, this );
+		this.on( 'openLiveChat.appEvents', this.startLiveChat, this );
 
 		this.fire( 'checkSession.appEvents' );
 
@@ -286,8 +288,10 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async startLiveChat( event ) {
-		event.stopPropagation();
-		event.preventDefault();
+		if( 'stopPropagation' in event ) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
 
 		this.removeNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 
@@ -707,7 +711,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	async personalChatMessage( data ) {
 		let isChatAvailable = await this.fire( 'findModule.liveChatDialog' );
-		
+
 		if( isChatAvailable !== true ) {
 			this._waitingUsers.push( data );
 
