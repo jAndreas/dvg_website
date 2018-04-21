@@ -174,8 +174,10 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 
 	async initComments() {
 		await commentSection.start({
-			location:	this.id,
-			context:	this.videoData.id
+			location:		this.id,
+			context:		this.videoData.id,
+			internalId:		this.videoData.internalId,
+			speakingName:	this.videoData.videoTitle
 		});
 	}
 

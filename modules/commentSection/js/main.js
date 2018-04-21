@@ -140,6 +140,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 				});
 
 				hash.localRoot.dataset.commentid = commentid;
+				hash.localRoot.querySelector( 'textarea.commentText' ).value = `@${ rootNode.querySelector( 'div.author' ).textContent } `;
 				hash.localRoot.classList.add( 'subCommentInput' );
 				hash.localRoot.querySelector( 'form.commentData' ).addEventListener( 'submit', this.sendComment.bind( this), false );
 				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focusin', this.focusCommentText.bind( this), false );
@@ -245,7 +246,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		cancelBtn.classList.remove( 'active' );
 	}
 
-	checkInput() {
+	checkInput( event ) {
 		let root		= event.target.closest( 'div.commentSection' ),
 			commentArea	= root.querySelector( 'textarea.commentText' ),
 			comment		= commentArea.value;
@@ -277,9 +278,11 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			let result = await this.send({
 				type:		'newComment',
 				payload:	{
-					content:	commentArea.value,
-					context:	this.context,
-					reference:	cid || ''
+					content:		commentArea.value,
+					context:		this.context,
+					internalId:		this.internalId,
+					speakingName:	this.speakingName,
+					reference:		cid || ''
 				}
 			});
 
