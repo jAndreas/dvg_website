@@ -1,7 +1,7 @@
 'use strict';
 
 /* fuck eslint, we need to load the core.js here */
-import { Component } from 'barfoos2.0/core.js';
+import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc, win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -27,6 +27,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async init() {
+		main();
+
 		this.on( 'userLogin.server', this.onUserLogin, this );
 		this.on( 'userLogout.server', this.onUserLogout, this );
 		this.on( 'waitForBackgroundImageLoaded.appEvents', this.waitForBackgroundImageLoaded, this );
@@ -185,7 +187,9 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else {
 			// contains also videoSection
 			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
-			await topSection.start();
+			await topSection.start({
+				skipInitialVideo:	hash.has( 'watch' )
+			});
 
 			if( hash.has( 'watch' ) ) {
 				this.fire( 'openVideoPlayer.appEvents', {

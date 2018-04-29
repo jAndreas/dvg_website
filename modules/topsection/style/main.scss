@@ -11,7 +11,6 @@ div#topSection {
 		width:auto;
 		box-shadow:0px 0px 55px 5px white;
 		align-self:center;
-		transition:opacity 800ms linear;
 
 		@media screen and (max-width:$iPadPortrait) {
 			width:100%;
@@ -42,6 +41,7 @@ div#topSection {
 		z-index:1;
 		background-image:none;
 		background-repeat:repeat;
+		background-color:rgba(0,0,0,0.5);
 	}
 
 	> video.introduction.darken + div.gridOverlay {
@@ -123,7 +123,7 @@ div#topSection {
 						> a {
 							display:inline-flex;
 							color:$defaultTextColor;
-							font-size:24px;
+							font-size:28px;
 							font-weight:bold;
 							text-shadow:0px 0px 20px white;
 							font-family:cursive, "Lucida Console";

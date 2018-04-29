@@ -17,10 +17,11 @@ div.userListElement {
 		display:flex;
 		flex-direction:row;
 		align-items:flex-end;
+		font-family:verdana,arial;
 
 		> div.userName {
 			font-weight:bold;
-			font-size:2vh;
+			font-size:1.5vh;
 			overflow:hidden;
 			text-overflow:ellipsis;
 			white-space:nowrap;

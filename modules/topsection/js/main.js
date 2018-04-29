@@ -48,8 +48,13 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	async init() {
 		try {
 			await super.init();
-			await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
-			await this.onBackgroundImageLoaded();
+
+			if( this.DOMParsingSpeed < 500 ) {
+				await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
+				await this.onBackgroundImageLoaded();
+			} else {
+				this.nodes[ 'div.gridOverlay' ].style.backgroundImage = 'none';
+			}
 		} catch( ex ) {
 			this.log( 'Error on initializing, module might not be fully available -> ', ex );
 		}
@@ -98,17 +103,31 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	async onBackgroundImageLoaded() {
 		try {
-			this.backgroundVideo = await loadVideo({
-				videoLink:		this.videoLink,
-				videoElement:	this.nodes[ 'video.introduction' ],
-				fallbackPath:	this.fallbackPath,
-				silenced:		true
-			});
+			if(!this.skipInitialVideo ) {
+				this.backgroundVideo = await loadVideo({
+					videoLink:		this.videoLink,
+					videoElement:	this.nodes[ 'video.introduction' ],
+					fallbackPath:	this.fallbackPath,
+					silenced:		true
+				});
 
-			let res = await this.backgroundVideo.play();
+				let res = await this.backgroundVideo.play();
 
-			if( res === -1 ) {
-				throw new Error( 'Unable to playback video, most likely because of webkit video security.' );
+				if( res === -1 ) {
+					throw new Error( 'Unable to playback video, most likely because of webkit video security.' );
+				}
+
+				this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
+					if( active && this.backgroundVideo.paused ) {
+						this.backgroundVideo.play();
+					}
+
+					if(!active && !this.backgroundVideo.paused) {
+						this.backgroundVideo.pause();
+					}
+
+					return false;
+				});
 			}
 		} catch( ex ) {
 			this.mobileSafariMode = true;
@@ -116,17 +135,6 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			this.nodes[ 'li.WatchIntroContainer' ].style.visibility = 'hidden';
 		}
 
-		this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
-			if( active && this.backgroundVideo.paused ) {
-				this.backgroundVideo.play();
-			}
-
-			if(!active && !this.backgroundVideo.paused) {
-				this.backgroundVideo.pause();
-			}
-
-			return false;
-		});
 	}
 
 	async inViewport() {
@@ -146,6 +154,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				ref:		this.name
 			}
 		});
+
+		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = '';
 
 		super.inViewport && super.inViewport( ...arguments );
 	}
@@ -177,6 +187,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 			this.stopVideoPlayback();
 		}
+
+		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = 'none';
 
 		super.offViewport && super.offViewport( ...arguments );
 	}

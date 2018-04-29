@@ -13,6 +13,8 @@ import style from '../style/main.scss';
  *****************************************************************************************************/
 class videoPreview extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
+		input.videoData.views = input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
+
 		extend( options ).with({
 			name:			'videoPreview',
 			tmpl:			html,

@@ -114,6 +114,15 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		});
 	}
 
+	onUserNameClick( event ) {
+		let chatMsg		= this.nodes[ 'textarea.inputChatMessage' ].value,
+			username	= event.target.dataset.username;
+
+		if( chatMsg.indexOf( `@${ username }` ) === -1 ) {
+			this.nodes[ 'textarea.inputChatMessage' ].value = `@${ username  } ${ chatMsg }`;
+		}
+	}
+
 	onTyping( event ) {
 		if( event.which === VK.RETURN && !event.shiftKey ) {
 			event.preventDefault();
@@ -364,7 +373,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.render({ htmlData:	chatMessageElementMarkup, standalone: true }).with({
 			time:				time,
 			timeDiff:			time ? `[Vor ${ getTimePeriod( time ) }]` : '',
-			from:				this.paint( from + ': ' ),
+			from:				this.paint( from ),
 			content:			content,
 			extraClasses:		extraClasses || ''
 		}).at({
@@ -445,7 +454,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 
 	paint( input ) {
 		let hashColor = intToRGB( hashCode( input ) );
-		return `<div class="chatUserNamePainted" title="${ input }" style="color: #${ hashColor }">${ input }</div>`;
+		return `<div class="chatUserNamePainted" data-username="${ input }" title="${ input }" style="color: #${ hashColor }">${ input }:</div>`;
 	}
 
 	scrollToEnd() {

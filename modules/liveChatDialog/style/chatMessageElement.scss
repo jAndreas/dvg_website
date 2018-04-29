@@ -75,6 +75,8 @@ div.chatMessageElement {
 		}
 
 		> div.shortInfo {
+			font-family:verdana,arial;
+			
 			> div.timeDiff {
 				font-size:1vh;
 
@@ -90,6 +92,7 @@ div.chatMessageElement {
 			> div.name {
 				font-weight:bold;
 				font-size:1.2vh;
+				cursor:pointer;
 
 				> div.chatUserNamePainted {
 					overflow:hidden;

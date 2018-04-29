@@ -29,6 +29,10 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 
 		super( options );
 
+		this.runtimeDependencies.push(
+			this.fire( 'waitForConnection.server' )
+		);
+
 		return this.init();
 	}
 
@@ -43,6 +47,8 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 
 		this.nodes[ 'label.thumbnailStyle' ].textContent = '📷 Thumbnail auswählen...';
 		this.nodes[ 'label.thumbnailStyle' ].style.color = 'rgba(255,255,255,0.5)';
+
+		this.disableSocketAutoClose();
 
 		return this;
 	}
@@ -349,6 +355,9 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 							lowblur:	true
 						}
 					});
+
+					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
+					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
 
 					this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
 				} else if( videoMeta.data.mode === 'finish' ) {

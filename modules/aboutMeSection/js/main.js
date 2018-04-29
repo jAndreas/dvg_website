@@ -48,8 +48,6 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 			'div.sectionTwo':sectionTwo,
 			'div.sectionThree':sectionThree } = this.nodes;
 
-		this.fire( 'requestFullBlur.core' );
-
 		[ topTitle, sectionTwo ].forEach( e => e.classList.remove( 'hiddenRight' ) );
 		[ sectionOne, sectionThree ].forEach( e => e.classList.remove( 'hiddenLeft' ) );
 
@@ -70,8 +68,6 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 			'div.sectionOne':sectionOne,
 			'div.sectionTwo':sectionTwo,
 			'div.sectionThree':sectionThree } = this.nodes;
-
-		this.fire( 'removeFullBlur.core' );
 
 		[ topTitle, sectionTwo ].forEach( e => e.classList.add( 'hiddenRight' ) );
 		[ sectionOne, sectionThree ].forEach( e => e.classList.add( 'hiddenLeft' ) );

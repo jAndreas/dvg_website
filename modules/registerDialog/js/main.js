@@ -125,7 +125,7 @@ class registerDialog extends mix( Overlay ).with( GlasEffect, ServerConnection )
 
 	onAccountConfirmation( data ) {
 		if( this.nodes[ 'input.nickname' ].value === data.user ) {
-			this.nodes[ 'span.registerInfo' ].innerHTML = `Alles klar ${ data.user }, ab jetzt kannst Du hier chatten und kommentieren!`;
+			this.nodes[ 'span.registerInfo' ].innerHTML = `Alles klar ${ data.user }, ab jetzt kannst Du hier chatten und kommentieren, sobald Du Dich eingeloggt hast!`;
 		}
 	}
 }
