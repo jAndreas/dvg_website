@@ -263,6 +263,14 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				}
 			}
 
+			if( typeof result.data.messageOfTheDay === 'string' ) {
+				this.putLine({
+					from:				'Server',
+					content:			result.data.messageOfTheDay,
+					extraClasses:		'serverNotification'
+				});
+			}
+
 			this.nodes[ 'div.username' ].textContent = this.username + ':';
 			this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = result.data.totalUsersCount;
 			this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = result.data.loggedInUsersCount;

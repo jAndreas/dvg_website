@@ -11,6 +11,7 @@ div#topSection {
 		width:auto;
 		box-shadow:0px 0px 55px 5px white;
 		align-self:center;
+		transition:opacity 800ms linear;
 
 		@media screen and (max-width:$iPadPortrait) {
 			width:100%;
