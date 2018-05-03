@@ -64,6 +64,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		});
 
 		this.sessionLoginData	= localStorage.getItem( 'dvgLogin' );
+		this.dvgBackgroundVideo	= localStorage.getItem( 'dvgBackgroundVideo' );
 		this.extraInfo			= new Map();
 
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
@@ -188,7 +189,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			// contains also videoSection
 			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
 			await topSection.start({
-				skipInitialVideo:	hash.has( 'watch' )
+				skipInitialVideo:	hash.has( 'watch' ) || this.dvgBackgroundVideo === 'disabled',
+				backgroundVideo:	this.dvgBackgroundVideo
 			});
 
 			if( hash.has( 'watch' ) ) {

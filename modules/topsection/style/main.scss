@@ -33,7 +33,7 @@ div#topSection {
 	}
 
 	> div.gridOverlay {
-		display:inline-block;
+		display:none;
 		position:absolute;
 		top:0;
 		left:0;
@@ -126,7 +126,7 @@ div#topSection {
 							color:$defaultTextColor;
 							font-size:28px;
 							font-weight:bold;
-							text-shadow:0px 0px 20px white;
+							text-shadow:0px 0px 20px white, 2px 2px 2px black;
 							font-family:cursive, "Lucida Console";
 							white-space:nowrap;
 							cursor:pointer;
@@ -139,16 +139,16 @@ div#topSection {
 						}
 
 						> a.followMe {
-								color:rgba(190,0,0,1);
+								color:#e44c4c;
 								text-shadow:0px 0px 2px white, -2px -2px 2px black;
 								transform:rotate(-35deg) translate(-80px, -20px);
-								font-size:35px;
+								font-size:30px;
 								position:absolute;
 								font-family:Verdana;
 								border:2px dashed rgba(220,220,220,0.8);
 								padding:4px;
 								border-radius:16px;
-								text-decoration-color:red;
+								text-decoration-color:#fd8686;
 								text-decoration-style:dotted;
 								background:linear-gradient(45deg, rgba(50,0,0,0.5), rgba(255,220,220,0.5));
 
@@ -219,7 +219,7 @@ div#topSection {
 				> a.revealIntro {
 					position:relative;
 
-					font-size:9vw;
+					font-size:11vw;
 					font-weight:bold;
 					font-family:"Verdana", "Lucida Console";
 					line-height:7vw;
@@ -228,8 +228,8 @@ div#topSection {
 					overflow:hidden;
 
 					white-space:nowrap;
-					color:rgba(0,0,0,0.8);
-					text-shadow:0px 0px 14px rgba(255,255,255,0.7);
+					color:rgba(0,0,0,0.9);
+					text-shadow:0px 0px 14px rgba(255, 255, 255, 0.7), 0 0 1px #002cff;
 
 					cursor:pointer;
 
@@ -257,11 +257,13 @@ div#topSection {
 					@media screen and (max-width:$iPhone6Portrait) {
 						line-height:14vw;
 						height:14vw;
+						display:none;
 					}
 
 					@media screen and(max-width:$iPhone6Landscape) {
 						line-height:12vw;
 						height:12vw;
+						display:none;
 					}
 				}
 
@@ -411,11 +413,10 @@ div#topSection {
 			display:none;
 
 			&:after {
-				content:'👤 Logout';
+				content:'🚫 Logout';
 
 				@media screen and (max-width:$iPhone6Landscape) {
-					content:'👤';
-					text-shadow:rgba(200,20,20,0.95);
+					content:'🚫';
 				}
 			}
 		}
@@ -491,11 +492,52 @@ div#topSection {
 		> div.startLiveChat.omgItsHim {
 			&:before {
 				content:'✠';
-				position:absolute;
-				right: -1vh;
-				bottom: 1.5vh;
+				position:relative;
 				color:white;
 				font-size:4vh;
+				order:1;
+				left:15px;
+				top:-10px;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					left:5px;
+					font-size:5vh;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					left:5px;
+					font-size:3vh;
+				}
+			}
+		}
+
+		> div.setupBackgroundVideo {
+			display:flex;
+			flex-direction:row;
+			align-items:center;
+			color:white;
+			border:none;
+			background:none;
+			cursor:default;
+			font-size:14px;
+
+			@media screen and (max-width:$iPhone6Landscape) {
+				display:none !important;
+			}
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				display:none !important;
+			}
+
+			> input#disabledBackgroundVideo {
+				margin-right:4px;
+				cursor:pointer;
+			}
+
+			> label {
+				color:white;
+				text-shadow:0px 0px 15px white;
+				cursor:pointer;
 			}
 		}
 	}

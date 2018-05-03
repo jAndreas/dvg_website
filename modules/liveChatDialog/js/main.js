@@ -2,7 +2,7 @@
 
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
-import { extend, mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -50,6 +50,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			removeTyping:		this.removeAsTyping.bind( this )
 		};
 
+		this.setNormalChatMode();
 		this.checkVideoPlayerStatus();
 
 		this.addNodeEvent( 'textarea.inputChatMessage', 'keydown', this.onTyping );
@@ -69,7 +70,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
 		this.on( 'userLogout.server', this.onSelfLogout.bind( this ) );
 
-		await this.getInitialChatData();
+		await this.getInitialChatData({ showMOTD: true });
 		this.getPingMessages();
 
 		return this;
@@ -188,6 +189,13 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		}
 	}
 
+	async setNormalChatMode() {
+		if( isMobileDevice ) {
+			this.nodes.dialogRoot.style.top = '2px';
+			this.nodes.dialogRoot.style.left = '0px';
+		}
+	}
+
 	removeLiveChatMode() {
 		this._liveChatMode = false;
 		this.nodes.dialogRoot.classList.remove( 'videoPlayerMode' );
@@ -210,7 +218,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.username = user.__username;
 		this.nodes[ 'div.username' ].textContent = this.username + ':';
 
-		await this.getInitialChatData();
+		await this.getInitialChatData({ showMOTD: false });
 
 		this.putLine({
 			from:				'Client',
@@ -237,7 +245,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		this.onDisconnect( 'Logout' );
 	}
 
-	async getInitialChatData() {
+	async getInitialChatData({ showMOTD = false } = { }) {
 		try {
 			let result = await this.send({
 				type:		'getInitialChatData'
@@ -263,7 +271,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				}
 			}
 
-			if( typeof result.data.messageOfTheDay === 'string' ) {
+			if( showMOTD && typeof result.data.messageOfTheDay === 'string' ) {
 				this.putLine({
 					from:				'Server',
 					content:			result.data.messageOfTheDay,

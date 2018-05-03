@@ -416,7 +416,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 			await this.progressAnimation.fulfill();
 			this.progressAnimation.cleanup();
 		} else {
-			console.log( 'Foreign VideoConvertFinish Event from: ', data.fileID );
+			this.log( 'Foreign VideoConvertFinish Event from: ', data.fileID );
 		}
 	}
 
@@ -424,7 +424,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 		if( this.currentFileId === data.fileID ) {
 			this.nodes[ 'sup.convertStep' ].textContent		= data.alreadyConverted.map( q => q + ' ✓' ).join(', ');
 		} else {
-			console.log( 'Foreign VideoQualityConverted Event from: ', data.fileID );
+			this.log( 'Foreign VideoQualityConverted Event from: ', data.fileID );
 		}
 	}
 

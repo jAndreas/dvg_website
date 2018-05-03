@@ -44,10 +44,11 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		try {
 			retVal = this.loadVideoData();
 
-			await retVal;
+			//await retVal;
 		} catch( ex ) {
 			this.modalOverlay && this.modalOverlay.log( ex || 'Fehler', 0 );
 
+			this.tryReconnectServer();
 			await this.fire( 'waitForConnection.server' );
 
 			retVal = this.loadVideoData();
@@ -116,7 +117,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 				let response;
 
 				response = await this.send({
-					type:		'getPublishedVideos'
+					type:	'getPublishedVideos'
 				});
 
 				response.data.videoData.sort(( a, b ) => {

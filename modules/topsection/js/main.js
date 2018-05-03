@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, mix, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -24,7 +24,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		extend( options ).with({
 			name:			'topSection',
 			location:		moduleLocations.center,
-			tmpl:			html
+			tmpl:			html,
+			renderData:		{ backgroundVideo: (input.backgroundVideo === null || input.backgroundVideo === 'enabled') ? 'checked' : '' }
 		}).and( input );
 
 		super( options );
@@ -51,9 +52,12 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 			if( this.DOMParsingSpeed < 500 ) {
 				await this.fire( 'waitForBackgroundImageLoaded.appEvents' );
-				await this.onBackgroundImageLoaded();
+
+				if(!this.skipInitialVideo ) {
+					await this.onBackgroundImageLoaded();
+				}
 			} else {
-				this.nodes[ 'div.gridOverlay' ].style.backgroundImage = 'none';
+				this.nodes[ 'div.gridOverlay' ].style.visibility = 'hidden';
 			}
 		} catch( ex ) {
 			this.log( 'Error on initializing, module might not be fully available -> ', ex );
@@ -71,6 +75,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.addNodeEvent( 'div.login', 'click', this.onLoginClick );
 		this.addNodeEvent( 'div.logout', 'click', this.onLogoutClick );
 		this.addNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
+		this.addNodeEvent( 'input#disabledBackgroundVideo', 'change', this.disabledBackgroundVideo );
 
 		this.on( 'getSiteNavigation.appEvents', this.getSiteNavigation, this );
 		this.on( 'remoteNavigate.appEvents', this.navigateTo, this );
@@ -103,38 +108,42 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	async onBackgroundImageLoaded() {
 		try {
-			if(!this.skipInitialVideo ) {
-				this.backgroundVideo = await loadVideo({
-					videoLink:		this.videoLink,
-					videoElement:	this.nodes[ 'video.introduction' ],
-					fallbackPath:	this.fallbackPath,
-					silenced:		true
-				});
+			if( isMobileDevice ) {
+				return;
+			}
 
-				let res = await this.backgroundVideo.play();
+			this.backgroundVideo = await loadVideo({
+				videoLink:		this.videoLink,
+				videoElement:	this.nodes[ 'video.introduction' ],
+				fallbackPath:	this.fallbackPath,
+				silenced:		true
+			});
 
-				if( res === -1 ) {
-					throw new Error( 'Unable to playback video, most likely because of webkit video security.' );
+			let res = await this.backgroundVideo.play();
+
+			if( res === -1 ) {
+				throw new Error( 'Unable to playback video, most likely because of webkit video security.' );
+			}
+
+			this.nodes[ 'div.gridOverlay' ].style.display = 'block';
+
+			this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
+				if( active && this.backgroundVideo.paused ) {
+					this.backgroundVideo.play();
 				}
 
-				this.on( 'appVisibilityChange.appEvents appFocusChange.appEvents', ( active ) => {
-					if( active && this.backgroundVideo.paused ) {
-						this.backgroundVideo.play();
-					}
+				if(!active && !this.backgroundVideo.paused) {
+					this.backgroundVideo.pause();
+				}
 
-					if(!active && !this.backgroundVideo.paused) {
-						this.backgroundVideo.pause();
-					}
-
-					return false;
-				});
-			}
+				return false;
+			});
 		} catch( ex ) {
 			this.mobileSafariMode = true;
 			this.backgroundVideo.stop();
 			this.nodes[ 'li.WatchIntroContainer' ].style.visibility = 'hidden';
+			return false;
 		}
-
 	}
 
 	async inViewport() {
@@ -143,7 +152,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.removeNodes( 'div.quickNav', true );
 
 		if(!this._dialogMode ) {
-			if( this.backgroundVideo && this.backgroundVideo.stopped ) {
+			if( this.nodes[ 'input#disabledBackgroundVideo' ].checked && this.backgroundVideo && this.backgroundVideo.stopped ) {
 				await this.startVideoPlayback();
 			}
 		}
@@ -156,6 +165,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		});
 
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = '';
+		this.nodes[ 'div.setupBackgroundVideo' ].style.display = 'flex';
 
 		super.inViewport && super.inViewport( ...arguments );
 	}
@@ -189,6 +199,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		}
 
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = 'none';
+		this.nodes[ 'div.setupBackgroundVideo' ].style.display = 'none';
 
 		super.offViewport && super.offViewport( ...arguments );
 	}
@@ -203,6 +214,20 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		await this.fire( 'mobileNavigationSection.launchModule' );
 		this.fire( 'requestMobileNavigation.core' );
+	}
+
+	async disabledBackgroundVideo() {
+		if( this.nodes[ 'input#disabledBackgroundVideo' ].checked ) {
+			if( this.backgroundVideo === null ) {
+				await this.onBackgroundImageLoaded();
+			}
+
+			this.startVideoPlayback();
+			localStorage.setItem( 'dvgBackgroundVideo', 'enabled' );
+		} else {
+			this.stopVideoPlayback();
+			localStorage.setItem( 'dvgBackgroundVideo', 'disabled' );
+		}
 	}
 
 	async onRegisterName( event ) {
@@ -399,11 +424,13 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			});
 
 			this.nodes.myVideo.style.display = 'none';
+			this.nodes[ 'div.gridOverlay' ].style.visibility = 'hidden';
 		}
 	}
 
 	async startVideoPlayback() {
-		if( this.backgroundVideo && this._insightViewport ) {
+		if( this.backgroundVideo && this._insightViewport && this.nodes[ 'input#disabledBackgroundVideo' ].checked ) {
+			this.nodes[ 'div.gridOverlay' ].style.visibility = 'visible';
 			this.nodes.myVideo.style.display = 'block';
 
 			this.backgroundVideo.play( this.lastPlaybackTime );
@@ -465,6 +492,10 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	async showIntro() {
 		if( this.isTheaterMode ) {
 			return;
+		}
+
+		if( this.skipInitialVideo && this.backgroundVideo === null ) {
+			await this.onBackgroundImageLoaded();
 		}
 
 		this.isTheaterMode = true;
@@ -657,21 +688,21 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	getSiteNavigation() {
 		let dataList = Array.from( this.nodes[ 'ul.jumpList' ].querySelectorAll( 'li > a' ) ).map( elem => {
 			let lookup			= Object.create( null );
-			lookup.id			= `${ elem.nodeName.toLowerCase() }.`+elem.className;
+			lookup.id			= this.resolveNodeNameFromRef( elem );
 			lookup.title		= elem.textContent;
-			lookup.mobileStyle	= elem.dataset.mobileStyle;
-			lookup.mobileFlags	= elem.dataset.mobileFlags;
-			lookup.mobileTitle	= elem.dataset.mobileTitle;
+			lookup.mobileStyle	= elem.dataset.mobileStyle || '';
+			lookup.mobileFlags	= elem.dataset.mobileFlags || '';
+			lookup.mobileTitle	= elem.dataset.mobileTitle || '';
 			return lookup;
 		});
 
 		let loginList = Array.from( this.nodes[ 'div.userOptions' ].querySelectorAll( 'div' ) ).map( elem => {
 			let lookup			= Object.create( null );
-			lookup.id			= `${ elem.nodeName.toLowerCase() }.`+elem.className;
+			lookup.id			= this.resolveNodeNameFromRef( elem );
 			lookup.title		= elem.textContent;
-			lookup.mobileStyle	= elem.dataset.mobileStyle;
-			lookup.mobileFlags	= elem.dataset.mobileFlags;
-			lookup.mobileTitle	= elem.dataset.mobileTitle;
+			lookup.mobileStyle	= elem.dataset.mobileStyle || '';
+			lookup.mobileFlags	= elem.dataset.mobileFlags || '';
+			lookup.mobileTitle	= elem.dataset.mobileTitle || '';
 			return lookup;
 		});
 

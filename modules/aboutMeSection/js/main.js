@@ -23,17 +23,15 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 
 		super( options );
 
-		this.runtimeDependencies.push(
-			this.loadImage( background )
-		);
-
 		return this.init();
 	}
 
 	async init() {
 		await super.init();
 
-		this.nodes.root.style.backgroundImage = `url( ${ this._depsResolve[ 1 ] } )`;
+		this.loadImage( background ).then( image => {
+			this.nodes.root.style.backgroundImage = `url( ${ image } )`;
+		});
 
 		return this;
 	}

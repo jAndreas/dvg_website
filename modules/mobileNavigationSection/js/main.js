@@ -37,10 +37,12 @@ class mobileNavigationSection extends Component {
 		let navListData = await this.fire( 'getSiteNavigation.appEvents' );
 
 		for( let data of navListData ) {
-			this.render({ htmlData:	navElementMarkup }).with( data ).at({
-				node:		'root',
-				position:	'beforeend'
-			});
+			if( data.mobileFlags.indexOf( 'skip' ) === -1 ) {
+				this.render({ htmlData:	navElementMarkup }).with( data ).at({
+					node:		'root',
+					position:	'beforeend'
+				});
+			}
 		}
 
 		this.addNodeEvent( 'root', 'click', this.onNavClick );
