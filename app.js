@@ -36,6 +36,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
+		this.once( 'topSection.launchModule', this.launchTopSection, this );
+		this.once( 'videoSection.launchModule', this.launchTopSection, this );
 		this.once( 'articleSection.launchModule', this.launchArticleSection, this );
 		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
@@ -186,22 +188,20 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			let dispatchMailDialog = await import( /* webpackChunkName: "dispatchMailDialog" */ 'dispatchMailDialog/js/main.js' );
 			dispatchMailDialog.start();
 		} else {
-			// contains also videoSection
-			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
-			await topSection.start({
-				skipInitialVideo:	hash.has( 'watch' ) || this.dvgBackgroundVideo === 'disabled',
-				backgroundVideo:	this.dvgBackgroundVideo
-			});
+			let ref = hash.get( 'ref' );
+
+			if( ref ) {
+				await this.fire( `${ ref }.launchModule` );
+				this.fire( `slideDownTo.${ ref }` );
+			} else {
+				await this.launchTopSection();
+			}
 
 			if( hash.has( 'watch' ) ) {
 				this.fire( 'openVideoPlayer.appEvents', {
 					internalId:	hash.get( 'watch'),
 					at:			hash.get( 'at' ) || 0
 				});
-			}
-
-			if( hash.has( 'ref' ) ) {
-				// scroll section into view
 			}
 
 			if( hash.has( 'chat' ) ) {
@@ -247,7 +247,23 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		location.hash = this.currentHash.toString();
 	}
 
+	async launchTopSection() {
+		let state = await this.fire( 'findModule.topSection' );
+
+		if( state !== true ) {
+			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
+			await topSection.start({
+				skipInitialVideo:	this.currentHash.has( 'watch' ) || this.dvgBackgroundVideo === 'disabled',
+				backgroundVideo:	this.dvgBackgroundVideo
+			});
+		} else {
+			this.log( 'aboutMeSection already online, aborting launch.' );
+		}
+	}
+
 	async launchArticleSection() {
+		await this.launchTopSection();
+
 		let state = await this.fire( 'findModule.articleSection' );
 
 		if( state !== true ) {
@@ -274,13 +290,27 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchSupportSection() {
 		await this.launchAboutMeSection();
 
-		let supportSection = await import( /* webpackChunkName: "supportSection" */ 'supportSection/js/main.js' );
-		await supportSection.start();
+		let state = await this.fire( 'findModule.supportSection' );
+
+		if( state !== true ) {
+			let supportSection = await import( /* webpackChunkName: "supportSection" */ 'supportSection/js/main.js' );
+			await supportSection.start();
+		} else {
+			this.log( 'supportSection already online, aborting launch.' );
+		}
 	}
 
 	async launchImpressumSection() {
-		let impressumSection = await import( /* webpackChunkName: "impressumSection" */ 'impressumSection/js/main.js' );
-		await impressumSection.start();
+		await this.launchSupportSection();
+
+		let state = await this.fire( 'findModule.impressumSection' );
+
+		if( state !== true ) {
+			let impressumSection = await import( /* webpackChunkName: "impressumSection" */ 'impressumSection/js/main.js' );
+			await impressumSection.start();
+		} else {
+			this.log( 'impressumSection already online, aborting launch.' );
+		}
 	}
 
 	async launchMobileNavigationSection() {

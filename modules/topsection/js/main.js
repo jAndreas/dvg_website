@@ -748,7 +748,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				this.onUserLogin( user );
 			}
 		} catch( ex ) {
-			this.log( 'onSessionLogin: ', ex );
+			this.log( 'onSessionLogin: ', ex.message );
 		}
 	}
 
