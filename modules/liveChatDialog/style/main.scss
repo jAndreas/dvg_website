@@ -76,7 +76,7 @@ div.liveChatDialog {
 				overflow-x:hidden;
 				overflow-y:scroll;
 				box-shadow:-7px -2px 24px 0px #ffffff59 inset;
-				font-size:1.5vh;
+				font-size:14px;
 				font-family:verdana,arial;
 
 				display:flex;
@@ -121,8 +121,6 @@ div.liveChatDialog {
 			> div.usersOnlineTotal {
 				display:flex;
 				flex-direction:row;
-				align-self:center;
-
 				margin-left:auto;
 				font-size:1.6vh;
 				font-weight:bold;
@@ -139,9 +137,8 @@ div.liveChatDialog {
 			> div.usersOnlineLoggedIn {
 				display:flex;
 				flex-direction:row;
-				align-self:center;
-
 				margin-left:10px;
+				margin-right:2vw;
 				font-size:1.6vh;
 				font-weight:bold;
 
@@ -185,7 +182,7 @@ div.liveChatDialog {
 			> textarea.inputChatMessage {
 				border:1px solid #dde1ffc7;
 				box-sizing:border-box;
-				font-size:1.5vh;
+				font-size:14px;
 				font-family:verdana,arial;
 				padding:4px;
 				outline:none;
@@ -230,6 +227,9 @@ div.liveChatDialog {
 			position:relative;
 			top:3vh;
 			border-top:1px solid white;
+			flex-direction:row;
+			justify-content:flex-start;
+			flex-wrap:wrap;
 		}
 
 		/*@media screen and (max-width:$iPhone6Landscape) {

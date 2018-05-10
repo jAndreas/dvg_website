@@ -200,7 +200,8 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			let result = await this.send({
 				type:		'getInitialComments',
 				payload:	{
-					context:	this.context
+					context:		this.context,
+					speakingName:	this.speakingName
 				}
 			});
 

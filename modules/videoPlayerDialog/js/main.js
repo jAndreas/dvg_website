@@ -6,6 +6,7 @@ import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import * as commentSection from 'commentSection/js/main.js';
+import Clipboard from 'clipboard';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -61,6 +62,26 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
 		this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
 
+		this.clipboard = new Clipboard('div.copyLinkToClipboard', {
+			text: () => {
+				this.copyLink = this.activateSpinner({
+					at:		this.nodes[ 'div.copyLinkToClipboard' ],
+					opts:	{
+						lowblur:	true
+					}
+				});
+
+				this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Kopiert!';
+
+				this.copyLink.fulfill().then( () => {
+					this.copyLink.cleanup();
+					this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
+				});
+
+				return `https://www.der-vegane-germane.de/static/${ this.videoData.internalId }/index.html`;
+			}
+		});
+
 		this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 
 		this.log('videoData: ', this.videoData);
@@ -69,6 +90,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	}
 
 	async destroy() {
+		this.clipboard.destroy();
 		this.video && this.video.destroy();
 		this.video = null;
 
