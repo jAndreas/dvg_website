@@ -216,7 +216,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		this.nodes[ 'span.description' ].classList.remove( 'folded' );
 
 		if(!this._liveChatMode ) {
-			this.centerOverlay();
+			this.centerOverlay({ centerToViewport: true });
 		}
 	}
 

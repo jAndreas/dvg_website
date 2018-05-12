@@ -363,7 +363,8 @@ div#topSection {
 			@media screen and (max-width:$iPhone6Landscape) {
 				border-left:none;
 				border-radius:0px 4px 4px 0px;
-				width:33px;
+				width:44px;
+				height:44px;
 			}
 
 			&:hover {
@@ -383,7 +384,7 @@ div#topSection {
 				}
 
 				@media screen and (max-width:$iPhone6Portrait) {
-					font-size:4vw;
+					font-size:8vw;
 				}
 			}
 		}

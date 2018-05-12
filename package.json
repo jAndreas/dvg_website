@@ -23,6 +23,7 @@
 		"babel-preset-es2017": "^6.24.1",
 		"babel-preset-stage-0": "^6.24.1",
 		"barfoos2.0": "^0.3.0",
+		"clipboard": "^2.0.1",
 		"css-loader": "^0.28.11",
 		"eslint": "^4.19.1",
 		"eslint-loader": "^2.0.0",
@@ -37,7 +38,7 @@
 		"uglify-js": "^3.3.23",
 		"url-loader": "^1.0.1",
 		"url-search-params": "^0.10.0",
-		"webpack": "^4.4.1",
+		"webpack": "^4.8.2",
 		"webpack-cli": "^2.1.2",
 		"webpack-sources": "^1.0.1"
 	},

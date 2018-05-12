@@ -38,6 +38,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
+		this.on( 'loadNextVideos.videoSection', this.onLoadNextVideos, this );
 
 		let retVal;
 
@@ -111,17 +112,16 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}*/
 
-	async loadVideoData() {
+	async loadVideoData( next = false ) {
 		return new Promise(async ( res, rej ) => {
 			try {
 				let response;
 
 				response = await this.send({
-					type:	'getPublishedVideos'
-				});
-
-				response.data.videoData.sort(( a, b ) => {
-					return b.creationDate - a.creationDate;
+					type:		next ? 'getNextVideos' : 'getPublishedVideos',
+					payload:	{
+						start:	this.previewLinks.length
+					}
 				});
 
 				for( let video of response.data.videoData ) {
@@ -137,11 +137,39 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 					this.previewLinks.push( videoPreviewInstance );
 				}
 
+				this.checkNext( response.data.total );
+
 				res();
 			} catch( ex ) {
 				rej( ex );
 			}
 		});
+	}
+
+	async checkNext( totalLength = 0 ) {
+		if( this.previewLinks.length < totalLength ) {
+			if( this.nextModule ) {
+				this.fire( 'updateNextInfo.videoPreview', {
+					videosLeft:	totalLength - this.previewLinks.length
+				});
+			} else {
+				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
+
+				this.nextModule = await videoPreviewPromise.start({
+					location:	this.id,
+					mode:		'loadNextChunk',
+					info:		{
+						videosLeft:	totalLength - this.previewLinks.length
+					}
+				});
+			}
+		} else {
+			this.fire( 'destroyNextInfo.videoPreview' );
+		}
+	}
+
+	async onLoadNextVideos() {
+		await this.loadVideoData( true );
 	}
 
 	async onVideoPlayerLaunch( module ) {

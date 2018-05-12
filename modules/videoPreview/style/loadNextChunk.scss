@@ -1,0 +1,26 @@
+div.videoPreview {
+	&.nextLink {
+		flex-direction:row;
+		justify-content:center;
+		align-items:center;
+		cursor:pointer;
+		background:linear-gradient(45deg, rgba(0,0,0,0.9), rgba(25,255,25,0.1));
+		order:9999;
+		user-select:none;
+		height:120px;
+		width:160px;
+		align-self:center;
+
+		&:hover {
+			background:linear-gradient(45deg, rgba(0, 0, 30, 0.9), rgba(25, 205, 25, 0.2));
+		}
+	}
+
+	> div.loadNext {
+		font-size:4vh;
+		font-weight:bold;
+		color:white;
+		text-shadow:0 0 2px green;
+		text-align:center;
+	}
+}
