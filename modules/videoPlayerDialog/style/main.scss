@@ -161,6 +161,48 @@ div.videoPlayerDialog {
 			justify-content:flex-end;
 			align-items:center;
 
+			> a.downloadVideo {
+				display:flex;
+				justify-content:center;
+				align-items:center;
+				text-align:center;
+				background-image:linear-gradient(45deg, rgba(57, 138, 224, 0.4), rgba(43, 43, 88, 0.4));
+				opacity:0.7;
+				height:100%;
+				border:1px solid rgba(200,200,235,0.5);
+				border-bottom:none;
+				border-top:none;
+				box-sizing:border-box;
+				padding-left:2px;
+				padding-right:6px;
+				font-size:16px;
+				line-height:14px;
+				cursor:pointer;
+				user-select:none;
+				margin-right:auto;
+				text-decoration:none;
+
+				@media screen and(max-width:$iPhone6Portrait) {
+					padding-left:0px;
+					padding-right:0px;
+					width:40px;
+				}
+
+				&:hover {
+					opacity:1;
+				}
+
+				&:after {
+					content:'⬇ Download';
+					color:white;
+					text-shadow:0 0 6px white;
+
+					@media screen and (max-width:$iPhone6Landscape) {
+						content:'⬇';
+					}
+				}
+			}
+
 			> div.donationForm {
 				display:flex;
 				flex-direction:row;
@@ -168,16 +210,22 @@ div.videoPlayerDialog {
 				align-items:center;
 				margin-right:1vw;
 				background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4));
-				border-radius:8px;
-				height:4vh;
-				width:30vh;
-				min-width:230px;
+				height:100%;
+				padding-left:4px;
+				padding-right:4px;
 				border:1px solid rgba(200,200,235,0.5);
+				border-bottom:none;
+				border-top:none;
 				box-sizing:border-box;
 
 				> input.donateRange {
 					margin-right:5px;
-					width:100px;
+					width:80px;
+
+					@media screen and (max-width:$iPhone6Portrait) {
+						filter:none;
+						box-shadow:none;
+					}
 				}
 
 				> input.donateAmount {
@@ -198,15 +246,22 @@ div.videoPlayerDialog {
 					min-width:2vh;
 					height:75%;
 					font-size:2vh;
+					border:1px solid rgba(255,255,255,0.4);
 				}
 			}
 
 			> a.shareFacebookLink {
+				height:100%;
+				width:42px;
+				margin-right:4px;
+
 				> div.shareFacebook {
-					background-size:100%;
+					background-size:100% 100%;
 					background-repeat:no-repeat;
 					background-image:url(../images/fb.jpg);
 					opacity:0.7;
+					width:42px;
+					height:100%;
 
 					&:hover {
 						opacity:1;
@@ -221,17 +276,19 @@ div.videoPlayerDialog {
 				text-align:center;
 				background-image:linear-gradient(45deg, rgba(57, 138, 224, 0.4), rgba(43, 43, 88, 0.4));
 				opacity:0.7;
-				height:4vh;
+				height:100%;
 				border:1px solid rgba(200,200,235,0.5);
+				border-bottom:none;
+				border-top:none;
 				box-sizing:border-box;
 				padding-left:2px;
 				padding-right:2px;
-				margin-right:4px;
 				width:68px;
 				font-size:16px;
 				line-height:14px;
 				cursor:pointer;
 				user-select:none;
+				color:white;
 
 				&:hover {
 					opacity:1;

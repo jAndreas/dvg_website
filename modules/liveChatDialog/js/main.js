@@ -3,7 +3,7 @@
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
 import { extend, mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
-import { win, undef } from 'barfoos2.0/domkit.js';
+import { win, doc, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -103,6 +103,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 				action:		this.name
 			}
 		});
+
+		if( isMobileDevice ) {
+			doc.body.scrollTop = 160;
+		}
 
 		return false;
 	}

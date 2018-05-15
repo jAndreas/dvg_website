@@ -139,7 +139,6 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 				return false;
 			});
 		} catch( ex ) {
-			this.mobileSafariMode = true;
 			this.backgroundVideo.stop();
 			this.nodes[ 'li.WatchIntroContainer' ].style.visibility = 'hidden';
 			return false;
@@ -180,7 +179,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			}
 		});
 
-		if( this.mobileSafariMode ) {
+		if( isMobileDevice ) {
 			this.addNodes({
 				htmlData:	quickNavMarkup,
 				reference:	{
@@ -248,7 +247,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		await registerDialog.start({
 			location:	this.id,
 			position:	position,
-			center:		this.mobileSafariMode
+			center:		isMobileDevice
 		});
 	}
 
@@ -271,7 +270,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		await loginDialog.start({
 			location:	this.id,
 			position:	position,
-			center:		this.mobileSafariMode
+			center:		isMobileDevice
 		});
 	}
 
@@ -345,7 +344,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		await liveChatDialog.start({
 			position:		position,
-			center:			this.mobileSafariMode,
+			center:			isMobileDevice,
 			pingMessages:	this._waitingUsers
 		});
 
@@ -357,7 +356,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async onDialogModeChange( active ) {
-		if( this.mobileSafariMode ) {
+		if( isMobileDevice ) {
 			if( active ) {
 				if( this.nodes[ 'div.quickNav' ] ) {
 					this.removeNodes( 'div.quickNav', true );

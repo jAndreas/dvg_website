@@ -1,3 +1,5 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
 div.videoPreview {
 	&.nextLink {
 		flex-direction:row;
@@ -7,12 +9,16 @@ div.videoPreview {
 		background:linear-gradient(45deg, rgba(0,0,0,0.9), rgba(25,255,25,0.1));
 		order:9999;
 		user-select:none;
-		height:120px;
-		width:160px;
+		height:70px;
+		width:260px;
 		align-self:center;
 
 		&:hover {
 			background:linear-gradient(45deg, rgba(0, 0, 30, 0.9), rgba(25, 205, 25, 0.2));
+		}
+
+		@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+			width:95vw;
 		}
 	}
 
