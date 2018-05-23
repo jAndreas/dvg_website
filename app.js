@@ -187,6 +187,9 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else if( hash.has( 'dispatchMail' ) ) {
 			let dispatchMailDialog = await import( /* webpackChunkName: "dispatchMailDialog" */ 'dispatchMailDialog/js/main.js' );
 			dispatchMailDialog.start();
+		} else if( hash.has( 'createNewArticleDialog' ) ) {
+			let createNewArticleDialog = await import( /* webpackChunkName: "createNewArticleDialog" */ 'createNewArticleDialog/js/main.js' );
+			createNewArticleDialog.start();
 		} else {
 			let ref = hash.get( 'ref' );
 
@@ -198,10 +201,24 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			}
 
 			if( hash.has( 'watch' ) ) {
-				this.fire( 'openVideoPlayer.appEvents', {
+				let firstTry = await this.fire( 'openVideoPlayer.appEvents', {
 					internalId:	hash.get( 'watch'),
 					at:			hash.get( 'at' ) || 0
 				});
+
+				if( firstTry.filter( Boolean ).length === 0 ) { // no video preview module answered positive
+					let nextTry, moreVideosAvailable;
+
+					do {
+						moreVideosAvailable = await this.fire( 'loadNextVideos.videoSection' );
+
+						nextTry = await this.fire( 'openVideoPlayer.appEvents', {
+							internalId:	hash.get( 'watch'),
+							at:			hash.get( 'at' ) || 0
+						});
+
+					} while( nextTry.filter( Boolean ).length === 0 && moreVideosAvailable );
+				}
 			}
 
 			if( hash.has( 'chat' ) ) {
@@ -257,7 +274,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 				backgroundVideo:	this.dvgBackgroundVideo
 			});
 		} else {
-			this.log( 'aboutMeSection already online, aborting launch.' );
+			this.log( 'topSection already online, aborting launch.' );
 		}
 	}
 

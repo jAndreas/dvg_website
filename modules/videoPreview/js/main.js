@@ -74,6 +74,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 	onOpenVideoPlayer({ internalId, at }) {
 		if( this.videoData.internalId === internalId ) {
 			this.launchVideoModule( at );
+			return internalId;
 		}
 	}
 

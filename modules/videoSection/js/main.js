@@ -137,9 +137,9 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 					this.previewLinks.push( videoPreviewInstance );
 				}
 
-				this.checkNext( response.data.total );
+				let nextChunkAvailable = this.checkNext( response.data.total );
 
-				res();
+				res( nextChunkAvailable );
 			} catch( ex ) {
 				rej( ex );
 			}
@@ -163,13 +163,16 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 					}
 				});
 			}
+
+			return true;
 		} else {
 			this.fire( 'destroyNextInfo.videoPreview' );
+			return false;
 		}
 	}
 
 	async onLoadNextVideos() {
-		await this.loadVideoData( true );
+		return await this.loadVideoData( true );
 	}
 
 	async onVideoPlayerLaunch( module ) {
