@@ -143,7 +143,7 @@ div.supportSection {
 
 		> div.impressum {
 			position:absolute;
-			left:4vw;
+			left:10px;
 			bottom:2vh;
 			cursor:pointer;
 			color:rgba(220,220,220,0.95);
@@ -153,6 +153,23 @@ div.supportSection {
 
 			@media screen and (max-width:$iPhone6Portrait) {
 				font-size:1.5vh;
+			}
+		}
+
+		> div.privacy {
+			position:absolute;
+			left:90px;
+			bottom:2vh;
+			cursor:pointer;
+			color:rgba(220,220,220,0.95);
+			font-family:verdana, arial;
+			font-size:1.2vh;
+			z-index:5;
+
+			@media screen and (max-width:$iPhone6Portrait) {
+				font-size:1.5vh;
+				left:auto;
+				right:8vw;
 			}
 		}
 	}

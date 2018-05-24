@@ -41,6 +41,7 @@ class supportSection extends Component {
 		this._boundPlayHandler	= this.play.bind( this );
 
 		this.addNodeEvent( 'div.impressum', 'click', this.onImpressumClick );
+		this.addNodeEvent( 'div.privacy', 'click', this.onPrivacyClick );
 
 		try {
 			this.video = await loadVideo({
@@ -63,6 +64,11 @@ class supportSection extends Component {
 	async onImpressumClick() {
 		await this.fire( 'impressumSection.launchModule' );
 		this.fire( 'slideDownTo.impressumSection' );
+	}
+
+	async onPrivacyClick() {
+		await this.fire( 'privacySection.launchModule' );
+		this.fire( 'slideDownTo.privacySection' );
 	}
 
 	async inViewport({ enteredFrom }) {

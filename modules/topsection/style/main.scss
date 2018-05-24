@@ -1,5 +1,10 @@
 @import '~barfoos2.0/css/viewportDefinitions';
 
+@font-face {
+	font-family:"heart";
+	src:url(../fonts/heart.ttf);
+}
+
 div#topSection {
 	position:relative;
 	height:100vh;
@@ -124,10 +129,9 @@ div#topSection {
 						> a {
 							display:inline-flex;
 							color:$defaultTextColor;
-							font-size:28px;
-							font-weight:bold;
+							font-size:24px;
 							text-shadow:0px 0px 20px white, 2px 2px 2px black;
-							font-family:cursive, "Lucida Console";
+							font-family:Verdana, "Lucida Console";
 							white-space:nowrap;
 							cursor:pointer;
 							transition:transform 100ms ease-in, text-shadow 100ms linear;
@@ -183,19 +187,16 @@ div#topSection {
 				flex-grow:8;
 
 				> a.title {
-					font-size:10vw;
-					font-weight:bold;
-					font-family:cursive, "Lucida Console";
+					font-size:14vw;
+					font-family:"heart";
 					white-space:nowrap;
-					color:rgba(245,245,245,1);
+					color:#cdffbd73;
 					text-shadow:0px 0px 16px white;
-
 					height:10vw;
-					line-height:5vw;
-
+					line-height:6vw;
+					letter-spacing:1vw;
 					perspective:1500px;
 					transform-style:preserve-3d;
-
 					align-self:flex-start;
 
 					> span {
@@ -228,13 +229,13 @@ div#topSection {
 					overflow:hidden;
 
 					white-space:nowrap;
-					color:rgba(0,0,0,0.9);
-					text-shadow:0px 0px 14px rgba(255, 255, 255, 0.7), 0 0 1px #002cff;
+					color:rgba(0, 0, 0, 0.8);
+					text-shadow:0px 0px 14px rgba(255, 255, 255, 0.7);
 
 					cursor:pointer;
 
 					&:hover {
-						color:$defaultHoverColor;
+						color:rgba(0, 0, 0, 0.66);
 					}
 
 					&.returnSymbol {
@@ -281,13 +282,12 @@ div#topSection {
 					position:absolute;
 					background-image:url(../images/arrowdown.png);
 					background-size:100% 100%;
-					width:10vh;
-					height:10vh;
+					width:11vh;
+					height:12vh;
 					margin-top:5vh;
 					cursor:pointer;
 					z-index:3;
 					transform:translateY(-18vh) translateX(5vw);
-					text-shadow:0 0 10px white;
 
 					&:hover {
 						animation:2100ms ease 0ms infinite normal forwards bouncequick;

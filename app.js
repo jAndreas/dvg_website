@@ -42,6 +42,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
 		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
+		this.once( 'privacySection.launchModule', this.launchPrivacySection, this );
 		this.once( 'mobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
 		// dynamic routing is not enabled for now.
 		this.on( 'hashChange.appEvents', this.navigateByHash, this );
@@ -327,6 +328,19 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			await impressumSection.start();
 		} else {
 			this.log( 'impressumSection already online, aborting launch.' );
+		}
+	}
+
+	async launchPrivacySection() {
+		await this.launchSupportSection();
+
+		let state = await this.fire( 'findModule.privacySection' );
+
+		if( state !== true ) {
+			let privacySection = await import( /* webpackChunkName: "privacySection" */ 'privacySection/js/main.js' );
+			await privacySection.start();
+		} else {
+			this.log( 'privacySection already online, aborting launch.' );
 		}
 	}
 
