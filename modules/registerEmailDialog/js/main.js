@@ -1,7 +1,9 @@
 'use strict';
 
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
+import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -14,9 +16,11 @@ import style from '../style/main.scss';
 class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend(	options	).with({
-			name:			'registerEmailDialog',
-			tmpl:			html,
-			center:			true
+			name:						'registerEmailDialog',
+			location:					moduleLocations.center,
+			tmpl:						html,
+			center:						true,
+			avoidOutsideClickClose:		!input.location
 		}).and( input );
 
 		super( options );
@@ -54,6 +58,9 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 			'section.page1':page1,
 			'section.page2':page2 } = this.nodes;
 
+		this.removeNodeEvent( 'input.emailAddress', 'keyup', this.onInputKeyUp );
+		this.removeNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
+
 		this.createModalOverlay({
 			at:		this.dialogElements[ 'div.bfContentDialogBody' ],
 			opts:	{
@@ -81,7 +88,16 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 		}
 
 		this.addNodeEventOnce( closeBtn, 'click', () => {
-			this.destroy();
+			if( this.location === moduleLocations.center ) {
+				page2.style.display = 'none';
+				page1.style.display = 'flex';
+
+				this.addNodeEvent( 'input.emailAddress', 'keyup', this.onInputKeyUp );
+				this.addNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
+			} else {
+				this.destroy();
+			}
+
 			return false;
 		});
 
@@ -99,8 +115,6 @@ class registerEmailDialog extends mix( Overlay ).with( GlasEffect, ServerConnect
 
 		if( emailAddress.checkValidity() ) {
 			if( event.which === 13 ) {
-				this.removeNodeEvent( 'input.emailAddress', 'keyup', this.onInputKeyUp );
-				this.removeNodeEvent( 'input.sendEmailAddress', 'click', this.onSubscribeClick );
 				this.onSubscribeClick();
 			} else {
 				sendEmailAddress.removeAttribute( 'disabled' );

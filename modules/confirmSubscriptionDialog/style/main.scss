@@ -1,4 +1,5 @@
 @import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
 
 div.confirmSubscriptionDialog {
 	display:flex;
@@ -26,5 +27,10 @@ div.confirmSubscriptionDialog {
 	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
 		width:90vw;
 		height:50vh;
+	}
+
+	> input.confirmTermination {
+		display:none;
+		padding:8px;
 	}
 }

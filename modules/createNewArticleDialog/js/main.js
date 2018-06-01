@@ -30,6 +30,9 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 		await super.init();
 
 		this.addNodeEvent( 'form.articleData', 'submit', this.postArticle );
+		this.on( 'sessionLogin.appEvents', this.sessionLogin, this );
+
+		this.fire( 'checkSession.appEvents' );
 
 		return this;
 	}
@@ -37,6 +40,12 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
+	}
+
+	async sessionLogin( user ) {
+		if( user ) {
+			this.fire( 'startNewSession.server', user );
+		}
 	}
 
 	async postArticle( event ) {
@@ -47,7 +56,7 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 			articleBody			= this.nodes[ 'textarea.articleBody' ].value;
 
 		await this.send({
-			type:		'dispatchMail',
+			type:		'createNewArticle',
 			payload:	{ articleSubject, articleBody }
 		});
 	}

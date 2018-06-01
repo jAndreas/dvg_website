@@ -63,7 +63,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 
 	async launchVideoModule( at ) {
 		let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
-
+		
 		videoPlayer.start({
 			location:	this.location,
 			videoData:	this.videoData,

@@ -42,11 +42,38 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 					response = await this.send({
 						type:		'confirmReset',
 						payload:	{
-							secretKey:		this.secretKey
+							secretKey:		this.secretKey,
+							mode:			'user'
 						}
 					}, {
 						noTimeout: true
 					});
+				} else if( this.confirmTermination ) {
+					this.addNodeEventOnce( 'input.confirmTermination', 'click', async () => {
+						this.nodes[ 'input.confirmTermination' ].style.display = 'none';
+						
+						this.createModalOverlay({
+							opts:	{
+								spinner: true
+							}
+						});
+
+						let response = await this.send({
+							type:		'confirmReset',
+							payload:	{
+								secretKey:		this.secretKey,
+								mode:			'subscription'
+							}
+						}, {
+							noTimeout: true
+						});
+
+						await this.modalOverlay.fulfill();
+
+						this.nodes[ 'div.responseMsg' ].innerHTML = response.msg || '';
+					});
+
+					this.nodes[ 'input.confirmTermination' ].style.display = 'block';
 				} else {
 					response = await this.send({
 						type:		'confirmAccountSecretKey',
@@ -61,7 +88,7 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 
 				this.modalOverlay.fulfill();
 
-				this.nodes[ 'div.responseMsg' ].innerHTML = response.msg;
+				this.nodes[ 'div.responseMsg' ].innerHTML = response.msg || '';
 			} catch( ex ) {
 				this.nodes[ 'div.responseMsg' ].innerHTML = ex;
 

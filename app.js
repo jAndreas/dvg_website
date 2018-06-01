@@ -1,6 +1,10 @@
 'use strict';
 
-/* fuck eslint, we need to load the core.js here */
+/*import nodePolyfill from 'babel-polyfill/node.js';
+import babelPolyfill from 'babel-polyfill';
+import proxyPolyfill from 'proxy-polyfill/proxy.min.js';
+import urlPolyfill from 'url-search-params';*/
+
 import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc, win } from 'barfoos2.0/domkit.js';
@@ -182,6 +186,12 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 				secretKey:		hash.get( 'confirmReset' ),
 				confirmReset:	true
 			});
+		} else if( hash.has( 'confirmTermination' ) ) {
+			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
+			confirmSubDialog.start({
+				secretKey:			hash.get( 'confirmTermination' ),
+				confirmTermination:	true
+			});
 		} else if( hash.has( 'uploadVideo' ) ) {
 			let uploadVideoDialog = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
 			uploadVideoDialog.start();
@@ -191,6 +201,9 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else if( hash.has( 'createNewArticleDialog' ) ) {
 			let createNewArticleDialog = await import( /* webpackChunkName: "createNewArticleDialog" */ 'createNewArticleDialog/js/main.js' );
 			createNewArticleDialog.start();
+		} else if( hash.has( 'newsletter' ) ) {
+			let registerEmailDialog = await import( /* webpackChunkName: "registerEmailDialog" */ 'registerEmailDialog/js/main.js' );
+			registerEmailDialog.start();
 		} else {
 			let ref = hash.get( 'ref' );
 
