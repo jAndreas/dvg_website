@@ -30,6 +30,9 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 		await super.init();
 
 		this.addNodeEvent( 'form.emailData', 'submit', this.sendMail );
+		this.on( 'sessionLogin.appEvents', this.sessionLogin, this );
+
+		this.fire( 'checkSession.appEvents' );
 
 		return this;
 	}
@@ -39,6 +42,12 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 		[ style ].forEach( s => s.unuse() );
 	}
 
+	async sessionLogin( user ) {
+		if( user ) {
+			this.fire( 'startNewSession.server', user );
+		}
+	}
+
 	async sendMail( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -46,10 +55,21 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 		let mailSubject		= this.nodes[ 'input.mailSubject' ].value,
 			mailBody		= this.nodes[ 'textarea.mailBody' ].value;
 
-		await this.send({
+		let res = await this.send({
 			type:		'dispatchMail',
 			payload:	{ mailSubject, mailBody }
+		},{
+			noTimeout:	true
 		});
+
+		switch( res.status ) {
+			case 'adminPrivilegesRequired':
+				alert( 'Admin Login required.' );
+				break;
+			case 'ok':
+				alert( 'Mail dispatching complete.' );
+				break;
+		}
 	}
 }
 /****************************************** dispatchMailDialog End ******************************************/
