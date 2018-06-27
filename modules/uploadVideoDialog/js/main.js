@@ -45,10 +45,14 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 		this.addNodeEvent( 'input.uploadThumbnail', 'click', this.onUploadThumbnailClick );
 		this.addNodeEvent( 'dialogRoot', 'change', this.onGlobalChange );
 
+		this.on( 'sessionLogin.appEvents', this.sessionLogin, this );
+
 		this.nodes[ 'label.thumbnailStyle' ].textContent = '📷 Thumbnail auswählen...';
 		this.nodes[ 'label.thumbnailStyle' ].style.color = 'rgba(255,255,255,0.5)';
 
 		this.disableSocketAutoClose();
+
+		this.fire( 'checkSession.appEvents' );
 
 		return this;
 	}
@@ -56,6 +60,12 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style, progressStyle, progressConvertStyle ].forEach( s => s.unuse() );
+	}
+
+	async sessionLogin( user ) {
+		if( user ) {
+			this.fire( 'startNewSession.server', user );
+		}
 	}
 
 	onGlobalChange() {
