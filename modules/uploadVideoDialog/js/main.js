@@ -124,7 +124,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 			let response	= await this.send({
 				type:		'saveVideoMeta',
 				payload:	{
-					pass:				pass.value,
 					fileID:				this.currentFileId,
 					docData:			this.currentDocData,
 					image:				blob,
@@ -318,8 +317,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 							scaleOnly:	this.nodes[ 'input#ffmpegStrategy' ].checked,
 							fileName:	this.selectedVideoFile.name,
 							_id:		this.currentDocData.id,
-							fileID:		videoMeta.data.fileID,
-							pass:		pass.value
+							fileID:		videoMeta.data.fileID
 						}
 					});
 
