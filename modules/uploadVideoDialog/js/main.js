@@ -204,7 +204,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 				let videoMeta	= await this.send({
 					type:		'newVideoUploadMeta',
 					payload:	{
-						pass:		pass.value,
 						fileName:	this.selectedVideoFile.name,
 						fileSize:	maxSize,
 						title:		title.value,
