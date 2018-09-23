@@ -24,7 +24,7 @@ fs.writeFileSync( `${websitePath}index.html`, indexHTML );
 console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
-execSync( 'buildbf -p' );
+execSync( 'buildbf -l' );
 console.log( 'Done.\n' );
 
 module.exports = {
@@ -52,13 +52,13 @@ module.exports = {
 					{ loader:		'eslint-loader' }
 				]
 			},
-			/*{
+			{
 				test:		/\.js$/,
 				exclude:	/node_modules/,
 				use: [
 					{ loader:		'babel-loader' }
 				]
-			},*/
+			},
 			{
 				test:		/\.css$/,
 				use: [

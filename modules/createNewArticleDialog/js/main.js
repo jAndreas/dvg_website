@@ -18,7 +18,8 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,
-			avoidOutsideClickClose:	true
+			avoidOutsideClickClose:	true,
+			selectedAttachments:	[ ]
 		}).and( input );
 
 		super( options );
@@ -30,6 +31,7 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 		await super.init();
 
 		this.addNodeEvent( 'form.articleData', 'submit', this.postArticle );
+		this.addNodeEvent( 'input.fileAttachments', 'change', this.onFileAttachmentsChanged );
 		this.on( 'sessionLogin.appEvents', this.sessionLogin, this );
 
 		this.fire( 'checkSession.appEvents' );
@@ -53,12 +55,36 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 		event.stopPropagation();
 
 		let articleSubject		= this.nodes[ 'input.articleSubject' ].value,
-			articleBody			= this.nodes[ 'textarea.articleBody' ].value;
+			articleBody			= this.nodes[ 'textarea.articleBody' ].value,
+			articleFiles		= [ ];
 
-		await this.send({
-			type:		'createNewArticle',
-			payload:	{ articleSubject, articleBody }
-		});
+		if( this.selectedAttachments ) {
+			for( let file of Array.from( this.selectedAttachments ) ) {
+				articleFiles.push({
+					blob:		new Blob( [ file ], { type: file.type } ),
+					name:		file.name || 'unknown',
+					type:		file.type.slice( file.type.lastIndexOf( '/' ) + 1 )
+				});
+			}
+		}
+
+		try {
+			let result	= await this.send({
+				type:		'createNewArticle',
+				payload:	{ articleSubject, articleBody, articleFiles }
+			});
+		} catch( ex ) {
+			console.error( ex );
+		}
+
+
+		console.log(result);
+	}
+
+	async onFileAttachmentsChanged( event ) {
+		if( 'files' in event.target ) {
+			this.selectedAttachments = event.target.files;
+		}
 	}
 }
 /****************************************** createNewArticleDialog End ******************************************/

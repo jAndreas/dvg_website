@@ -25,7 +25,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 			topMost:				true,
 			avoidOutsideClickClose:	true,
 			hoverOverlay:			true,
-			noBlur:					true,
+			noBlur:					false,
 			title:					input.videoData.videoTitle
 		}).and( input );
 
@@ -90,7 +90,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	}
 
 	async destroy() {
-		this.clipboard.destroy();
+		this.clipboard && this.clipboard.destroy();
 		this.video && this.video.destroy();
 		this.video = null;
 
@@ -196,7 +196,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 
 	async initComments() {
 		await commentSection.start({
-			location:		this.id,
+			location:		this.name,
 			context:		this.videoData.id,
 			internalId:		this.videoData.internalId,
 			speakingName:	this.videoData.videoTitle
@@ -247,7 +247,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	}
 
 	onDonateNowClick() {
-		win.open( `https://www.paypal.me/DerVeganeGermane/send?amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&currencyCode=EUR`, '_blank' );
+		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
 	}
 }
 /****************************************** videoPlayerDialog End ******************************************/

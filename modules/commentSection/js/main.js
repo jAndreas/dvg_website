@@ -42,11 +42,19 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
 
 		this.on( 'mouseup.appEvents', this.delegatedClick, this );
+		this.on( 'startNewSession.server', this.checkAdminRights, this );
+		this.on( 'userLogout.server', this.checkAdminRights, this );
 
 		this.recv( 'commentWasVoted', this.commentWasVoted.bind( this ) );
 		this.recv( 'newCommentWasPosted', this.newCommentWasPosted.bind( this ) );
 
-		this.getComments();
+		if( this.small ) {
+			this.nodes[ 'input.sendComment' ].classList.add( 'small' );
+		}
+
+		await this.getComments();
+
+		this.fire( 'getUserSession.server', this.checkAdminRights.bind( this ) );
 
 		return this;
 	}
@@ -54,6 +62,12 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style, displayStyle ].forEach( s => s.unuse() );
+	}
+
+	checkAdminRights( session ) {
+		if( session ) {
+			Array.from( this.nodes[ 'div.commentsList' ].querySelectorAll( '.isAdmin' ) ).forEach( node => node.style.display = session.__isAdmin && !session.__destroyed ? 'flex' : 'none' );
+		}
 	}
 
 	delegatedClick( event ) {
@@ -206,7 +220,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			});
 
 			for( let comment of result.data.comments ) {
-				this.renderComment({ comment: comment, srcArray: result.data.comments });
+				await this.renderComment({ comment: comment, srcArray: result.data.comments });
 			}
 		} catch( ex ) {
 			this.createModalOverlay();

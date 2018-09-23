@@ -186,7 +186,6 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 			'label.uploadStyle':fileSelect,
 			'textarea.videoDescription':desc,
 			'input.videoTags':tags,
-			'input.password':pass,
 			'input.uploadVideo':uploadButton } = this.nodes;
 
 		if( this.selectedVideoFile ) {
@@ -278,8 +277,7 @@ class uploadVideoDialog extends mix( Overlay ).with( GlasEffect, ServerConnectio
 							type:		'fileUpload',
 							payload:	{
 								chunk:		currentChunk,
-								fileID:		videoMeta.data.fileID,
-								pass:		pass.value
+								fileID:		videoMeta.data.fileID
 							}
 						}, {
 							noTimeout:	true

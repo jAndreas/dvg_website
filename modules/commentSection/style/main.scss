@@ -53,6 +53,11 @@ div.commentSection {
 
 				@media screen and (max-width:$iPhone6Portrait) {
 					width:auto;
+					height:6vh;
+				}
+
+				&.small {
+					font-size:2vh;
 				}
 			}
 		}
@@ -84,5 +89,12 @@ div.commentSection {
 		margin:auto;
 		margin-top:5vh;
 		text-shadow:none;
+
+		&:empty:before {
+			content:'Sei der Erste, der kommentiert';
+			color:white;
+			margin-top:-3vh;
+			text-align:center;
+		}
 	}
 }

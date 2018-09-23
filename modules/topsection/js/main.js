@@ -442,7 +442,10 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	async slideDownArrowClick() {
+	async slideDownArrowClick( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
 		this.fire( 'slideDownArrayClicked.topSection' );
 	}
 

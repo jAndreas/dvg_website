@@ -2,7 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend } from 'barfoos2.0/toolkit.js';
+import { extend, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 
@@ -75,13 +75,12 @@ class supportSection extends Component {
 		let result;
 
 		if( this.video && enteredFrom === 'top' ) {
-			this.video.seek( this.mobileVideo ? 3 : 0 );
+			this.video.seek( isMobileDevice ? 3 : 0 );
 			result = await this.video.play();
 
-			if( result === -1 ) {
+			if( result === -1 || isMobileDevice ) {
 				this.video.node.classList.add( 'mobile' );
 				this.video.addControls();
-				this.mobileVideo = true;
 
 				this.video.node.addEventListener( 'play', this._boundPlayHandler );
 			}

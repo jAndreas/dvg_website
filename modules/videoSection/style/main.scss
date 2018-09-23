@@ -13,5 +13,21 @@ div.videoSection {
 		justify-content:flex-start;
 
 		margin:3vh;
+		margin-top:22vh;
+
+		&:before {
+			position:absolute;
+			content:'Videos';
+			top:0px;
+			color:#ffffff17;
+			font-size:18vw;
+			font-family:Fixed;
+			font-weight:bold;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				top:10vh;
+				right:4vw;
+			}
+		}
 	}
 }

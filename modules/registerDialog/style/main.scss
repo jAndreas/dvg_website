@@ -44,35 +44,36 @@ div.registerDialog {
 			}
 
 			> input {
-				border:1px solid gray;
 				box-sizing:border-box;
 				font-family:verdana,arial;
 				padding:4px;
 				outline:none;
 				width:95%;
 				color:white;
-				background-color:rgba(0, 200, 0, 0.1);
+				background-color:rgba(73, 247, 79, 0);
 				margin-bottom:4px;
 
 				&:invalid {
-					background-color:rgba(200, 0, 0, 0.1);
+					background-color:#ff000021;
 				}
 			}
 
 			> input.nickname {
 				margin-top:10px;
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.emailAddress {
-
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.password {
 				margin-top:20px;
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.repeatPassword {
-
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.register {
@@ -80,6 +81,7 @@ div.registerDialog {
 				margin:1vh;
 				align-self:flex-start;
 				font-size:2vh;
+				border:1px solid #ffffff9c;
 
 				@media screen and (max-width:$iPhone6Landscape) {
 					align-self:center;

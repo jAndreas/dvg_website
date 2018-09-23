@@ -15,11 +15,11 @@ import style from '../style/main.scss';
 class videoSection extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'videoSection',
-			location:		moduleLocations.center,
-			loadingMessage:	'Warte auf Serververbindung...',
-			tmpl:			html,
-			previewLinks:	[ ]
+			name:				'videoSection',
+			location:			moduleLocations.center,
+			loadingMessage:		'Warte auf Serververbindung...',
+			tmpl:				html,
+			previewLinks:		[ ]
 		}).and( input );
 
 		super( options );
@@ -130,7 +130,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 					let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
 
 					let videoPreviewInstance = await videoPreviewPromise.start({
-						location:	this.id,
+						location:	this.name,
 						videoData:	video
 					});
 
@@ -156,7 +156,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
 
 				this.nextModule = await videoPreviewPromise.start({
-					location:	this.id,
+					location:	this.name,
 					mode:		'loadNextChunk',
 					info:		{
 						videosLeft:	totalLength - this.previewLinks.length

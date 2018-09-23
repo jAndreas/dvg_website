@@ -127,6 +127,24 @@ div.commentWrapper {
 				cursor:not-allowed;
 			}
 		}
+
+		> div.edit {
+			font-weight:bold;
+			font-size:10px;
+			cursor:pointer;
+			user-select:none;
+		}
+
+		> div.remove {
+			font-weight:bold;
+			font-size:10px;
+			cursor:pointer;
+			user-select:none;
+		}
+
+		> div.isAdmin {
+			display:none;
+		}
 	}
 
 	> div.responseWrapper {

@@ -23,6 +23,10 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 
 		super( options );
 
+		this.runtimeDependencies.push(
+			this.fire( 'waitForConnection.server' )
+		);
+
 		return this.init();
 	}
 

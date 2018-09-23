@@ -45,25 +45,26 @@ div.loginDialog {
 			}
 
 			> input {
-				border:1px solid gray;
 				box-sizing:border-box;
 				font-family:verdana,arial;
 				padding:4px;
 				outline:none;
 				width:95%;
 				color:white;
-				background-color:rgba(0, 200, 0, 0.1);
+				background-color:rgba(73, 247, 79, 0);
 				margin-bottom:4px;
 
 				&:invalid {
-					background-color:rgba(200, 0, 0, 0.1);
+					background-color:#ff000021;
 				}
 			}
 
 			> input.emailAddress {
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.password {
+				border-bottom:1px solid #ffffff4f;
 			}
 
 			> input.login {
@@ -71,6 +72,7 @@ div.loginDialog {
 				margin:1vh;
 				align-self:flex-start;
 				font-size:2vh;
+				border:1px solid #ffffff9c;
 
 				@media screen and (max-width:$iPhone6Landscape) {
 					align-self:center;
@@ -91,6 +93,7 @@ div.loginDialog {
 				margin-right:2vh;
 				text-decoration:underline;
 				cursor:pointer;
+				text-shadow:1px 1px 10px black;
 			}
 		}
 	}

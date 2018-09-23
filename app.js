@@ -1,9 +1,9 @@
 'use strict';
 
 /*import nodePolyfill from 'babel-polyfill/node.js';
-import babelPolyfill from 'babel-polyfill';
+import babelPolyfill from 'babel-polyfill';*/
 import proxyPolyfill from 'proxy-polyfill/proxy.min.js';
-import urlPolyfill from 'url-search-params';*/
+import urlPolyfill from 'url-search-params';
 
 import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
@@ -156,6 +156,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		switch( module.name ) {
 			case 'videoPlayerDialog':
 				this.currentHash.delete( 'watch' );
+				this.currentHash.delete( 'read' );
 				this.currentHash.delete( 'action' );
 				doc.location.hash = this.currentHash.toString();
 				break;
@@ -267,10 +268,14 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	async updateHash( hashUpdate = { data: { }, extra: null } ) {
 		for( let [ key, value ] of Object.entries( hashUpdate.data ) ) {
-			this.currentHash.set( key, value );
+			if( value ) {
+				this.currentHash.set( key, value );
 
-			if( hashUpdate.extra ) {
-				this.extraInfo.set( value, hashUpdate.extra );
+				if( hashUpdate.extra ) {
+					this.extraInfo.set( value, hashUpdate.extra );
+				}
+			} else {
+				this.currentHash.delete( key );
 			}
 		}
 

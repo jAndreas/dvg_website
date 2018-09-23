@@ -73,6 +73,8 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		await this.getInitialChatData({ showMOTD: true });
 		this.getPingMessages();
 
+		this.nodes[ 'textarea.inputChatMessage' ].focus();
+
 		return this;
 	}
 

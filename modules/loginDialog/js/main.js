@@ -1,6 +1,6 @@
 'use strict';
 
-import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
+import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
@@ -12,12 +12,13 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Logs in a user and dispatches session data
  *****************************************************************************************************/
-class loginDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
+class loginDialog extends mix( Overlay ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:			'loginDialog',
 			location:		moduleLocations.center,
-			tmpl:			html
+			tmpl:			html,
+			fixed:			true
 		}).and( input );
 
 		super( options );

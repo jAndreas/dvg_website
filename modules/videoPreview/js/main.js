@@ -16,12 +16,14 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
 class videoPreview extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		if( input.videoData ) {
-			input.videoData.views = input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
+			input.videoData.views	= input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
+			input.videoData.vid		= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.videoData.internalId;
 
 			extend( options ).with({
 				name:			'videoPreview',
 				tmpl:			html,
-				renderData:		input.videoData
+				renderData:		input.videoData,
+				touchStartPos:	Object.create( null )
 			}).and( input );
 		} else if( input.mode === 'loadNextChunk' ) {
 			extend( options ).with({
@@ -48,7 +50,9 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 			this.on( `updateNextInfo.${ this.name }`, this.onUpdateNextInfo, this );
 			this.on( `destroyNextInfo.${ this.name }`, this.onDestroyNextInfo, this );
 		} else {
-			this.addNodeEvent( 'div.videoThumbnail, span.videoTitle', 'click', this.launchVideoModule );
+			this.addNodeEvent( 'a.videoThumbnailAnchor, span.videoTitle', 'mousedown', this.videoTitleMouseDown );
+			this.addNodeEvent( 'a.videoThumbnailAnchor, span.videoTitle', 'mouseup', this.launchVideoModule );
+			this.addNodeEvent( 'a.videoThumbnailAnchor, span.videoTitle', 'click', this.preventClick );
 			this.on( 'openVideoPlayer.appEvents', this.onOpenVideoPlayer, this );
 			this.recv( 'videoViewCountUpdate', this.updateViewCount.bind( this ) );
 		}
@@ -61,18 +65,45 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 		[ style, loadNextChunkStyle ].forEach( s => s.unuse() );
 	}
 
+	async preventClick( event ) {
+		event.preventDefault();
+	}
+
+	async videoTitleMouseDown( event ) {
+		if( event.changedTouches && event.changedTouches.length ) {
+			this.touchStartPos = event.changedTouches[ 0 ];
+		} else {
+			this.touchStartPos = { pageX: event.pageX, pageY: event.pageY };
+		}
+	}
+
 	async launchVideoModule( at ) {
-		let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
-		
-		videoPlayer.start({
-			location:	this.location,
-			videoData:	this.videoData,
-			at:			at
-		});
+		let touchEndPos;
+
+		if( at && typeof at.preventDefault === 'function' ) {
+			at.preventDefault();
+			at.stopPropagation();
+		}
+
+		if( at && at.changedTouches && at.changedTouches.length ) {
+			touchEndPos = at.changedTouches[ 0 ];
+		} else {
+			touchEndPos	= at;
+		}
+
+		if( at === 0 || (Math.abs( this.touchStartPos.pageX - touchEndPos.pageX ) < 10 && Math.abs( this.touchStartPos.pageY - touchEndPos.pageY ) < 10) ) {
+			let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
+
+			videoPlayer.start({
+				location:	this.location,
+				videoData:	this.videoData,
+				at:			at
+			});
+		}
 	}
 
 	onOpenVideoPlayer({ internalId, at }) {
-		if( this.videoData.internalId === internalId ) {
+		if( this.videoData.internalId === internalId || this.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') === internalId ) {
 			this.launchVideoModule( at );
 			return internalId;
 		}

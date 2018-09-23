@@ -6,41 +6,41 @@
 	"scripts": {
 		"legacy": "webpack --mode production --progress --config webpack.legacy",
 		"dev": "webpack --mode development --watch --progress --config webpack.dev",
-		"prod": "webpack --mode production --progress --config webpack.prod"
+		"prod": "webpack --mode development --progress --config webpack.prod"
 	},
 	"author": "Andreas Goebel",
 	"license": "MIT",
 	"dependencies": {
-		"babel-core": "^6.26.3",
-		"babel-eslint": "^8.2.5",
-		"babel-loader": "^7.1.5",
-		"babel-plugin-syntax-dynamic-import": "^6.18.0",
-		"babel-plugin-transform-class-properties": "^6.24.1",
-		"babel-plugin-transform-regenerator": "^6.26.0",
-		"babel-plugin-transform-runtime": "^6.23.0",
-		"babel-polyfill": "^6.26.0",
-		"babel-preset-es2015": "^6.24.1",
-		"babel-preset-es2017": "^6.24.1",
-		"babel-preset-stage-0": "^6.24.1",
+		"@babel/core": "^7.0.0",
+		"@babel/plugin-proposal-class-properties": "^7.0.0",
+		"@babel/plugin-syntax-dynamic-import": "^7.0.0",
+		"@babel/plugin-transform-regenerator": "^7.0.0",
+		"@babel/plugin-transform-runtime": "^7.0.0",
+		"@babel/plugin-transform-destructuring": "^7.0.0",
+		"@babel/polyfill": "^7.0.0",
+		"@babel/preset-env": "^7.0.0",
+		"@babel/runtime-corejs2": "^7.0.0",
+		"babel-eslint": "^9.0.0",
+		"babel-loader": "^8.0.0",
 		"barfoos2.0": "^0.3.0",
 		"clipboard": "^2.0.1",
 		"css-loader": "^1.0.0",
-		"eslint": "^5.0.1",
-		"eslint-loader": "^2.0.0",
-		"hls.js": "^0.10.1",
+		"eslint": "^5.4.0",
+		"eslint-loader": "^2.1.0",
+		"hls.js": "^0.11.0",
 		"loader-utils": "^1.1.0",
-		"node-sass": "^4.9.1",
+		"node-sass": "^4.9.3",
 		"proxy-polyfill": "^0.3.0",
 		"raw-loader": "^0.5.1",
-		"sass-loader": "^7.0.3",
+		"sass-loader": "^7.1.0",
 		"socket.io": "^2.1.0",
-		"style-loader": "^0.21.0",
-		"uglify-js": "^3.4.3",
-		"url-loader": "^1.0.1",
+		"style-loader": "^0.23.0",
+		"uglify-js": "^3.4.7",
+		"url-loader": "^1.1.1",
 		"url-search-params": "^1.0.2",
-		"webpack": "^4.15.1",
-		"webpack-cli": "^3.0.8",
-		"webpack-sources": "^1.0.1"
+		"webpack": "^4.16.5",
+		"webpack-cli": "^3.1.0",
+		"webpack-sources": "^1.2.0"
 	},
 	"eslintConfig": {
 		"parser": "babel-eslint",
@@ -81,6 +81,6 @@
 		}
 	},
 	"devDependencies": {
-		"file-loader": "^1.1.11"
+		"file-loader": "^2.0.0"
 	}
 }

@@ -62,6 +62,12 @@ div.createNewArticleDialog {
 			}
 		}
 
+		> input.fileAttachments {
+			margin:2vh;
+			padding:1vh;
+			align-self:flex-start;
+		}
+
 		> input.postArticle {
 			width:20%;
 			margin:2vh;
