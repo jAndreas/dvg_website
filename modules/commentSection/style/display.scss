@@ -133,6 +133,10 @@ div.commentWrapper {
 			font-size:10px;
 			cursor:pointer;
 			user-select:none;
+
+			&.inEditMode {
+				color:#83ff7d;
+			}
 		}
 
 		> div.remove {

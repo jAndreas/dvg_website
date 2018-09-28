@@ -19,7 +19,10 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:			'commentSection',
-			tmpl:			html
+			tmpl:			html,
+			inEditMode:		Object.create( null ),
+			session:		null,
+			allComments:	[ ]
 		}).and( input );
 
 		super( options );
@@ -47,14 +50,16 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 		this.recv( 'commentWasVoted', this.commentWasVoted.bind( this ) );
 		this.recv( 'newCommentWasPosted', this.newCommentWasPosted.bind( this ) );
+		this.recv( 'commentWasUpdated', this.commentWasUpdated.bind( this ) );
+		this.recv( 'commentWasRemoved', this.commentWasRemoved.bind( this ) );
 
 		if( this.small ) {
 			this.nodes[ 'input.sendComment' ].classList.add( 'small' );
 		}
 
-		await this.getComments();
+		this.fire( 'getUserSession.server', session => this.session = session );
 
-		this.fire( 'getUserSession.server', this.checkAdminRights.bind( this ) );
+		await this.getComments();
 
 		return this;
 	}
@@ -66,32 +71,50 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 
 	checkAdminRights( session ) {
 		if( session ) {
-			Array.from( this.nodes[ 'div.commentsList' ].querySelectorAll( '.isAdmin' ) ).forEach( node => node.style.display = session.__isAdmin && !session.__destroyed ? 'flex' : 'none' );
+			for( let comment of this.allComments ) {
+				if( session.__isAdmin || comment.author === session.__username ) {
+					comment.node.querySelectorAll( '.isAdmin' ).forEach( node => node.style.display = session.__destroyed ? 'none' : 'flex' );
+				}
+			}
 		}
 	}
 
 	delegatedClick( event ) {
 		if( this.nodes.root.contains( event.target ) ) {
+			let commentWrapper = event.target.closest( 'div.commentWrapper' );
+
 			if( event.target.classList.contains( 'thumbsUp' ) ) {
-				this.voteClick( event.target.closest( 'div.commentWrapper' ), 'castUpvote' );
+				this.voteClick( commentWrapper, 'castUpvote' );
 			}
 
 			if( event.target.classList.contains( 'thumbsDown' ) ) {
-				this.voteClick( event.target.closest( 'div.commentWrapper' ), 'castDownvote' );
+				this.voteClick( commentWrapper, 'castDownvote' );
 			}
 
 			if( event.target.classList.contains( 'reply' ) ) {
-				this.replyClick( event.target.closest( 'div.commentWrapper' ) );
+				this.replyClick( commentWrapper );
 			}
 
 			if( event.target.classList.contains( 'report' ) ) {
 				if( event.target.classList.contains( 'alreadyReported' ) === false ) {
-					this.reportClick( event.target.closest( 'div.commentWrapper' ) );
+					this.reportClick( commentWrapper );
 				}
 			}
 
 			if( event.target.classList.contains( 'showLocalResponses' ) ) {
-				this.showLocalResponses( event.target.closest( 'div.commentWrapper' ) );
+				this.showLocalResponses( commentWrapper );
+			}
+
+			if( event.target.classList.contains( 'edit' ) ) {
+				if( event.target.classList.contains( 'inEditMode' ) ) {
+					this.editContent( commentWrapper, event.target );
+				} else {
+					this.makeContentEditable( commentWrapper, event.target );
+				}
+			}
+
+			if( event.target.classList.contains( 'remove' ) ) {
+				this.removeComment( commentWrapper );
 			}
 		}
 	}
@@ -144,9 +167,9 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 					commentid = rootNode.closest( 'div.commentWrapper.topLevel' ).dataset.commentid;
 				}
 
-				Array.from( doc.querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
+				Array.from( this.nodes[ 'div.commentsList' ].querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
 
-				this.nodes.defaultChildContainer = doc.querySelector( `div.comment-${ commentid }` );
+				this.nodes.defaultChildContainer = this.nodes[ 'div.commentsList' ].querySelector( `div.comment-${ commentid }` );
 
 				let hash = this.render({ htmlData: html, standalone: true }).with({}).at({
 					node:		rootNode.querySelector( 'div.actionsLine' ),
@@ -209,6 +232,90 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
+	async editContent( rootNode, target ) {
+		try {
+			let commentid;
+
+			if( rootNode ) {
+				this.createModalOverlay({
+					at:	rootNode
+				});
+
+				commentid = rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
+
+				if( commentid in this.inEditMode ) {
+					let result = await this.send({
+						type:		'editCommentContent',
+						payload:	{
+							context:	this.context,
+							commentid:	commentid,
+							content:	this.inEditMode[ commentid ].editInput.localRoot.value
+						}
+					});
+
+					this.inEditMode[ commentid ].originalNode.innerHTML = result.data.comment.content.replace( /\n/g, '<br/>' );
+					this.inEditMode[ commentid ].editInput.localRoot.replaceWith( this.inEditMode[ commentid ].originalNode );
+					delete this.inEditMode[ commentid ];
+
+					target.textContent	= 'Bearbeiten';
+					target.classList.remove( 'inEditMode' );
+
+					this.modalOverlay.fulfill();
+				}
+			}
+		} catch( ex ) {
+			this.createModalOverlay({
+				at:	rootNode
+			});
+
+			await this.modalOverlay.log( ex.message );
+			this.modalOverlay.fulfill();
+		}
+	}
+
+	makeContentEditable( rootNode, target ) {
+		try {
+			let originalNode	= rootNode.querySelector( 'div.content' ),
+				commentid		= rootNode.closest( 'div.commentWrapper' ).dataset.commentid,
+				editInput		= this.render({ htmlData: '<textarea class="commentText" style="width:%width%px;height:%height%px;">%text%</textarea>', standalone: true, crlf: true }).with({
+					text:			originalNode.innerHTML,
+					width:			originalNode.offsetWidth,
+					height:			originalNode.offsetHeight
+				}).at({
+					node:		originalNode,
+					position:	'replace'
+				});
+
+			target.textContent	= 'Senden';
+			target.classList.add( 'inEditMode' );
+
+			this.inEditMode[ commentid ] = { originalNode, editInput };
+		} catch( ex ) {
+			this.log( ex );
+		}
+	}
+
+	async removeComment( rootNode ) {
+		try {
+			let commentid	= rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
+
+			let result		= this.send({
+				type:		'removeComment',
+				payload:	{
+					context:	this.context,
+					commentid:	commentid
+				}
+			});
+		} catch( ex ) {
+			this.createModalOverlay({
+				at:	rootNode
+			});
+
+			await this.modalOverlay.log( ex.message );
+			this.modalOverlay.fulfill();
+		}
+	}
+
 	async getComments() {
 		try {
 			let result = await this.send({
@@ -219,9 +326,11 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 				}
 			});
 
+			this.nodes[ 'div.commentsList' ].remove();
 			for( let comment of result.data.comments ) {
 				await this.renderComment({ comment: comment, srcArray: result.data.comments });
 			}
+			this.nodes[ 'div.commentInput' ].insertAdjacentElement( 'afterend', this.nodes[ 'div.commentsList' ] );
 		} catch( ex ) {
 			this.createModalOverlay();
 			await this.modalOverlay.log( ex.message );
@@ -256,7 +365,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			cancelBtn	= root.querySelector( 'input.cancelComment' ),
 			commentText	= root.querySelector( 'textarea.commentText' );
 
-		Array.from( doc.querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
+		Array.from( this.nodes[ 'div.commentsList' ].querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
 		commentText.value = '';
 		cancelBtn.classList.remove( 'active' );
 	}
@@ -309,7 +418,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 					commentWrapper.querySelector( 'div.showLocalResponses' ).textContent = 'Antworten ausblenden';
 				}
 
-				Array.from( doc.querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
+				Array.from( this.nodes[ 'div.commentsList' ].querySelectorAll( 'div.subCommentInput' ) ).forEach( node => node.remove() );
 				commentArea.value = '';
 				this.blurCommentText({ target: cancelBtn });
 			}
@@ -344,7 +453,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		}
 
 		if( comment.reference ) {
-			targetContainer = doc.querySelector( `div.comment-${ comment.reference } > div.responseWrapper > div.responseContainer` );
+			targetContainer = this.nodes[ 'div.commentsList' ].querySelector( `div.comment-${ comment.reference } > div.responseWrapper > div.responseContainer` );
 		} else {
 			targetContainer	= 'div.commentsList';
 		}
@@ -358,6 +467,10 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 			hash.localRoot.addEventListener( 'animationend', () => {
 				hash.localRoot.classList.remove( 'fadeIn' );
 			}, false);
+		}
+
+		if( this.session && ( this.session.__isAdmin || this.session.__username === comment.author ) ) {
+			hash.localRoot.querySelectorAll( '.isAdmin' ).forEach( node => node.style.display = 'flex' );
 		}
 
 		if( comment.reference ) {
@@ -390,25 +503,73 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		} else {
 			hash.localRoot.querySelector( 'div.voting' ).classList.remove( 'negative', 'positive' );
 		}
+
+		comment.node = hash.localRoot;
+
+		this.allComments.push( comment );
 	}
 
 	commentWasVoted( data ) {
-		let rootNode = doc.querySelector( `div.comment-${ data.commentid }` );
+		let rootNode = this.nodes[ 'div.commentsList' ].querySelector( `div.comment-${ data.commentid }` );
 
-		let voteResult = data.upvoteCount - data.downvoteCount;
-		rootNode.querySelector( 'div.voting' ).textContent = voteResult;
+		if( rootNode ) {
+			let voteResult = data.upvoteCount - data.downvoteCount;
+			rootNode.querySelector( 'div.voting' ).textContent = voteResult;
 
-		if( voteResult < 0 ) {
-			rootNode.querySelector( 'div.voting' ).classList.add( 'negative' );
-		} else if( voteResult > 0 ) {
-			rootNode.querySelector( 'div.voting' ).classList.add( 'positive' );
-		} else {
-			rootNode.querySelector( 'div.voting' ).classList.remove( 'negative', 'positive' );
+			if( voteResult < 0 ) {
+				rootNode.querySelector( 'div.voting' ).classList.add( 'negative' );
+			} else if( voteResult > 0 ) {
+				rootNode.querySelector( 'div.voting' ).classList.add( 'positive' );
+			} else {
+				rootNode.querySelector( 'div.voting' ).classList.remove( 'negative', 'positive' );
+			}
 		}
 	}
 
 	newCommentWasPosted( comment ) {
-		this.renderComment({ comment: comment, fadeIn: true });
+		if( comment.context === this.context ) {
+			this.renderComment({ comment: comment, fadeIn: true });
+		}
+	}
+
+	async commentWasUpdated( comment ) {
+		let rootNode = this.nodes[ 'div.commentsList' ].querySelector( `div.comment-${ comment._id }` );
+
+		if( rootNode ) {
+			let ctn	= rootNode.querySelector( 'div.content' );
+
+			let fade = await this.transition({
+				node:	ctn,
+				style:	{ opacity:	{ from: 1, to: '0.25' } },
+				rules:	{
+					duration:	400,
+					timing:		'linear'
+				}
+			});
+
+			ctn.innerHTML = comment.content.replace( /\n/g, '<br/>' );
+
+			fade.undo();
+		}
+	}
+
+	async commentWasRemoved( id ) {
+		let rootNode = this.nodes[ 'div.commentsList' ].querySelector( `div.comment-${ id }` );
+
+		if( rootNode ) {
+			rootNode.remove();
+		}
+
+		let index	= -1,
+			comment = this.allComments.find( (comment, idx) => {
+				index = idx;
+				return comment._id === id;
+			});
+
+		if( comment ) {
+			comment.node.remove();
+			this.allComments.splice( index, 1 );
+		}
 	}
 }
 /****************************************** commentSection End ******************************************/

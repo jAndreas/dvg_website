@@ -57,23 +57,28 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 		event.stopPropagation();
 
 		let mailSubject		= this.nodes[ 'input.mailSubject' ].value,
-			mailBody		= this.nodes[ 'textarea.mailBody' ].value;
+			mailBody		= this.nodes[ 'textarea.mailBody' ].value,
+			donatorsOnly	= this.nodes[ 'input#donatorsOnly' ].checked;
 
 		let res = await this.send({
 			type:		'dispatchMail',
-			payload:	{ mailSubject, mailBody }
+			payload:	{ mailSubject, mailBody, donatorsOnly }
 		},{
 			noTimeout:	true
 		});
 
+		this.createModalOverlay();
+
 		switch( res.status ) {
 			case 'adminPrivilegesRequired':
-				alert( 'Admin Login required.' );
+				await this.modalOverlay.log( 'Admin Login required.' );
 				break;
 			case 'ok':
-				alert( 'Mail dispatching complete.' );
+				await this.modalOverlay.log( 'Mail dispatching complete.' );
 				break;
 		}
+
+		this.modalOverlay.fulfill();
 	}
 }
 /****************************************** dispatchMailDialog End ******************************************/

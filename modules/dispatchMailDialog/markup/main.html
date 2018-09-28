@@ -2,6 +2,10 @@
 	<form class="emailData">
 		<input class="mailSubject" type="text" placeholder="Thema..." required/>
 		<textarea class="mailBody" placeholder="Welche Nachricht darf ich verlautbaren lassen..." required></textarea>
+		<div class="receiverSelection">
+			<input type="checkbox" id="donatorsOnly"/>
+			<label class="donatorLabel" for="donatorsOnly">Nur Unterstützer</label>
+		</div>
 		<input class="sendMail bfButton" type="submit" value="Senden"/>
 	</form>
 </div>
