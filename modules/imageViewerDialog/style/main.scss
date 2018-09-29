@@ -1,0 +1,25 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+
+div.imageViewerDialog {
+	display:flex;
+	flex-direction:row;
+	flex-wrap:wrap;
+	justify-content:center;
+
+	width:80vw;
+	height:70vh;
+
+	background-size:contain;
+	background-repeat:no-repeat;
+	background-position:center center;
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		width:100vw;
+		height:100vh;
+	}
+
+	@media screen and (max-width:$iPhone6Landscape) {
+		width:100vw;
+		height:100vh;
+	}
+}

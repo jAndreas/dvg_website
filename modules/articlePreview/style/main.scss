@@ -76,15 +76,53 @@ div.articlePreview {
 		}
 
 		> div.articleBodyPreview {
-			width:640px;
+			position:relative;
+
+			display:flex;
+			flex-direction:column;
+			justify-content:flex-start;
+			align-items:center;
+
+			width:100%;
 			height:290px;
 			color:#212020;
 			margin-top:8px;
 
-			overflow-x:hidden;
-			overflow-y:auto;
 			font-family:"system-ui","Futura","Lucida Grande","Arial";
 			font-size:18px;
+
+			> div.text {
+				overflow-x:hidden;
+				overflow-y:hidden;
+				align-self:flex-start;
+				width:100%;
+
+				&.overflow {
+					box-shadow:0px -20px 80px 10px black inset;
+				}
+			}
+
+			> div.showMore {
+				display:none;
+
+				width:100px;
+				height:50px;
+				border:1px solid white;
+				box-sizing:border-box;
+				box-shadow:0px 0px 2px 2px rgba(0,0,0,0.5);
+				position:absolute;
+				background-image:linear-gradient(45deg, white, #555569);
+				bottom:-15px;
+				justify-content:center;
+				align-items:center;
+				font-weight:bold;
+				border-radius:12px;
+				text-shadow:0 0 4px white;
+
+				&:hover {
+					box-shadow:0px 0px 2px 2px rgba(100,100,100,0.8);
+				}
+			}
 		}
 
 		> div.articleThumbnail {
@@ -109,15 +147,15 @@ div.articlePreview {
 			}
 
 			> div.additionalImageMini {
-				width:10vw;
-				height:7vw;
-				box-shadow:2px 2px 8px black;
-				margin:1vw;
+				width:8vw;
+				height:6vw;
+				box-shadow:2px 2px 8px black, -1px -1px 2px white;
+				margin-right:1vw;
+				margin-bottom:1vw;
 				justify-content:flex-end;
 				align-items:flex-end;
 				background-size:cover;
 				opacity:0.8;
-				margin-right:2vw;
 
 				&:hover {
 					box-shadow:0 0 4px 1px #766f92;

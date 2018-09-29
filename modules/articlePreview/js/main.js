@@ -20,7 +20,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		if( input.articleData ) {
 			input.articleData.aid					= input.articleData.subject ? input.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
 			input.articleData.articlePreviewImage	= input.articleData.fileNames[ 0 ];
-			input.articleData.formatedDate			= "29.02.1991";
+			input.articleData.formatedDate			= new Date( input.articleData.creationDate ).toLocaleDateString();
 
 			extend( options ).with({
 				name:				'articlePreview',
@@ -53,18 +53,26 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.on( `updateNextInfo.${ this.name }`, this.onUpdateNextInfo, this );
 			this.on( `destroyNextInfo.${ this.name }`, this.onDestroyNextInfo, this );
 		} else {
-			this.addNodeEvent( 'a.articleThumbnailAnchor, div.articleTitle', 'mousedown', this.articleTitleMouseDown );
-			this.addNodeEvent( 'a.articleThumbnailAnchor, div.articleTitle', 'mouseup', this.launchArticleViewer );
-			this.addNodeEvent( 'a.articleThumbnailAnchor, div.articleTitle', 'click', this.preventClick );
+			this.addNodeEvent( 'div.articleThumbnail, div.articleTitle', 'mousedown', this.articleTitleMouseDown );
+			this.addNodeEvent( 'div.articleThumbnail, div.articleTitle', 'mouseup', this.launchArticleViewer );
+			this.addNodeEvent( 'div.articleThumbnail, div.articleTitle', 'click', this.preventClick );
+			this.addNodeEvent( 'a.articleThumbnailAnchor', 'click', this.preventClick );
+			this.addNodeEvent( 'div.showMore', 'click', this.showMore );
 			this.on( 'openArticleViewer.appEvents', this.onOpenArticleViewer, this );
+		}
+
+		if( this.nodes[ 'div.text' ].scrollHeight > this.nodes[ 'div.text' ].offsetHeight ) {
+			this.nodes[ 'div.showMore' ].style.display = 'flex';
+			this.nodes[ 'div.text' ].classList.add( 'overflow' );
 		}
 
 
 		if( this.articleData.articlePreviewImage ) {
 			if( Array.isArray( this.articleData.fileNames ) && this.articleData.fileNames.length > 1 ) {
-				for( let image of this.articleData.fileNames.slice( 1 ) ) {
-					this.render({ htmlData:	'<div class="additionalImageMini" style="background-image:url(/articleFiles/%internalId%/%src%)"></div>', standalone: true }).with({
+				for( let image of this.articleData.fileNames.reverse().slice( 0 ) ) {
+					this.render({ htmlData:	'<div class="additionalImageMini" style="background-image:url(/articleFiles/%internalId%/%srcMini%)" onclick="onMiniImageClick" data-imageurl="/articleFiles/%internalId%/%src%"></div>', standalone: true }).with({
 						src:		image,
+						srcMini:	image.substr( 0, image.lastIndexOf('.') ) + '_mini' + image.substr( image.lastIndexOf('.') ),
 						internalId:	this.articleData.internalId
 					}).at({
 						node:		'div.articleThumbnail',
@@ -73,7 +81,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 				}
 			}
 		} else {
-			this.nodes[ 'div.articleBodyPreview' ].style.height = `${ this.nodes[ 'div.articleBodyPreview' ].offsetHeight + this.nodes[ 'div.articleThumbnail' ].offsetHeight }px`;
+			//this.nodes[ 'div.articleBodyPreview' ].style.height = `${ this.nodes[ 'div.articleBodyPreview' ].offsetHeight + this.nodes[ 'div.articleThumbnail' ].offsetHeight }px`;
 			this.nodes[ 'div.articleThumbnail' ].style.display = 'none';
 		}
 
@@ -97,6 +105,12 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		});
 	}
 
+	showMore() {
+		this.nodes[ 'div.showMore' ].style.display = 'none';
+		this.nodes[ 'div.text' ].classList.remove( 'overflow' );
+		this.nodes[ 'div.articleBodyPreview' ].style.height = 'auto';
+	}
+
 	preventClick( event ) {
 		event.preventDefault();
 	}
@@ -109,12 +123,32 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		}
 	}
 
-	launchArticleViewer( at ) {
+	async openImageViewer( event ) {
+		let imageViewerDialog = await import( /* webpackChunkName: "imageViewerDialog" */ 'imageViewerDialog/js/main.js' );
+		await imageViewerDialog.start({
+			location:	this.location,
+			url:		this.nodes[ 'div.articleThumbnail' ].style.backgroundImage
+		});
+
+		at.preventDefault();
+		at.stopPropagation();
+	}
+
+	async launchArticleViewer( at ) {
 		let touchEndPos;
 
 		if( at && typeof at.preventDefault === 'function' ) {
 			at.preventDefault();
 			at.stopPropagation();
+		}
+
+		if( at && at.originalTarget && at.originalTarget.classList.contains( 'additionalImageMini' ) ) {
+			if( at.type === 'touchend' ) {
+				this.onMiniImageClick({ target: at.originalTarget });
+				return;
+			} else {
+				return;
+			}
 		}
 
 		if( at && at.changedTouches && at.changedTouches.length ) {
@@ -124,16 +158,12 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		}
 
 		if( at === 0 || (Math.abs( this.touchStartPos.pageX - touchEndPos.pageX ) < 10 && Math.abs( this.touchStartPos.pageY - touchEndPos.pageY ) < 10) ) {
-			console.log('ARTICLE: ', this.articleData);
+			let imageViewerDialog = await import( /* webpackChunkName: "imageViewerDialog" */ 'imageViewerDialog/js/main.js' );
+			await imageViewerDialog.start({
+				location:	this.location,
+				url:		this.nodes[ 'div.articleThumbnail' ].style.backgroundImage
+			});
 		}
-
-		/*let articlePlayer = await import( /* webpackChunkName: "articlePlayerDialog" *'articleViewerDialog/js/main.js' );
-
-		articlePlayer.start({
-			location:		this.location,
-			articleData:	this.articleData,
-			at:				at
-		});*/
 	}
 
 	onOpenArticleViewer({ internalId, at }) {
@@ -153,6 +183,10 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 
 	onDestroyNextInfo() {
 		this.destroy();
+	}
+
+	onMiniImageClick( event ) {
+		this.nodes[ 'div.articleThumbnail' ].style.backgroundImage = `url( ${ event.target.dataset.imageurl })`;
 	}
 
 	onDialogModeChange() {
