@@ -1,14 +1,18 @@
 <div class="articlePreview" data-iid="%internalId%">
-	<a class="articleThumbnailAnchor" href="/static/%aid%/">
+		<div class="adminPanel">
+			<div class="editArticleData">Bearbeiten</div>
+			<div class="removeArticle">Löschen</div>
+		</div>
 		<div class="articleHeader">
-			<div class="articleTitle" title="%articleTitle%">%subject%</div>
+			<a class="articleThumbnailAnchor" href="/static/%aid%/">
+				<div class="articleTitle" title="%articleTitle%">%subject%</div>
+			</a>
 			<div class="articleDate" title="%articleDate%">%formatedDate%</div>
 		</div>
 		<div class="articleBodyPreview">
 			<div class="text">%body%</div>
-			<div class="showMore">Mehr</div>
+			<div class="showMore">weiter lesen</div>
 		</div>
 		<div class="articleThumbnail" style="background-image:url(/articleFiles/%internalId%/%articlePreviewImage%)"></div>
-	</a>
 	<div class="commentsWrapper noPropagation" defaultChildContainer></div>
 </div>

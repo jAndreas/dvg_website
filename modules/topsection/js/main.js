@@ -206,6 +206,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 	// referenced via html markup, interpretated and linked by cacheNodes
 	async onQuickScrollUpClick() {
 		await this.fire( 'slideUpTo.appEvents', this.nodes.root );
+		this.inViewport();
 	}
 
 	async onQuickNavClick() {
@@ -736,7 +737,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		this.nodes[ 'div.logout' ].style.display = 'flex';
 		this.nodes[ 'div.logout' ].setAttribute( 'title', `${ user.__username } ausloggen...` );
 
-		this.inViewport();
+		//this.inViewport();
 	}
 
 	async onSessionLogin( user ) {

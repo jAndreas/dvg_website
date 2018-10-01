@@ -46,6 +46,9 @@ class articleSection extends mix( Component ).with( ServerConnection ) {
 			retVal = this.loadArticleData();
 		}
 
+		this.recv( 'articleWasRemoved', this.articleWasRemoved.bind( this ) );
+		this.recv( 'newArticleWasCreated', this.newArticleWasCreated.bind( this ) );
+
 		this.modalOverlay && await this.modalOverlay.fulfill();
 
 		return retVal;
@@ -76,6 +79,27 @@ class articleSection extends mix( Component ).with( ServerConnection ) {
 		});
 
 		super.offViewport && super.offViewport( ...arguments );
+	}
+
+	articleWasRemoved( id ) {
+		let index = this.previewLinks.findIndex( instance => instance.articleData._id === id );
+
+		if( index > -1 ) {
+			this.log( 'Removing preview link entry for: ', id );
+			this.previewLinks.splice( index, 1 );
+		}
+	}
+
+	async newArticleWasCreated( articleData ) {
+		let articlePreviewPromise = await import( /* webpackChunkName: "articlePreview" */ 'articlePreview/js/main.js'  );
+
+		let articlePreviewInstance = await articlePreviewPromise.start({
+			location:		this.name,
+			nodeLocation:	'afterbegin',
+			articleData:	articleData
+		});
+
+		this.previewLinks.push( articlePreviewInstance );
 	}
 
 	async loadArticleData( next = false ) {

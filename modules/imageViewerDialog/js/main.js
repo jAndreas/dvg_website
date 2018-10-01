@@ -1,6 +1,6 @@
 'use strict';
 
-import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
+import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
@@ -12,14 +12,13 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Displays a given image url centered and fixed
  *****************************************************************************************************/
-class imageViewerDialog extends mix( Overlay ).with( Draggable ) {
+class imageViewerDialog extends Overlay {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:			'imageViewerDialog',
 			location:		input.location || moduleLocations.center,
 			tmpl:			html,
 			noBlur:			true,
-			hoverOverlay:	true,
 			topMost:		true,
 			center:			true,
 			fixed:			true
@@ -33,7 +32,7 @@ class imageViewerDialog extends mix( Overlay ).with( Draggable ) {
 	async init() {
 		await super.init();
 
-		this.addNodeEvent( this.nodes.root, 'click', () => this.destroy() );
+		this.addNodeEvent( this.nodes.root, 'click', this.destroyInstance  );
 
 		if( isMobileDevice ) {
 			this.nodes.dialogRoot.style.top = `0px`;
@@ -48,6 +47,11 @@ class imageViewerDialog extends mix( Overlay ).with( Draggable ) {
 	async destroy() {
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
+	}
+
+	destroyInstance() {
+		this.destroy();
+		return false;
 	}
 }
 /****************************************** imageViewerDialog End ******************************************/

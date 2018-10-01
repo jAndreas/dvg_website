@@ -37,16 +37,16 @@ div.userListElement {
 
 		> div.typingStatus {
 			flex-direction:row;
-			font-size:1.2vh;
+			font-size:1.0vh;
 			margin-left:2px;
-			line-height:1vh;
+			align-self:center;
 			display:none;
 
 			&.isTyping {
 				display:flex;
 
-				> div {
-					animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+				/*> div {
+					animation: sk-bouncedelay 1.4s infinite linear both;
 
 					&.b2 {
 						animation-delay: 0.16s;
@@ -55,7 +55,7 @@ div.userListElement {
 					&.b3 {
 						animation-delay: 0.32s;
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -78,14 +78,10 @@ div.userListElement {
 }
 
 @keyframes sk-bouncedelay {
-	0%,
-	80%,
-	100% {
-		-webkit-transform: scale(0);
-		transform: scale(0);
+	from {
+		opacity:0;
 	}
-	40% {
-		-webkit-transform: scale(1.0);
-		transform: scale(1.0);
+	to {
+		opacity:1;
 	}
 }

@@ -277,7 +277,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		try {
 			let originalNode	= rootNode.querySelector( 'div.content' ),
 				commentid		= rootNode.closest( 'div.commentWrapper' ).dataset.commentid,
-				editInput		= this.render({ htmlData: '<textarea class="commentText" style="width:%width%px;height:%height%px;">%text%</textarea>', standalone: true, crlf: true }).with({
+				editInput		= this.render({ htmlData: '<textarea style="width:%width%px;height:%height%px;background-color:transparent;">%text%</textarea>', standalone: true, crlf: true }).with({
 					text:			originalNode.innerHTML,
 					width:			originalNode.offsetWidth,
 					height:			originalNode.offsetHeight
@@ -299,7 +299,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		try {
 			let commentid	= rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
 
-			let result		= this.send({
+			await this.send({
 				type:		'removeComment',
 				payload:	{
 					context:	this.context,

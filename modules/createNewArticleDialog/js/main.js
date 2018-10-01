@@ -73,12 +73,11 @@ class createNewArticleDialog extends mix( Overlay ).with( GlasEffect, ServerConn
 				type:		'createNewArticle',
 				payload:	{ articleSubject, articleBody, articleFiles }
 			});
+
+			console.log(result);
 		} catch( ex ) {
 			console.error( ex );
 		}
-
-
-		console.log(result);
 	}
 
 	async onFileAttachmentsChanged( event ) {
