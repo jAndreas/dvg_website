@@ -1,18 +1,30 @@
 <div class="articlePreview" data-iid="%internalId%">
-		<div class="adminPanel">
-			<div class="editArticleData">Bearbeiten</div>
-			<div class="removeArticle">Löschen</div>
+	<div class="adminPanel">
+		<div class="editArticleData">Bearbeiten</div>
+		<div class="removeArticle">Löschen</div>
+	</div>
+	<div class="articleHeader">
+		<a class="articleThumbnailAnchor" href="/static/%aid%/">
+			<div class="articleTitle" title="%subject%">%subject%</div>
+		</a>
+		<div class="articleDate" title="%articleDate%">%formatedDate%</div>
+	</div>
+	<div class="articleBodyPreview">
+		<div class="text">%body%</div>
+		<div class="showMore">weiter lesen</div>
+	</div>
+	<div class="articleThumbnail" style="background-image:url(/articleFiles/%internalId%/%articlePreviewImage%)"></div>
+	<div class="actionButtonsWrapper sectionContainer noPropagation">
+		<div class="donationForm" title="Hilf mir, diese Plattform zu betreiben.">
+			<input class="donateRange" type="range" min="2" max="100" step="1" value="5"/>
+			<input class="donateAmount" type="text" maxlength="4" value="5€"/>
+			<input class="donateNow bfButton" type="button" value="Spenden"/>
 		</div>
-		<div class="articleHeader">
-			<a class="articleThumbnailAnchor" href="/static/%aid%/">
-				<div class="articleTitle" title="%articleTitle%">%subject%</div>
-			</a>
-			<div class="articleDate" title="%articleDate%">%formatedDate%</div>
+		<div class="amazonWishList">
+			<a class="amazonWishListLink" title="Zu meinem Amazon Wunschzettel" href="https://goo.gl/sJsxJu" target="_blank"></a>
 		</div>
-		<div class="articleBodyPreview">
-			<div class="text">%body%</div>
-			<div class="showMore">weiter lesen</div>
-		</div>
-		<div class="articleThumbnail" style="background-image:url(/articleFiles/%internalId%/%articlePreviewImage%)"></div>
+		<a class="shareFacebookLink" title="Auf Facebook teilen" href="https://www.facebook.com/sharer/sharer.php?u=https://%uri%/static/%aid%/index.html" target="_blank"><div class="shareFacebook bfButton actionButton"></div></a>
+		<div class="copyLinkToClipboard" title="Den Direktaufruf zum Video in die Zwischenablage kopieren">Link kopieren</div>
+	</div>
 	<div class="commentsWrapper noPropagation" defaultChildContainer></div>
 </div>

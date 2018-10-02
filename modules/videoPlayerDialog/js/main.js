@@ -18,6 +18,8 @@ import style from '../style/main.scss';
  *****************************************************************************************************/
 class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
+		input.videoData.vid			= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
+
 		extend( options ).with({
 			name:					'videoPlayerDialog',
 			tmpl:					html,
@@ -64,7 +66,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
 		this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
 
-		this.clipboard = new Clipboard('div.copyLinkToClipboard', {
+		this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
 			text: () => {
 				this.copyLink = this.activateSpinner({
 					at:		this.nodes[ 'div.copyLinkToClipboard' ],
@@ -189,7 +191,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 				data:	{
 					action:		this.name
 				},
-				extra:		this.videoData.id
+				extra:		this.videoData.vid
 			});
 		} catch( ex ) {
 			this.log( ex );

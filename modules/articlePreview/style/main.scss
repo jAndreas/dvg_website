@@ -17,7 +17,7 @@ div.articlePreview {
 	border:1px solid rgb(86, 70, 70);
 	box-shadow:9px 8px 20px 0px #00000094;
 	position:relative;
-	opacity:0.75;
+	opacity:0.85;
 	order:2;
 
 	&.highlight {
@@ -153,7 +153,7 @@ div.articlePreview {
 	}
 
 	> div.articleThumbnail {
-		width:100%;
+		width:95%;
 		height:240px;
 		margin-top:8px;
 		margin-bottom:8px;
@@ -192,6 +192,154 @@ div.articlePreview {
 				width:30%;
 				height:28%;
 			}
+		}
+	}
+
+	> div.actionButtonsWrapper {
+		width:95%;
+		height:4vh;
+		display:flex;
+		flex-direction:row;
+		justify-content:flex-end;
+		align-items:center;
+
+		> div.donationForm {
+			display:flex;
+			flex-direction:row;
+			justify-content:space-around;
+			align-items:center;
+			background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4));
+			height:100%;
+			padding-left:4px;
+			padding-right:4px;
+			border:1px solid rgba(200,200,235,0.5);
+			border-bottom:none;
+			border-top:none;
+			box-sizing:border-box;
+
+			@media screen and (max-width:870px) {
+				margin-right:auto;
+			}
+
+			> input.donateRange {
+				margin-right:5px;
+				width:80px;
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					filter:none;
+					box-shadow:none;
+				}
+			}
+
+			> input.donateAmount {
+				width:35px;
+				background:transparent;
+				color:212020;
+				text-shadow:0 0 6px #3a3535;
+				outline:none;
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					filter:none;
+					box-shadow:none;
+				}
+			}
+
+			> input.donateNow {
+				width:10vh;
+				min-width:2vh;
+				height:75%;
+				font-size:2vh;
+				border:1px solid rgba(255,255,255,0.4);
+			}
+		}
+
+		> div.amazonWishList {
+			display:none;
+			flex-direction:row;
+			justify-content:space-around;
+			align-items:center;
+			margin-right:auto;
+			margin-left:1px;
+			background-image:linear-gradient(45deg, rgba(160,199,240,0.4), rgba(120,120,155,0.4));
+			height:100%;
+			padding-left:4px;
+			padding-right:4px;
+			border:1px solid rgba(200,200,235,0.5);
+			border-bottom:none;
+			border-top:none;
+			box-sizing:border-box;
+			opacity:0.7;
+
+			> a.amazonWishListLink {
+				background-image:url(../images/amazon.png);
+				width:120px;
+				height:100%;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+
+			@media screen and (min-width:870px) {
+				display:flex;
+			}
+
+			&:hover {
+				opacity:1;
+			}
+		}
+
+		> a.shareFacebookLink {
+			height:100%;
+			width:42px;
+			margin-right:4px;
+
+			> div.shareFacebook {
+				background-size:100% 100%;
+				background-repeat:no-repeat;
+				background-image:url(../images/fb.jpg);
+				opacity:0.7;
+				width:42px;
+				height:100%;
+
+				&:hover {
+					opacity:1;
+				}
+			}
+		}
+
+		div.copyLinkToClipboard {
+			display:flex;
+			justify-content:center;
+			align-items:center;
+			text-align:center;
+			background-image:linear-gradient(45deg, rgb(57, 138, 224), rgb(43, 43, 88));
+			opacity:0.7;
+			height:100%;
+			border:1px solid rgba(200,200,235,0.5);
+			border-bottom:none;
+			border-top:none;
+			box-sizing:border-box;
+			padding-left:2px;
+			padding-right:2px;
+			width:68px;
+			font-size:16px;
+			line-height:14px;
+			cursor:pointer;
+			user-select:none;
+			color:white;
+
+			&:hover {
+				opacity:1;
+			}
+		}
+
+		.actionButton {
+			width:4vh;
+			height:4vh;
+			box-shadow:none;
+			border-radius:0;
+			margin-right:1vw;
+			background-color:none;
+			background-size:100% 100%;
 		}
 	}
 

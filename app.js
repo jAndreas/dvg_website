@@ -142,7 +142,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	onModuleLaunch( module ) {
 		switch( module.name ) {
 			case 'videoPlayerDialog':
-				this.currentHash.set( 'watch', module.state.videoData.internalId );
+				this.currentHash.set( 'watch', module.state.videoData.vid );
 				doc.location.hash = this.currentHash.toString();
 				break;
 			case 'liveChatDialog':
@@ -212,7 +212,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 				await this.fire( `${ ref }.launchModule`, {
 					highlightArticleId:	hash.get( 'read' )
 				});
-				
+
 				this.fire( `slideDownTo.${ ref }` );
 			} else {
 				await this.launchTopSection();

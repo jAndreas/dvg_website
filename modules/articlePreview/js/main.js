@@ -5,6 +5,7 @@ import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import * as commentSection from 'commentSection/js/main.js';
+import Clipboard from 'clipboard';
 
 import html from '../markup/main.html';
 import loadNextChunkMarkup from '../markup/loadNextChunk.html';
@@ -25,7 +26,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			extend( options ).with({
 				name:				'articlePreview',
 				tmpl:				html,
-				renderData:			input.articleData,
+				renderData:			extend( input.articleData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 				touchStartPos:		Object.create( null ),
 				session:			null
 			}).and( input );
@@ -60,7 +61,11 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.addNodeEvent( 'a.articleThumbnailAnchor', 'click', this.preventClick );
 			this.addNodeEvent( 'div.showMore', 'click', this.showMore );
 			this.addNodeEvent( 'div.editArticleData', 'click', this.editMode );
-			this.addNodeEvent( 'div.removeArticle', 'click', this.removeArticle )
+			this.addNodeEvent( 'div.removeArticle', 'click', this.removeArticle );
+			this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
+			this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusin', this.onDonateAmountFocus );
+			this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
+			this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
 			this.on( 'openArticleViewer.appEvents', this.onOpenArticleViewer, this );
 			this.on( 'startNewSession.server', this.checkAdminRights, this );
 			this.on( 'userLogout.server', this.checkAdminRights, this );
@@ -68,6 +73,26 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.recv( 'articleWasUpdated', this.articleWasUpdated.bind( this ) );
 
 			this.checkOverflow();
+
+			this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
+				text: () => {
+					this.copyLink = this.activateSpinner({
+						at:		this.nodes[ 'div.copyLinkToClipboard' ],
+						opts:	{
+							lowblur:	true
+						}
+					});
+
+					this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Kopiert!';
+
+					this.copyLink.fulfill().then( () => {
+						this.copyLink.cleanup();
+						this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
+					});
+
+					return `https://${ location.host }/static/${ this.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
+				}
+			});
 
 			if( this.articleData.articlePreviewImage ) {
 				if( Array.isArray( this.articleData.fileNames ) && this.articleData.fileNames.length > 1 ) {
@@ -103,6 +128,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async destroy() {
+		this.clipboard && this.clipboard.destroy();
 		super.destroy && super.destroy();
 		[ style, loadNextChunkStyle ].forEach( s => s.unuse() );
 	}
@@ -125,6 +151,36 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.nodes[ 'div.text' ].classList.remove( 'overflow' );
 			this.nodes[ 'div.showMore' ].style.display = 'none';
 		}
+	}
+
+	onDonateClick() {
+		this.nodes[ 'div.donate' ].style.display = 'none';
+		this.nodes[ 'div.donationForm' ].style.display = 'flex';
+	}
+
+	onRangeSlide() {
+		this.nodes[ 'input.donateAmount' ].value = this.nodes[ 'input.donateRange' ].value + '€';
+	}
+
+	onDonateAmountFocus() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'donation'
+			}
+		});
+	}
+
+	onDonateAmountBlur() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.name
+			},
+			extra:		this.articleData.aid
+		});
+	}
+
+	onDonateNowClick() {
+		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
 	}
 
 	checkAdminRights( session ) {
