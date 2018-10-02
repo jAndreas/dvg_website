@@ -58,11 +58,11 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 
 		let mailSubject		= this.nodes[ 'input.mailSubject' ].value,
 			mailBody		= this.nodes[ 'textarea.mailBody' ].value,
-			donatorsOnly	= this.nodes[ 'input#donatorsOnly' ].checked;
+			receivers		= this.nodes[ 'select.receiverList' ].value;
 
 		let res = await this.send({
 			type:		'dispatchMail',
-			payload:	{ mailSubject, mailBody, donatorsOnly }
+			payload:	{ mailSubject, mailBody, receivers }
 		},{
 			noTimeout:	true
 		});

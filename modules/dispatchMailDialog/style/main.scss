@@ -70,8 +70,8 @@ div.dispatchMailDialog {
 			width:95%;
 			margin-top:1vh;
 
-			> input#donatorsOnly {
-
+			> select.receiverList {
+				width:100%;
 			}
 
 			> label.donatorLabel {

@@ -72,7 +72,13 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 		this.sessionLoginData	= localStorage.getItem( 'dvgLogin' );
 		this.dvgBackgroundVideo	= localStorage.getItem( 'dvgBackgroundVideo' );
+		this.cookiesAccepted	= localStorage.getItem( 'allowCookies' );
 		this.extraInfo			= new Map();
+
+		if(!this.cookiesAccepted ) {
+			let cookieConfirmSection = await import( /* webpackChunkName: "cookieConfirmSection" */ 'cookieConfirmSection/js/main.js' );
+			cookieConfirmSection.start();
+		}
 
 		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
 
@@ -244,7 +250,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 						highlightArticleId:	hash.get( 'read' )
 					});
 
-					this.fire( `slideDownTo.articleSection` );
+					this.fire( 'slideDownTo.articleSection' );
 				} catch( ex ) {
 					this.log( ex.message );
 				}

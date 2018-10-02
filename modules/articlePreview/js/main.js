@@ -144,6 +144,14 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 	}
 
 	checkOverflow() {
+		if( this.nodes[ 'div.text' ].textContent.trim().length === 0 ) {
+			this.nodes[ 'div.articleBodyPreview'].classList.remove( 'textMode' );
+
+			if( this.articleData.articlePreviewImage ) {
+				this.nodes[ 'div.articleThumbnail' ].classList.add( 'imageMode' );
+			}
+		}
+
 		if( this.nodes[ 'div.text' ].scrollHeight > this.nodes[ 'div.text' ].offsetHeight ) {
 			this.nodes[ 'div.showMore' ].style.display = 'flex';
 			this.nodes[ 'div.text' ].classList.add( 'overflow' );
@@ -195,8 +203,8 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		try {
 			this.render({ htmlData: '<textarea class="editTitle" style="width:%width%px;height:%height%px;background-color:transparent;">%text%</textarea>', crlf: true }).with({
 				text:		this.nodes[ 'div.articleTitle' ].innerHTML,
-				width:		this.nodes[ 'div.articleTitle' ].offsetWidth,
-				height:		this.nodes[ 'div.articleTitle' ].offsetHeight
+				width:		this.nodes[ 'div.articleTitle' ].offsetWidth || '100',
+				height:		this.nodes[ 'div.articleTitle' ].offsetHeight || '10'
 			}).at({
 				node:		this.nodes[ 'div.articleTitle' ],
 				position:	'replace'
@@ -204,8 +212,8 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 
 			this.render({ htmlData: '<textarea class="editText" style="width:%width%px;height:%height%px;background-color:transparent;">%text%</textarea>', crlf: true }).with({
 				text:		this.nodes[ 'div.text' ].innerHTML,
-				width:		this.nodes[ 'div.text' ].offsetWidth,
-				height:		this.nodes[ 'div.text' ].offsetHeight
+				width:		this.nodes[ 'div.text' ].offsetWidth || '100',
+				height:		this.nodes[ 'div.text' ].offsetHeight || '10'
 			}).at({
 				node:		this.nodes[ 'div.text' ],
 				position:	'replace'
@@ -303,7 +311,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 		event.preventDefault();
 	}
 
- 	articleTitleMouseDown( event ) {
+	articleTitleMouseDown( event ) {
 		if( event.changedTouches && event.changedTouches.length ) {
 			this.touchStartPos = event.changedTouches[ 0 ];
 		} else {
@@ -318,8 +326,8 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			url:		this.nodes[ 'div.articleThumbnail' ].style.backgroundImage
 		});
 
-		at.preventDefault();
-		at.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
 	}
 
 	async launchArticleViewer( at ) {

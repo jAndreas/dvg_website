@@ -163,6 +163,10 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 			}
 		});
 
+		if( isMobileDevice ) {
+			this.nodes[ 'div.socialMediaLinks' ].style.opacity = 1;
+		}
+
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = '';
 		this.nodes[ 'div.setupBackgroundVideo' ].style.display = 'flex';
 
@@ -180,6 +184,8 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		});
 
 		if( isMobileDevice ) {
+			this.nodes[ 'div.socialMediaLinks' ].style.opacity = 0;
+
 			this.addNodes({
 				htmlData:	quickNavMarkup,
 				reference:	{
@@ -714,7 +720,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	async navigateTo( data = { } ) {
 		if( Object.keys( data ).length ) {
-			this.data.get( this.nodes[ data.id ] ).events[ 'touchstart' ][ 0 ].call( this, data.event );
+			this.data.get( this.nodes[ data.id ] ).events[ 'touchend' ][ 0 ].call( this, data.event );
 		}
 
 		if(!this.nodes[ 'div.quickNav' ] ) {

@@ -2,9 +2,7 @@
 
 import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix, isMobileDevice } from 'barfoos2.0/toolkit.js';
-import { win } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
+import { extend, isMobileDevice } from 'barfoos2.0/toolkit.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -35,8 +33,8 @@ class imageViewerDialog extends Overlay {
 		this.addNodeEvent( this.nodes.root, 'click', this.destroyInstance  );
 
 		if( isMobileDevice ) {
-			this.nodes.dialogRoot.style.top = `0px`;
-			this.nodes.dialogRoot.style.left = `0px`;
+			this.nodes.dialogRoot.style.top = '0px';
+			this.nodes.dialogRoot.style.left = '0px';
 		}
 
 		this.nodes.root.style.backgroundImage	= this.url;

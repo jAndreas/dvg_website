@@ -109,13 +109,16 @@ div.articlePreview {
 		align-items:center;
 
 		width:95%;
-		min-height:290px;
-		height:290px;
 		color:#212020;
 		margin-top:8px;
 
 		font-family:"system-ui","Futura","Lucida Grande","Arial";
 		font-size:18px;
+
+		&.textMode {
+			min-height:290px;
+			height:290px;
+		}
 
 		> div.text {
 			overflow-x:hidden;
@@ -145,6 +148,7 @@ div.articlePreview {
 			text-shadow:0 0 4px white;
 			font-size:12px;
 			cursor:pointer;
+			z-index:2;
 
 			&:hover {
 				box-shadow:0px 0px 2px 2px rgba(100,100,150,0.8);
@@ -168,6 +172,10 @@ div.articlePreview {
 		flex-direction:row;
 		justify-content:flex-end;
 		align-items:flex-end;
+
+		&.imageMode {
+			height:360px;
+		}
 
 		&:hover {
 			box-shadow:0 0 4px 1px #766f92;
@@ -202,6 +210,11 @@ div.articlePreview {
 		flex-direction:row;
 		justify-content:flex-end;
 		align-items:center;
+		margin-top:1vh;
+
+		@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+			height:6vh;
+		}
 
 		> div.donationForm {
 			display:flex;

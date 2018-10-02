@@ -142,18 +142,18 @@ div#topSection {
 						}
 
 						> a.followMe {
-								color:#e44c4c;
-								text-shadow:0px 0px 2px white, -2px -2px 2px black;
-								transform:rotate(-35deg) translate(-80px, -20px);
-								font-size:30px;
-								position:absolute;
-								font-family:Verdana;
-								border:2px dashed rgba(220,220,220,0.8);
-								padding:4px;
-								border-radius:16px;
-								text-decoration-color:#fd8686;
-								text-decoration-style:dotted;
-								background:linear-gradient(45deg, rgba(50,0,0,0.5), rgba(255,220,220,0.5));
+								color: #efb2b2;
+								text-shadow: 0px 0px 2px white, -2px -2px 2px black;
+								transform: rotate(-35deg) translate(-80px, -20px);
+								font-size: 30px;
+								position: absolute;
+								font-family: Verdana;
+								border: 1px dashed rgba(220, 220, 220, 0.8);
+								padding: 6px;
+								border-radius: 16px;
+								text-decoration-color: #fd8686;
+								text-decoration-style: dotted;
+								background: linear-gradient(45deg, rgba(50, 0, 0, 0.5), rgba(216, 207, 207, 0.5));
 
 								@media screen and (max-width:$iPhone6Portrait) {
 									font-size:20px;
@@ -547,6 +547,55 @@ div#topSection {
 				text-shadow:0px 0px 15px white;
 				cursor:pointer;
 			}
+		}
+	}
+
+	div.socialMediaLinks {
+		position:fixed;
+		right:4vw;
+		top:2vh;
+		box-sizing:border-box;
+		display:flex;
+		flex-direction:row;
+		z-index:1000;
+		border-radius:4px;
+		transition:all 100ms linear;
+		animation:fadeInScroll 500ms linear 1;
+		filter:sepia(0.5);
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			flex-direction:column;
+		}
+
+		> a.youtubeIcon {
+			width:64px;
+			height:64px;
+			background-image:url(../images/yt_icon.png);
+			cursor:pointer;
+
+			&:hover {
+				filter:brightness(1.3) sepia(0.3);
+			}
+		}
+
+		> a.facebookIcon {
+			width:64px;
+			height:64px;
+			background-image:url(../images/fb_icon.png);
+			cursor:pointer;
+
+			&:hover {
+				filter:brightness(1.3) sepia(0.3);
+			}
+		}
+	}
+
+	@keyframes fadeInScroll {
+		from {
+			opacity:0;
+		}
+		to {
+			opacity:1;
 		}
 	}
 }

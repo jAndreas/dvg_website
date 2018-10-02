@@ -1,0 +1,49 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
+
+div.cookieConfirmSection {
+	width:100vw;
+	height:10vh;
+	background-color:#3a4054e8;
+
+	display:flex;
+	flex-direction:row;
+	flex-wrap:nowrap;
+	justify-content:center;
+	align-items:center;
+
+	border-top:1px solid white;
+
+	@media screen and (max-width:$iPhone6Portrait) {
+		flex-direction:column;
+		align-items:stretch;
+		height:20vh;
+	}
+
+	> div.cookieInformation {
+		color:white;
+		font-size:2.5vh;
+		font-weight:bold;
+		width:80vw;
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			width:100vw;
+			text-align:center;
+		}
+	}
+
+	> input.confirm {
+		font-size:2.5vh;
+		padding:0.5vh;
+		padding-left:1vh;
+		padding-right:1vh;
+		margin-left:2vw;
+
+		@media screen and (max-width:$iPhone6Portrait) {
+			margin-left:0px;
+			margin-top:2vh;
+			border-radius:0;
+			flex-grow:1;
+		}
+	}
+}
