@@ -87,6 +87,10 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 				this.nodes[ 'div.articleThumbnail' ].style.display = 'none';
 			}
 
+			if( this.highlightArticleId ) {
+				this.nodes.root.classList.add( 'highlight' );
+			}
+
 			this.initComments();
 
 			await this.fire( 'getUserSession.server', session => this.session = session );
@@ -302,7 +306,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 	}
 
 	onLoadNextChunk() {
-		this.fire( 'loadNextVideos.articleSection' );
+		this.fire( 'loadNextArticles.articleSection' );
 	}
 
 	onUpdateNextInfo( info ) {

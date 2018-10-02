@@ -61,7 +61,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.fire( 'configApp.core', {
 			name:				'Der Vegane Germane - Website',
 			title:				'Der Vegane Germane',
-			version:			'0.1.0',
+			version:			'0.4.0',
 			status:				'beta',
 			background:			{
 				objURL:		objURL,
@@ -209,30 +209,44 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			let ref = hash.get( 'ref' );
 
 			if( ref ) {
-				await this.fire( `${ ref }.launchModule` );
+				await this.fire( `${ ref }.launchModule`, {
+					highlightArticleId:	hash.get( 'read' )
+				});
+				
 				this.fire( `slideDownTo.${ ref }` );
 			} else {
 				await this.launchTopSection();
 			}
 
 			if( hash.has( 'watch' ) ) {
-				let firstTry = await this.fire( 'openVideoPlayer.appEvents', {
-					internalId:	hash.get( 'watch'),
-					at:			hash.get( 'at' ) || 0
-				});
+				try {
+					let video = await this.send({
+						type:		'getVideoData',
+						payload:	{
+							internalId:		hash.get( 'watch' )
+						}
+					});
 
-				if( firstTry.filter( Boolean ).length === 0 ) { // no video preview module answered positive
-					let nextTry, moreVideosAvailable;
+					let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
 
-					do {
-						moreVideosAvailable = await this.fire( 'loadNextVideos.videoSection' );
+					videoPlayer.start({
+						fixed:		true,
+						videoData:	video.data
+					});
+				} catch( ex ) {
+					this.log( ex.message );
+				}
+			}
 
-						nextTry = await this.fire( 'openVideoPlayer.appEvents', {
-							internalId:	hash.get( 'watch'),
-							at:			hash.get( 'at' ) || 0
-						});
+			if( hash.has( 'read' ) ) {
+				try {
+					await this.launchArticleSection({
+						highlightArticleId:	hash.get( 'read' )
+					});
 
-					} while( nextTry.filter( Boolean ).length === 0 && moreVideosAvailable );
+					this.fire( `slideDownTo.articleSection` );
+				} catch( ex ) {
+					this.log( ex.message );
 				}
 			}
 
@@ -297,14 +311,14 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		}
 	}
 
-	async launchArticleSection() {
+	async launchArticleSection( input ) {
 		await this.launchTopSection();
 
 		let state = await this.fire( 'findModule.articleSection' );
 
 		if( state !== true ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
-			await articleSection.start();
+			await articleSection.start( input );
 		} else {
 			this.log( 'aboutMeSection already online, aborting launch.' );
 		}

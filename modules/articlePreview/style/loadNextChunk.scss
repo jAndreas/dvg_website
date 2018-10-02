@@ -12,6 +12,7 @@ div.articlePreview {
 		height:70px;
 		width:260px;
 		align-self:center;
+		border:1px solid rgba(240, 240, 240, 0.8);
 
 		&:hover {
 			background:linear-gradient(45deg, rgba(0, 0, 30, 0.9), rgba(25, 205, 25, 0.2));

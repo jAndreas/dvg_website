@@ -18,6 +18,14 @@ div.articlePreview {
 	box-shadow:9px 8px 20px 0px #00000094;
 	position:relative;
 	opacity:0.75;
+	order:2;
+
+	&.highlight {
+		opacity:1;
+		border:1px dotted red;
+		box-shadow:0 0 70px 5px white;
+		order:1;
+	}
 
 	&:hover {
 		background:linear-gradient(45deg, rgba(255, 255, 255, 0.7), rgba(199, 211, 255, 0.77)), url(../images/paper.jpg);

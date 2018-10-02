@@ -1,6 +1,7 @@
 'use strict';
 
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
+import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
@@ -21,6 +22,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 			name:					'videoPlayerDialog',
 			tmpl:					html,
 			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
+			location:				moduleLocations.center,
 			centerToViewport:		true,
 			topMost:				true,
 			avoidOutsideClickClose:	true,
@@ -78,7 +80,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 					this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
 				});
 
-				return `https://www.der-vegane-germane.de/static/${ this.videoData.internalId }/index.html`;
+				return `https://${ location.host }/static/${ this.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
 			}
 		});
 
