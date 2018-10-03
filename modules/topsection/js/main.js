@@ -165,6 +165,10 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 		if( isMobileDevice ) {
 			this.nodes[ 'div.socialMediaLinks' ].style.opacity = 1;
+
+			if( this.nodes[ 'div.quickNav' ] ) {
+				this.removeNodes( 'div.quickNav', true );
+			}
 		}
 
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = '';

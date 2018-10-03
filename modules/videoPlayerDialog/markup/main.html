@@ -1,9 +1,9 @@
 <div class="videoPlayerDialog">
 	<section class="tab1">
-		<div class="playerWrapper noPropagation">
+		<div class="playerWrapper">
 			<video class="mainPlayer" src="" controls autoplay></video>
 		</div>
-		<div class="videoInfoWrapper noPropagation">
+		<div class="videoInfoWrapper">
 			<span class="title">%videoTitle%</span>
 			<span class="quality"></span>
 			<div class="videoViewsWrapper">
@@ -11,7 +11,7 @@
 				<span class="uniqueViews">(ᚱ %uniqueViews%)</span>
 			</div>
 		</div>
-		<div class="actionButtonsWrapper sectionContainer noPropagation">
+		<div class="actionButtonsWrapper sectionContainer">
 			<a class="downloadVideo" download="%videoTitle%.mp4" href="/fallback/_video/%internalId%/complete_720.mp4" title="Video herunterladen"></a>
 			<div class="donationForm" title="Hilf mir, diese Plattform zu betreiben.">
 				<input class="donateRange" type="range" min="2" max="100" step="1" value="5"/>
@@ -24,11 +24,11 @@
 			<a class="shareFacebookLink" title="Auf Facebook teilen" href="https://www.facebook.com/sharer/sharer.php?u=https://%uri%/static/%vid%/index.html" target="_blank"><div class="shareFacebook bfButton actionButton"></div></a>
 			<div class="copyLinkToClipboard" title="Den Direktaufruf zum Video in die Zwischenablage kopieren">Link kopieren</div>
 		</div>
-		<div class="descriptionWrapper sectionContainer noPropagation">
+		<div class="descriptionWrapper sectionContainer">
 			<span class="description folded">%videoDescription%</span>
 			<div class="expand">Mehr...</div>
 		</div>
-		<div class="commentsWrapper sectionContainer noPropagation" defaultChildContainer>
+		<div class="commentsWrapper sectionContainer" defaultChildContainer>
 		</div>
 	</section>
 </div>

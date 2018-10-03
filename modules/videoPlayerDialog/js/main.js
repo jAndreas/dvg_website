@@ -18,7 +18,10 @@ import style from '../style/main.scss';
  *****************************************************************************************************/
 class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
-		input.videoData.vid			= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
+		input.videoData.vid					= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
+		input.videoData.videoDescription	= input.videoData.videoDescription.replace(/http\S*/g, urlMatch => {
+			return `<a href="${ urlMatch }" target="_blank">${ urlMatch }</a>`;
+		});
 
 		extend( options ).with({
 			name:					'videoPlayerDialog',
@@ -62,9 +65,10 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 
 		this.addNodeEvent( 'div.expand', 'click', this.showFullDescription );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
-		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusin', this.onDonateAmountFocus );
-		this.addNodeEvent( 'input.donateAmount input.donateRange', 'focusout', this.onDonateAmountBlur );
+		this.addNodeEvent( 'input.donateAmount', 'input focusin', this.onDonateAmountFocus );
+		this.addNodeEvent( 'input.donateAmount', 'blur focusout', this.videoFocused );
 		this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
+		//this.addNodeEvent( 'div.videoPlayerDialog', 'mouseup', this.videoFocused );
 
 		this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
 			text: () => {
@@ -104,6 +108,17 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		[ style ].forEach( s => s.unuse() );
 	}
 
+	async inViewport() {
+		super.inViewport && super.inViewport( ...arguments );
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.name
+			},
+			extra:		this.videoData.id
+		});
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -115,6 +130,15 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		if(!this._liveChatMode ) {
 			win.setTimeout( this.centerOverlay.bind( this ), 100 );
 		}
+	}
+
+	videoFocused() {
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		this.name
+			},
+			extra:		this.videoData.id
+		});
 	}
 
 	async checkLiveChatStatus() {
@@ -191,7 +215,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 				data:	{
 					action:		this.name
 				},
-				extra:		this.videoData.vid
+				extra:		this.videoData.id
 			});
 		} catch( ex ) {
 			this.log( ex );
@@ -233,25 +257,23 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		this.nodes[ 'input.donateAmount' ].value = this.nodes[ 'input.donateRange' ].value + '€';
 	}
 
-	onDonateAmountFocus() {
+	onDonateAmountFocus( event ) {
+		win.setTimeout(() => {
+			this.fire( 'updateHash.appEvents', {
+				data:	{
+					action:		'donation'
+				}
+			});
+		}, 150);
+	}
+
+	onDonateNowClick() {
+		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		'donation'
 			}
 		});
-	}
-
-	onDonateAmountBlur() {
-		this.fire( 'updateHash.appEvents', {
-			data:	{
-				action:		this.name
-			},
-			extra:		this.videoData.id
-		});
-	}
-
-	onDonateNowClick() {
-		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
 	}
 }
 /****************************************** videoPlayerDialog End ******************************************/

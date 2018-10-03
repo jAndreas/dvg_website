@@ -38,8 +38,8 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		await super.init();
 
 		this.nodes[ 'form.commentData' ].addEventListener( 'submit', this.sendComment.bind( this), false );
-		this.nodes[ 'textarea.commentText' ].addEventListener( 'focusin', this.focusCommentText.bind( this), false );
-		this.nodes[ 'textarea.commentText' ].addEventListener( 'focusout', this.focusoutCommentText.bind( this), false );
+		this.nodes[ 'textarea.commentText' ].addEventListener( 'focus', this.focusCommentText.bind( this), false );
+		this.nodes[ 'textarea.commentText' ].addEventListener( 'blur', this.focusoutCommentText.bind( this), false );
 		this.nodes[ 'textarea.commentText' ].addEventListener( 'input', this.checkInput.bind( this), false );
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'click', this.blurCommentText.bind( this), false );
 		this.nodes[ 'input.cancelComment' ].addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
@@ -354,7 +354,7 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 	focusoutCommentText() {
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		'videoPlayerDialog'
+				action:		this.location
 			},
 			extra:	this.context
 		});
@@ -382,6 +382,12 @@ class commentSection extends mix( Component ).with( ServerConnection ) {
 		} else {
 			commentArea.setCustomValidity( '' );
 		}
+
+		this.fire( 'updateHash.appEvents', {
+			data:	{
+				action:		'commenting'
+			}
+		});
 	}
 
 	async sendComment( event ) {

@@ -365,6 +365,11 @@ div.videoPlayerDialog {
 					box-shadow:0px -1.5vh 40px 0px rgba(220, 220, 240, 0.5) inset;
 					height:1vh;
 				}
+
+				> a {
+					text-shadow:none;
+					color:white;
+				}
 			}
 
 			> div.expand {
