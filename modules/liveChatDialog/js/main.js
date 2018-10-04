@@ -27,7 +27,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			topMost:				true,
 			fixed:					true,
 			avoidOutsideClickClose:	true,
-			hoverOverlay:			true
+			hoverOverlay:			{
+				maximize:		true,
+				close:			true
+			}
 		}).and( input );
 
 		super( options );
@@ -149,6 +152,10 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 		}
 	}
 
+	onOverlayCloseMax() {
+		this.nodes.root.classList.toggle( 'maximized' );
+	}
+
 	async checkVideoPlayerStatus() {
 		let videoPlayerDialog = await this.fire( 'findModule.videoPlayerDialog' );
 
@@ -168,6 +175,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 			}
 		});
 	}
+
 
 	async setLiveChatMode() {
 		this._liveChatMode = true;

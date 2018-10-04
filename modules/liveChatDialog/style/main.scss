@@ -17,8 +17,12 @@ div.liveChatDialog {
 	transition:width 100ms linear;
 
 	@media screen and (max-width:$iPhone6Landscape) {
-		background:black;
 		transition:none;
+	}
+
+	&.maximized {
+		width:65vw;
+		height:70vh;
 	}
 
 	&.compact {
