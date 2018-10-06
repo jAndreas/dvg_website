@@ -10,10 +10,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Cookie Disclaimer
  *****************************************************************************************************/
-class cookieConfirmSection extends Component {
+class CookieConfirmSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'cookieConfirmSection',
+			name:			'CookieConfirmSection',
 			location:		moduleLocations.footer,
 			tmpl:			html
 		}).and( input );
@@ -47,7 +47,7 @@ class cookieConfirmSection extends Component {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new cookieConfirmSection( ...args );
+	return await new CookieConfirmSection( ...args );
 }
 
 export { start };

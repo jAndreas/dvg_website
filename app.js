@@ -24,7 +24,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			currentHash:			Object.create( null ),
 			localUser:				Object.create( null ),
 			lastPostedHashString:	'',
-			id:						'app'
+			id:						'App'
 		});
 
 		this.init();
@@ -40,14 +40,14 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
-		this.once( 'topSection.launchModule', this.launchTopSection, this );
-		this.once( 'videoSection.launchModule', this.launchTopSection, this );
-		this.once( 'articleSection.launchModule', this.launchArticleSection, this );
-		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
-		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
-		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
-		this.once( 'privacySection.launchModule', this.launchPrivacySection, this );
-		this.once( 'mobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
+		this.once( 'TopSection.launchModule', this.launchTopSection, this );
+		this.once( 'VideoSection.launchModule', this.launchTopSection, this );
+		this.once( 'ArticleSection.launchModule', this.launchArticleSection, this );
+		this.once( 'AboutMeSection.launchModule', this.launchAboutMeSection, this );
+		this.once( 'SupportSection.launchModule', this.launchSupportSection, this );
+		this.once( 'ImpressumSection.launchModule', this.launchImpressumSection, this );
+		this.once( 'PrivacySection.launchModule', this.launchPrivacySection, this );
+		this.once( 'MobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
 		// dynamic routing is not enabled for now.
 		this.on( 'hashChange.appEvents', this.navigateByHash, this );
 		this.on( 'updateHash.appEvents', this.updateHash, this );
@@ -147,11 +147,11 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	onModuleLaunch( module ) {
 		switch( module.name ) {
-			case 'videoPlayerDialog':
+			case 'VideoPlayerDialog':
 				this.currentHash.set( 'watch', module.state.videoData.vid );
 				doc.location.hash = this.currentHash.toString();
 				break;
-			case 'liveChatDialog':
+			case 'LiveChatDialog':
 				this.currentHash.set( 'chat', 1 );
 				doc.location.hash = this.currentHash.toString();
 				break;
@@ -160,13 +160,13 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	onModuleDestruction( module ) {
 		switch( module.name ) {
-			case 'videoPlayerDialog':
+			case 'VideoPlayerDialog':
 				this.currentHash.delete( 'watch' );
 				this.currentHash.delete( 'read' );
 				this.currentHash.delete( 'action' );
 				doc.location.hash = this.currentHash.toString();
 				break;
-			case 'liveChatDialog':
+			case 'LiveChatDialog':
 				this.currentHash.delete( 'chat' );
 				doc.location.hash = this.currentHash.toString();
 				break;
@@ -250,7 +250,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 						highlightArticleId:	hash.get( 'read' )
 					});
 
-					this.fire( 'slideDownTo.articleSection' );
+					this.fire( 'slideDownTo.ArticleSection' );
 				} catch( ex ) {
 					this.log( ex.message );
 				}
@@ -304,7 +304,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async launchTopSection() {
-		let state = await this.fire( 'findModule.topSection' );
+		let state = await this.fire( 'findModule.TopSection' );
 
 		if( state !== true ) {
 			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
@@ -320,7 +320,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchArticleSection( input ) {
 		await this.launchTopSection();
 
-		let state = await this.fire( 'findModule.articleSection' );
+		let state = await this.fire( 'findModule.ArticleSection' );
 
 		if( state !== true ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
@@ -333,7 +333,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchAboutMeSection() {
 		await this.launchArticleSection();
 
-		let state = await this.fire( 'findModule.aboutMeSection' );
+		let state = await this.fire( 'findModule.AboutMeSection' );
 
 		if( state !== true ) {
 			let aboutMeSection = await import( /* webpackChunkName: "aboutMeSection" */ 'aboutMeSection/js/main.js' );
@@ -346,7 +346,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchSupportSection() {
 		await this.launchAboutMeSection();
 
-		let state = await this.fire( 'findModule.supportSection' );
+		let state = await this.fire( 'findModule.SupportSection' );
 
 		if( state !== true ) {
 			let supportSection = await import( /* webpackChunkName: "supportSection" */ 'supportSection/js/main.js' );
@@ -359,7 +359,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchImpressumSection() {
 		await this.launchSupportSection();
 
-		let state = await this.fire( 'findModule.impressumSection' );
+		let state = await this.fire( 'findModule.ImpressumSection' );
 
 		if( state !== true ) {
 			let impressumSection = await import( /* webpackChunkName: "impressumSection" */ 'impressumSection/js/main.js' );
@@ -372,7 +372,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	async launchPrivacySection() {
 		await this.launchSupportSection();
 
-		let state = await this.fire( 'findModule.privacySection' );
+		let state = await this.fire( 'findModule.PrivacySection' );
 
 		if( state !== true ) {
 			let privacySection = await import( /* webpackChunkName: "privacySection" */ 'privacySection/js/main.js' );

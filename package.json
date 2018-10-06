@@ -6,7 +6,7 @@
 	"scripts": {
 		"legacy": "webpack --mode production --progress --config webpack.legacy",
 		"dev": "webpack --mode development --watch --progress --config webpack.dev",
-		"prod": "webpack --mode development --progress --config webpack.prod"
+		"prod": "webpack --mode production --progress --config webpack.prod"
 	},
 	"author": "Andreas Goebel",
 	"license": "MIT",

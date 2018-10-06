@@ -2,7 +2,7 @@
 
 import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -12,10 +12,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Logs in a user and dispatches session data
  *****************************************************************************************************/
-class loginDialog extends mix( Overlay ).with( ServerConnection ) {
+class LoginDialog extends Mix( Overlay ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'loginDialog',
+			name:			'LoginDialog',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			fixed:			true,
@@ -134,7 +134,7 @@ class loginDialog extends mix( Overlay ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new loginDialog( ...args );
+	return await new LoginDialog( ...args );
 }
 
 export { start };

@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
@@ -17,7 +17,7 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
  *  articlePreview Module renders previews based on article data. It also launches the
  *	articleViewer Module
  *****************************************************************************************************/
-class articlePreview extends mix( Component ).with( ServerConnection, Speech ) {
+class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	constructor( input = { }, options = { } ) {
 		if( input.articleData ) {
 			input.articleData.aid					= input.articleData.subject ? input.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
@@ -25,7 +25,7 @@ class articlePreview extends mix( Component ).with( ServerConnection, Speech ) {
 			input.articleData.formatedDate			= new Date( input.articleData.creationDate ).toLocaleDateString();
 
 			extend( options ).with({
-				name:				'articlePreview',
+				name:				'ArticlePreview',
 				tmpl:				html,
 				renderData:			extend( input.articleData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 				touchStartPos:		Object.create( null ),
@@ -384,7 +384,7 @@ class articlePreview extends mix( Component ).with( ServerConnection, Speech ) {
 	}
 
 	onLoadNextChunk() {
-		this.fire( 'loadNextArticles.articleSection' );
+		this.fire( 'loadNextArticles.ArticleSection' );
 	}
 
 	onUpdateNextInfo( info ) {
@@ -407,7 +407,7 @@ class articlePreview extends mix( Component ).with( ServerConnection, Speech ) {
 async function start( ...args ) {
 	[ style, loadNextChunkStyle ].forEach( style => style.use() );
 
-	return await new articlePreview( ...args );
+	return await new ArticlePreview( ...args );
 }
 
 export { start };

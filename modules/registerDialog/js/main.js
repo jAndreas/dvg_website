@@ -2,7 +2,7 @@
 
 import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -11,10 +11,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class registerDialog extends mix( Overlay ).with( ServerConnection ) {
+class RegisterDialog extends Mix( Overlay ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'registerDialog',
+			name:			'RegisterDialog',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			fixed:			true
@@ -135,7 +135,7 @@ class registerDialog extends mix( Overlay ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new registerDialog( ...args );
+	return await new RegisterDialog( ...args );
 }
 
 export { start };

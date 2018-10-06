@@ -10,10 +10,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Impressum, 'nuff said
  *****************************************************************************************************/
-class impressumSection extends Component {
+class ImpressumSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'impressumSection',
+			name:			'ImpressumSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -54,7 +54,7 @@ class impressumSection extends Component {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new impressumSection( ...args );
+	return await new ImpressumSection( ...args );
 }
 
 export { start };

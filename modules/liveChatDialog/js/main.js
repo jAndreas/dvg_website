@@ -2,7 +2,7 @@
 
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
-import { extend, mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win, doc, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -17,10 +17,10 @@ import userInListStyle from '../style/userInListElement.scss';
 /*****************************************************************************************************
  *  The live chat user interaction interface
  *****************************************************************************************************/
-class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
+class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'liveChatDialog',
+			name:					'LiveChatDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			title:					'Live Chat',
@@ -157,20 +157,20 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 	}
 
 	async checkVideoPlayerStatus() {
-		let videoPlayerDialog = await this.fire( 'findModule.videoPlayerDialog' );
+		let videoPlayerDialog = await this.fire( 'findModule.VideoPlayerDialog' );
 
 		if( videoPlayerDialog === true ) {
 			this.setLiveChatMode();
 		}
 
 		this.on( 'moduleLaunch.appEvents', module => {
-			if( module.name === 'videoPlayerDialog' ) {
+			if( module.name === 'VideoPlayerDialog' ) {
 				this.setLiveChatMode();
 			}
 		});
 
 		this.on( 'moduleDestruction.appEvents', module => {
-			if( module.name === 'videoPlayerDialog' ) {
+			if( module.name === 'VideoPlayerDialog' ) {
 				this.removeLiveChatMode();
 			}
 		});
@@ -496,7 +496,7 @@ class liveChatDialog extends mix( Overlay ).with( Draggable, ServerConnection ) 
 async function start( ...args ) {
 	[ style, chatMessageElementStyle, userInListStyle ].forEach( style => style.use() );
 
-	return await new liveChatDialog( ...args );
+	return await new LiveChatDialog( ...args );
 }
 
 export { start };

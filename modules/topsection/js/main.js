@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, getTimePeriod, isMobileDevice, isAgentCrawler } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -19,10 +19,10 @@ import * as videoSection from 'videoSection/js/main.js';
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class topSection extends mix( Component ).with( ServerConnection ) {
+class TopSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'topSection',
+			name:			'TopSection',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			renderData:		{ backgroundVideo: (input.backgroundVideo === null || input.backgroundVideo === 'enabled') ? 'checked' : '' }
@@ -108,7 +108,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	async onBackgroundImageLoaded() {
 		try {
-			if( isMobileDevice ) {
+			if( isMobileDevice || isAgentCrawler ) {
 				return;
 			}
 
@@ -479,27 +479,27 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		await this.fire( 'articleSection.launchModule' );
+		await this.fire( 'ArticleSection.launchModule' );
 
-		this.fire( 'slideDownTo.articleSection' );
+		this.fire( 'slideDownTo.ArticleSection' );
 	}
 
 	async slideToAboutMeSection( event ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		await this.fire( 'aboutMeSection.launchModule' );
+		await this.fire( 'AboutMeSection.launchModule' );
 
-		this.fire( 'slideDownTo.aboutMeSection' );
+		this.fire( 'slideDownTo.AboutMeSection' );
 	}
 
 	async slideToSupportSection( event ) {
 		event.stopPropagation();
 		event.preventDefault();
 
-		await this.fire( 'supportSection.launchModule' );
+		await this.fire( 'SupportSection.launchModule' );
 
-		this.fire( 'slideDownTo.supportSection' );
+		this.fire( 'slideDownTo.SupportSection' );
 	}
 
 	async showIntro() {
@@ -803,16 +803,16 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 
 	onModuleDestruction( module ) {
 		switch( module.name ) {
-			case 'registerEmailDialog':
+			case 'RegisterEmailDialog':
 				this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
 				break;
-			case 'loginDialog':
+			case 'LoginDialog':
 				this.addNodeEvent( 'div.login', 'click', this.onLoginClick );
 				break;
-			case 'registerDialog':
+			case 'RegisterDialog':
 				this.addNodeEvent( 'div.registerName', 'click', this.onRegisterName );
 				break;
-			case 'liveChatDialog':
+			case 'LiveChatDialog':
 				this.addNodeEvent( 'div.startLiveChat', 'click', this.startLiveChat );
 				break;
 		}
@@ -826,7 +826,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ transforms, style, scrollUpStyle, quickNavStyle ].forEach( style => style.use() );
 
-	let topSectionLoading		= await new topSection( ...args ),
+	let topSectionLoading		= await new TopSection( ...args ),
 		videoSectionLoading		= videoSection.start();
 
 	return Promise.all([ topSectionLoading, videoSectionLoading ]);

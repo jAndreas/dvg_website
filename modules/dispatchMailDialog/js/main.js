@@ -2,7 +2,7 @@
 
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -11,10 +11,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
+class DispatchMailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'dispatchMailDialog',
+			name:					'DispatchMailDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,
@@ -86,7 +86,7 @@ class dispatchMailDialog extends mix( Overlay ).with( GlasEffect, ServerConnecti
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new dispatchMailDialog( ...args );
+	return await new DispatchMailDialog( ...args );
 }
 
 export { start };

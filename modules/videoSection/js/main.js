@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -12,10 +12,10 @@ import style from '../style/main.scss';
  *  videoSection module receives all published video data and launches the videoPreview module based
  *	on that data. It will supervise the videoPreview modules.
  *****************************************************************************************************/
-class videoSection extends mix( Component ).with( ServerConnection ) {
+class VideoSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:				'videoSection',
+			name:				'VideoSection',
 			location:			moduleLocations.center,
 			loadingMessage:		'Warte auf Serververbindung...',
 			tmpl:				html,
@@ -38,7 +38,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 
 		this.on( 'moduleLaunch.appEvents', this.onVideoPlayerLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
-		this.on( 'loadNextVideos.videoSection', this.onLoadNextVideos, this );
+		this.on( 'loadNextVideos.VideoSection', this.onLoadNextVideos, this );
 
 		let retVal;
 
@@ -71,7 +71,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	async inViewport() {
 		super.inViewport && super.inViewport( ...arguments );
 
-		this.fire( 'articleSection.launchModule' );
+		this.fire( 'ArticleSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		this.name,
@@ -176,7 +176,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	async onVideoPlayerLaunch( module ) {
-		if( module.name === 'videoPlayerDialog' ) {
+		if( module.name === 'VideoPlayerDialog' ) {
 			await this.createModalOverlay({
 				at:		this.nodes.root,
 				opts:	{
@@ -187,7 +187,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 	}
 
 	onVideoPlayerDestruction( module ) {
-		if( module.name === 'videoPlayerDialog' ) {
+		if( module.name === 'VideoPlayerDialog' ) {
 			if(!this._disconnected ) {
 				this.modalOverlay && this.modalOverlay.cleanup();
 			}
@@ -203,7 +203,7 @@ class videoSection extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new videoSection( ...args );
+	return await new VideoSection( ...args );
 }
 
 export { start };

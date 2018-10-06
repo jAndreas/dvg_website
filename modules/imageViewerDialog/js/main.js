@@ -10,10 +10,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Displays a given image url centered and fixed
  *****************************************************************************************************/
-class imageViewerDialog extends Overlay {
+class ImageViewerDialog extends Overlay {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'imageViewerDialog',
+			name:			'ImageViewerDialog',
 			location:		input.location || moduleLocations.center,
 			tmpl:			html,
 			noBlur:			true,
@@ -57,7 +57,7 @@ class imageViewerDialog extends Overlay {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new imageViewerDialog( ...args );
+	return await new ImageViewerDialog( ...args );
 }
 
 export { start };

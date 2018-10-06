@@ -14,10 +14,10 @@ import navElementStyle from '../style/navElement.scss';
  *  mobileNavigationSection handles a vertical navigation section fixed on screen, mostly for
  *	quick navigation on mobile devices respectively devices with a small viewport
  *****************************************************************************************************/
-class mobileNavigationSection extends Component {
+class MobileNavigationSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'mobileNavigationSection',
+			name:			'MobileNavigationSection',
 			location:		moduleLocations.right,
 			tmpl:			html
 		}).and( input );
@@ -112,7 +112,7 @@ class mobileNavigationSection extends Component {
 async function start( ...args ) {
 	[ style, navElementStyle ].forEach( style => style.use() );
 
-	return await new mobileNavigationSection( ...args );
+	return await new MobileNavigationSection( ...args );
 }
 
 export { start };

@@ -2,7 +2,7 @@
 
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -12,10 +12,10 @@ import style from '../style/main.scss';
  *  confirmSubscriptionDialog tries to verify a passed secret-key which gets assigned to an
 *	user account on subscription on main site.
  *****************************************************************************************************/
-class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerConnection ) {
+class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'confirmSubscriptionDialog',
+			name:					'ConfirmSubscriptionDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,
@@ -51,7 +51,7 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 				} else if( this.confirmTermination ) {
 					this.addNodeEventOnce( 'input.confirmTermination', 'click', async () => {
 						this.nodes[ 'input.confirmTermination' ].style.display = 'none';
-						
+
 						this.createModalOverlay({
 							opts:	{
 								spinner: true
@@ -104,7 +104,7 @@ class confirmSubscriptionDialog extends mix( Overlay ).with( GlasEffect, ServerC
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new confirmSubscriptionDialog( ...args );
+	return await new ConfirmSubscriptionDialog( ...args );
 }
 
 export { start };

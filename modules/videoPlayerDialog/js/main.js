@@ -2,7 +2,7 @@
 
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -16,7 +16,7 @@ import style from '../style/main.scss';
  *  videoPlayer Dialog creates an overlay dialog to playback the passed in video based on the data
  *	It also displays all the information and is responsible for handling clicks/views
  *****************************************************************************************************/
-class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection ) {
+class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		input.videoData.vid					= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
 		input.videoData.videoDescription	= input.videoData.videoDescription.replace(/http\S*/g, urlMatch => {
@@ -24,7 +24,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 		});
 
 		extend( options ).with({
-			name:					'videoPlayerDialog',
+			name:					'VideoPlayerDialog',
 			tmpl:					html,
 			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 			location:				moduleLocations.center,
@@ -142,20 +142,20 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 	}
 
 	async checkLiveChatStatus() {
-		let liveChatDialog = await this.fire( 'findModule.liveChatDialog' );
+		let liveChatDialog = await this.fire( 'findModule.LiveChatDialog' );
 
 		if( liveChatDialog === true ) {
 			this.setLiveChatMode();
 		}
 
 		this.on( 'moduleLaunch.appEvents', module => {
-			if( module.name === 'liveChatDialog' ) {
+			if( module.name === 'LiveChatDialog' ) {
 				this.setLiveChatMode();
 			}
 		});
 
 		this.on( 'moduleDestruction.appEvents', module => {
-			if( module.name === 'liveChatDialog' ) {
+			if( module.name === 'LiveChatDialog' ) {
 				this.removeLiveChatMode();
 			}
 		});
@@ -281,7 +281,7 @@ class videoPlayerDialog extends mix( Overlay ).with( Draggable, ServerConnection
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new videoPlayerDialog( ...args );
+	return await new VideoPlayerDialog( ...args );
 }
 
 export { start };

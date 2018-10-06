@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -11,10 +11,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  articleSection is the host of articles
  *****************************************************************************************************/
-class articleSection extends mix( Component ).with( ServerConnection ) {
+class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:				'articleSection',
+			name:				'ArticleSection',
 			location:			moduleLocations.center,
 			loadingMessage:		'Warte auf Serververbindung...',
 			tmpl:				html,
@@ -47,7 +47,7 @@ class articleSection extends mix( Component ).with( ServerConnection ) {
 			retVal = this.loadArticleData( false, this.highlightArticleId );
 		}
 
-		this.on( 'loadNextArticles.articleSection', this.loadNextArticles, this );
+		this.on( 'loadNextArticles.ArticleSection', this.loadNextArticles, this );
 
 		this.recv( 'articleWasRemoved', this.articleWasRemoved.bind( this ) );
 		this.recv( 'newArticleWasCreated', this.newArticleWasCreated.bind( this ) );
@@ -65,7 +65,7 @@ class articleSection extends mix( Component ).with( ServerConnection ) {
 	async inViewport() {
 		super.inViewport && super.inViewport( ...arguments );
 
-		this.fire( 'aboutMeSection.launchModule' );
+		this.fire( 'AboutMeSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		this.name,
@@ -177,7 +177,7 @@ class articleSection extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new articleSection( ...args );
+	return await new ArticleSection( ...args );
 }
 
 export { start };

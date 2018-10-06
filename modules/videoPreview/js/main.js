@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
@@ -13,21 +13,21 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
  *  videoPreview Module renders previews based on video data. It also launches the
  *	videoPlayer Module
  *****************************************************************************************************/
-class videoPreview extends mix( Component ).with( ServerConnection ) {
+class VideoPreview extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		if( input.videoData ) {
 			input.videoData.views	= input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
 			input.videoData.vid		= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.videoData.internalId;
 
 			extend( options ).with({
-				name:			'videoPreview',
+				name:			'VideoPreview',
 				tmpl:			html,
 				renderData:		input.videoData,
 				touchStartPos:	Object.create( null )
 			}).and( input );
 		} else if( input.mode === 'loadNextChunk' ) {
 			extend( options ).with({
-				name:			'videoPreview',
+				name:			'VideoPreview',
 				tmpl:			loadNextChunkMarkup,
 				renderData:		input.info
 			}).and( input );
@@ -137,7 +137,7 @@ class videoPreview extends mix( Component ).with( ServerConnection ) {
 async function start( ...args ) {
 	[ style, loadNextChunkStyle ].forEach( style => style.use() );
 
-	return await new videoPreview( ...args );
+	return await new VideoPreview( ...args );
 }
 
 export { start };

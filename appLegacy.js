@@ -38,11 +38,11 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
-		this.once( 'articleSection.launchModule', this.launchArticleSection, this );
-		this.once( 'aboutMeSection.launchModule', this.launchAboutMeSection, this );
-		this.once( 'supportSection.launchModule', this.launchSupportSection, this );
-		this.once( 'impressumSection.launchModule', this.launchImpressumSection, this );
-		this.once( 'mobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
+		this.once( 'ArticleSection.launchModule', this.launchArticleSection, this );
+		this.once( 'AboutMeSection.launchModule', this.launchAboutMeSection, this );
+		this.once( 'SupportSection.launchModule', this.launchSupportSection, this );
+		this.once( 'ImpressumSection.launchModule', this.launchImpressumSection, this );
+		this.once( 'MobileNavigationSection.launchModule', this.launchMobileNavigationSection, this );
 		// dynamic routing is not enabled for now.
 		this.on( 'hashChange.appEvents', this.navigateByHash, this );
 		this.on( 'updateHash.appEvents', this.updateHash, this );
@@ -104,7 +104,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	onModuleLaunch( module ) {
 		switch( module.name ) {
-			case 'videoPlayerDialog':
+			case 'VideoPlayerDialog':
 				this.currentHash.set( 'watch', module.state.videoData.internalId );
 				doc.location.hash = this.currentHash.toString();
 				break;
@@ -113,7 +113,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 	onModuleDestruction( module ) {
 		switch( module.name ) {
-			case 'videoPlayerDialog':
+			case 'VideoPlayerDialog':
 				this.currentHash.delete( 'watch' );
 				this.currentHash.delete( 'action' );
 				doc.location.hash = this.currentHash.toString();
@@ -186,7 +186,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async launchArticleSection() {
-		let state = await this.fire( 'findModule.articleSection' );
+		let state = await this.fire( 'findModule.ArticleSection' );
 
 		if( state !== true ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );

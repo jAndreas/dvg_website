@@ -12,10 +12,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  supportSection shows basic options how to support the dvg project
  *****************************************************************************************************/
-class supportSection extends Component {
+class SupportSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'supportSection',
+			name:			'SupportSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -62,12 +62,12 @@ class supportSection extends Component {
 	}
 
 	async onImpressumClick() {
-		await this.fire( 'impressumSection.launchModule' );
+		await this.fire( 'ImpressumSection.launchModule' );
 		this.fire( 'slideDownTo.impressumSection' );
 	}
 
 	async onPrivacyClick() {
-		await this.fire( 'privacySection.launchModule' );
+		await this.fire( 'PrivacySection.launchModule' );
 		this.fire( 'slideDownTo.privacySection' );
 	}
 
@@ -143,7 +143,7 @@ class supportSection extends Component {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new supportSection( ...args );
+	return await new SupportSection( ...args );
 }
 
 export { start };

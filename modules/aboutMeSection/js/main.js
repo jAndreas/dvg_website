@@ -2,7 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix } from 'barfoos2.0/toolkit.js';
 import Swipe from 'barfoos2.0/swipe.js';
 
 import html from '../markup/main.html';
@@ -13,10 +13,10 @@ import background from '../images/aboutMebackground_static.jpg';
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class aboutMeSection extends mix( Component ).with( Swipe ) {
+class AboutMeSection extends Mix( Component ).With( Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'aboutMeSection',
+			name:			'AboutMeSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -49,7 +49,7 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 		[ topTitle, sectionTwo ].forEach( e => e.classList.remove( 'hiddenRight' ) );
 		[ sectionOne, sectionThree ].forEach( e => e.classList.remove( 'hiddenLeft' ) );
 
-		this.fire( 'supportSection.launchModule' );
+		this.fire( 'SupportSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		this.name,
@@ -83,7 +83,7 @@ class aboutMeSection extends mix( Component ).with( Swipe ) {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new aboutMeSection( ...args );
+	return await new AboutMeSection( ...args );
 }
 
 export { start };

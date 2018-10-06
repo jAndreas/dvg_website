@@ -10,10 +10,10 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Privacy declaration dsgvo
  *****************************************************************************************************/
-class privacySection extends Component {
+class PrivacySection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'privacySection',
+			name:			'PrivacySection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -54,7 +54,7 @@ class privacySection extends Component {
 async function start( ...args ) {
 	[ style ].forEach( style => style.use() );
 
-	return await new privacySection( ...args );
+	return await new PrivacySection( ...args );
 }
 
 export { start };
