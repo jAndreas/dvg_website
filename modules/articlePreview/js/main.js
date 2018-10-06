@@ -4,6 +4,7 @@ import { Component } from 'barfoos2.0/core.js';
 import { extend, mix } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
+import Speech from 'barfoos2.0/speech.js';
 import * as commentSection from 'commentSection/js/main.js';
 import Clipboard from 'clipboard';
 
@@ -16,7 +17,7 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
  *  articlePreview Module renders previews based on article data. It also launches the
  *	articleViewer Module
  *****************************************************************************************************/
-class articlePreview extends mix( Component ).with( ServerConnection ) {
+class articlePreview extends mix( Component ).with( ServerConnection, Speech ) {
 	constructor( input = { }, options = { } ) {
 		if( input.articleData ) {
 			input.articleData.aid					= input.articleData.subject ? input.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
@@ -58,6 +59,7 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.addNodeEvent( 'div.articleThumbnail', 'mousedown', this.articleTitleMouseDown );
 			this.addNodeEvent( 'div.articleThumbnail', 'mouseup', this.launchArticleViewer );
 			this.addNodeEvent( 'div.articleThumbnail', 'click', this.preventClick );
+			this.addNodeEvent( 'div.read', 'click', this.readArticle );
 			this.addNodeEvent( 'a.articleThumbnailAnchor', 'click', this.preventClick );
 			this.addNodeEvent( 'div.showMore', 'click', this.showMore );
 			this.addNodeEvent( 'div.editArticleData', 'click', this.editMode );
@@ -114,6 +116,10 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 
 			if( this.highlightArticleId ) {
 				this.nodes.root.classList.add( 'highlight' );
+			}
+
+			if( !('speechSynthesis' in win) ) {
+				this.nodes[ 'div.read' ].remove();
 			}
 
 			this.initComments();
@@ -298,6 +304,14 @@ class articlePreview extends mix( Component ).with( ServerConnection ) {
 			this.checkOverflow();
 
 			fade.undo();
+		}
+	}
+
+	readArticle() {
+		let success = this.read( this.articleData.body );
+
+		if( success === false ) {
+			alert('sorry');
 		}
 	}
 

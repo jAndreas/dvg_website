@@ -164,7 +164,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		});
 
 		if( isMobileDevice ) {
-			this.nodes[ 'div.socialMediaLinks' ].style.opacity = 1;
+			this.nodes.root.appendChild( this.nodes[ 'div.socialMediaLinks' ] );
 
 			if( this.nodes[ 'div.quickNav' ] ) {
 				this.removeNodes( 'div.quickNav', true );
@@ -188,7 +188,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		});
 
 		if( isMobileDevice ) {
-			this.nodes[ 'div.socialMediaLinks' ].style.opacity = 0;
+			this.nodes[ 'div.socialMediaLinks' ].remove();
 
 			this.addNodes({
 				htmlData:	quickNavMarkup,
@@ -279,7 +279,7 @@ class topSection extends mix( Component ).with( ServerConnection ) {
 		let loginDialog		= await import( /* webpackChunkName: "loginDialog" */  'loginDialog/js/main.js'  );
 
 		await loginDialog.start({
-			location:	this.id,
+			//location:	this.id,
 			position:	position,
 			center:		isMobileDevice
 		});

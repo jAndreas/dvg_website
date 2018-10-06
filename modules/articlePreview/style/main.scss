@@ -94,8 +94,13 @@ div.articlePreview {
 			}
 		}
 
+		> div.read {
+			font-size:24px;
+			cursor:pointer;
+		}
+
 		> div.articleDate {
-			font-size:18px;
+			font-size:16px;
 			color:#2d2d2d;
 		}
 	}

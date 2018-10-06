@@ -18,7 +18,8 @@ class loginDialog extends mix( Overlay ).with( ServerConnection ) {
 			name:			'loginDialog',
 			location:		moduleLocations.center,
 			tmpl:			html,
-			fixed:			true
+			fixed:			true,
+			topMost:		true
 		}).and( input );
 
 		super( options );
