@@ -222,7 +222,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 	async onQuickNavClick() {
 		this.removeNodes( 'div.quickNav', true );
 
-		await this.fire( 'mobileNavigationSection.launchModule' );
+		await this.fire( 'MobileNavigationSection.launchModule' );
 		this.fire( 'requestMobileNavigation.core' );
 	}
 
@@ -256,7 +256,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 		let registerDialog	= await import( /* webpackChunkName: "registerDialog" */  'registerDialog/js/main.js'  );
 
 		await registerDialog.start({
-			location:	this.id,
+			location:	this.name,
 			position:	position,
 			center:		isMobileDevice
 		});
@@ -471,7 +471,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
 
 		await registerEmailDialog.start({
-			location:	this.id
+			location:	this.name
 		});
 	}
 

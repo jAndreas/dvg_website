@@ -132,7 +132,8 @@ div.articlePreview {
 			width:100%;
 
 			&.overflow {
-				box-shadow:0px -20px 80px 10px black inset;
+				box-shadow:0px -20px 80px 10px black inset, -4px -4px 20px black;
+				border-radius:12px;
 			}
 		}
 
@@ -171,7 +172,6 @@ div.articlePreview {
 		background-position:50% 50%;
 		background-size:cover;
 		border-radius:0 0 12px 12px;
-		box-shadow:0 0 4px 1px black;
 
 		display:flex;
 		flex-direction:row;
@@ -180,6 +180,7 @@ div.articlePreview {
 
 		&.imageMode {
 			height:360px;
+			background-size:contain;
 		}
 
 		&:hover {

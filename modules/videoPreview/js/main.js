@@ -110,7 +110,7 @@ class VideoPreview extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	onLoadNextChunk() {
-		this.fire( 'loadNextVideos.videoSection' );
+		this.fire( 'loadNextVideos.VideoSection' );
 	}
 
 	onUpdateNextInfo( info ) {

@@ -180,8 +180,8 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 				hash.localRoot.querySelector( 'textarea.commentText' ).value = `@${ rootNode.querySelector( 'div.author' ).textContent } `;
 				hash.localRoot.classList.add( 'subCommentInput' );
 				hash.localRoot.querySelector( 'form.commentData' ).addEventListener( 'submit', this.sendComment.bind( this), false );
-				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focusin', this.focusCommentText.bind( this), false );
-				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focusout', this.focusoutCommentText.bind( this), false );
+				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'focus', this.focusCommentText.bind( this), false );
+				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'blur', this.focusoutCommentText.bind( this), false );
 				hash.localRoot.querySelector( 'textarea.commentText' ).addEventListener( 'input', this.checkInput.bind( this), false );
 				hash.localRoot.querySelector( 'input.cancelComment' ).addEventListener( 'click', this.blurCommentText.bind( this), false );
 				hash.localRoot.querySelector( 'input.cancelComment' ).addEventListener( 'touchstart', this.blurCommentText.bind( this), false );
@@ -388,6 +388,8 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 				action:		'commenting'
 			}
 		});
+
+		return false;
 	}
 
 	async sendComment( event ) {

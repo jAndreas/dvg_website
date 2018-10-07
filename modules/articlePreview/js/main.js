@@ -118,7 +118,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 				this.nodes.root.classList.add( 'highlight' );
 			}
 
-			if( !('speechSynthesis' in win) ) {
+			if( this.speechNotAvailable ) {
 				this.nodes[ 'div.read' ].remove();
 			}
 
@@ -309,10 +309,6 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 	readArticle() {
 		let success = this.read( this.articleData.body );
-
-		if( success === false ) {
-			alert('sorry');
-		}
 	}
 
 	showMore() {

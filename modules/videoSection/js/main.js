@@ -149,7 +149,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 	async checkNext( totalLength = 0 ) {
 		if( this.previewLinks.length < totalLength ) {
 			if( this.nextModule ) {
-				this.fire( 'updateNextInfo.videoPreview', {
+				this.fire( 'updateNextInfo.VideoPreview', {
 					videosLeft:	totalLength - this.previewLinks.length
 				});
 			} else {
@@ -166,7 +166,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 
 			return true;
 		} else {
-			this.fire( 'destroyNextInfo.videoPreview' );
+			this.fire( 'destroyNextInfo.VideoPreview' );
 			return false;
 		}
 	}

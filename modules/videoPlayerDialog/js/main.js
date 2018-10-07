@@ -31,7 +31,10 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 			centerToViewport:		true,
 			topMost:				true,
 			avoidOutsideClickClose:	true,
-			hoverOverlay:			true,
+			hoverOverlay:			{
+				maximize:		false,
+				close:			true
+			},
 			noBlur:					false,
 			title:					input.videoData.videoTitle
 		}).and( input );
@@ -61,14 +64,14 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 		this.modalOverlay && this.modalOverlay.fulfill();
 
-		this.initComments();
-
 		this.addNodeEvent( 'div.expand', 'click', this.showFullDescription );
 		this.addNodeEvent( 'input.donateRange', 'input', this.onRangeSlide );
-		this.addNodeEvent( 'input.donateAmount', 'input focusin', this.onDonateAmountFocus );
+		this.addNodeEvent( 'input.donateAmount', 'change focusin', this.onDonateAmountFocus );
 		this.addNodeEvent( 'input.donateAmount', 'blur focusout', this.videoFocused );
 		this.addNodeEvent( 'input.donateNow', 'click', this.onDonateNowClick );
 		//this.addNodeEvent( 'div.videoPlayerDialog', 'mouseup', this.videoFocused );
+
+		this.initComments();
 
 		this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
 			text: () => {
@@ -139,6 +142,8 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 			},
 			extra:		this.videoData.id
 		});
+
+		return false;
 	}
 
 	async checkLiveChatStatus() {
@@ -255,6 +260,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 	onRangeSlide() {
 		this.nodes[ 'input.donateAmount' ].value = this.nodes[ 'input.donateRange' ].value + '€';
+		return false;
 	}
 
 	onDonateAmountFocus( event ) {
@@ -265,6 +271,8 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 				}
 			});
 		}, 150);
+
+		return false;
 	}
 
 	onDonateNowClick() {

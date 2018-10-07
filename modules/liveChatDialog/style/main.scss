@@ -112,6 +112,25 @@ div.liveChatDialog {
 			align-items:flex-end;
 			flex-wrap:nowrap;
 			opacity:0.7;
+			position:relative;
+
+			> div.readChat {
+				align-self:flex-start;
+				padding:2px;
+				display:flex;
+				position:absolute;
+				text-shadow:0 0 2px black;
+				align-items:center;
+
+				> input#readChatInput {
+
+				}
+
+				> label.readChatLabel {
+					font-size:14px;
+					margin-left:4px;
+				}
+			}
 
 			> div.username {
 				margin-left:4px;
@@ -145,7 +164,7 @@ div.liveChatDialog {
 				display:flex;
 				flex-direction:row;
 				margin-left:10px;
-				margin-right:2vw;
+				margin-right:3vw;
 				font-size:1.6vh;
 				font-weight:bold;
 
@@ -167,6 +186,8 @@ div.liveChatDialog {
 				cursor:w-resize;
 				align-self:center;
 				margin-right:-10px;
+				right:0;
+				position:absolute;
 
 				&:after {
 					content:'◀';

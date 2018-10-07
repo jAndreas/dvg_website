@@ -5,6 +5,7 @@ import { moduleLocations, VK } from 'barfoos2.0/defs.js';
 import { extend, Mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win, doc, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
+import Speech from 'barfoos2.0/speech.js';
 
 import html from '../markup/main.html';
 import chatMessageElementMarkup from '../markup/chatMessageElement.html';
@@ -17,7 +18,7 @@ import userInListStyle from '../style/userInListElement.scss';
 /*****************************************************************************************************
  *  The live chat user interaction interface
  *****************************************************************************************************/
-class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) {
+class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, Speech ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:					'LiveChatDialog',
@@ -75,6 +76,10 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) 
 
 		await this.getInitialChatData({ showMOTD: true });
 		this.getPingMessages();
+
+		if( this.speechNotAvailable ) {
+			this.nodes[ 'div.readChat' ].remove();
+		}
 
 		this.nodes[ 'textarea.inputChatMessage' ].focus();
 
@@ -253,6 +258,11 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) 
 		this.nodes[ 'div.userListSection' ].innerHTML = '';
 		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = '';
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = '';
+
+		if( this.nodes[ 'input#readChatInput' ].checked ) {
+			this.read( `Verbindung unterbrochen, das Vorlesen wird eingestellt.` );
+			this.nodes[ 'input#readChatInput' ].checked = false;
+		}
 	}
 
 	onSelfLogout() {
@@ -412,6 +422,10 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) 
 		});
 
 		this.scrollToEnd();
+
+		if( this.nodes[ 'input#readChatInput' ].checked ) {
+			this.read( `${ from } schreibt: ${ content }` );
+		}
 	}
 
 	updateTimeOffsets() {
