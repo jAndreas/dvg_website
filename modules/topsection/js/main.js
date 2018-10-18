@@ -766,7 +766,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	async personalChatMessage( data ) {
-		let isChatAvailable = await this.fire( 'findModule.liveChatDialog' );
+		let isChatAvailable = await this.fire( 'findModule.LiveChatDialog' );
 
 		if( isChatAvailable !== true ) {
 			this._waitingUsers.push( data );

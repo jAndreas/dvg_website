@@ -142,25 +142,33 @@ div#topSection {
 						}
 
 						> a.followMe {
-								color: #efb2b2;
-								text-shadow: 0px 0px 2px white, -2px -2px 2px black;
-								transform: rotate(-35deg) translate(-80px, -20px);
-								font-size: 30px;
-								position: absolute;
-								font-family: Verdana;
-								border: 1px dashed rgba(220, 220, 220, 0.8);
-								padding: 6px;
-								border-radius: 16px;
-								text-decoration-color: #fd8686;
-								text-decoration-style: dotted;
-								background: linear-gradient(45deg, rgba(50, 0, 0, 0.5), rgba(216, 207, 207, 0.5));
+								color:#fff;
+								text-shadow:0px 0px 2px white, -2px -2px 2px black;
+								transform:rotate(-35deg) translate(-80px, -20px);
+								font-size:30px;
+								position:absolute;
+								font-family:Verdana;
+								border:1px solid rgba(220, 220, 220, 0.8);
+								padding:6px;
+								border-radius:16px;
+								text-decoration-color:#83b3e86e;
+								background:linear-gradient(45deg, rgba(125, 174, 210, 0.5), rgba(124, 126, 199, 0.5));
+								filter:sepia(0.3);
+
+								&:hover {
+									filter:brightness(1.3) sepia(0.3);
+									transform:rotate(-35deg) translate(-80px, -20px) scale(1.2,1.2);
+									text-decoration:none;
+								}
 
 								@media screen and (max-width:$iPhone6Portrait) {
 									font-size:20px;
+									filter:brightness(1.3) sepia(0.3);
 									transform:rotate(-35deg) translate(30px, 10px);
 								}
 
 								@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
+									filter:brightness(1.3) sepia(0.3);
 									font-size:24px;
 								}
 						}
@@ -189,14 +197,16 @@ div#topSection {
 					font-size:14vw;
 					font-family:"heart";
 					white-space:nowrap;
-					color:#cdffbd73;
-					text-shadow:0px 0px 16px white;
+					color:#daffce05;
 					height:10vw;
 					line-height:6vw;
 					letter-spacing:1vw;
 					perspective:1500px;
 					transform-style:preserve-3d;
 					align-self:flex-start;
+					animation:titleFadeIn 1800ms 1 ease-in-out;
+					text-shadow:0px 0px 14px white;
+					filter:drop-shadow(3px 3px black);
 
 					> span {
 						display:inline-flex;
@@ -205,6 +215,22 @@ div#topSection {
 					@media screen and (max-width:$iPhone6Portrait) {
 						position:relative;
 						top:30px;
+					}
+
+					@keyframes titleFadeIn {
+						0% {
+							color:#e5fbfff2;
+							filter:drop-shadow(-33px 3px white);
+							text-shadow:0px 0px 2px black;
+						}
+						50% {
+							filter:drop-shadow(33px 23px black);
+						}
+						100% {
+							color:#daffce05;
+							filter:drop-shadow(3px 3px black);
+							text-shadow:0px 0px 16px white;
+						}
 					}
 				}
 			}
@@ -226,15 +252,18 @@ div#topSection {
 					height:10vw;
 					padding:4px;
 					overflow:hidden;
-
 					white-space:nowrap;
 					color:rgba(0, 0, 0, 0.8);
 					text-shadow:0px 0px 14px rgba(255, 255, 255, 0.7);
-
+					filter:drop-shadow(3px 4px 2px);
 					cursor:pointer;
+					transition:filter 200ms ease-out;
+					opacity:0.8;
 
 					&:hover {
-						color:rgba(0, 0, 0, 0.66);
+						filter:drop-shadow(-1px 1px 2px);
+						text-shadow:0px 0px 10px rgba(255, 255, 255, 0.7);
+						opacity:0.9;
 					}
 
 					&.returnSymbol {
@@ -341,7 +370,6 @@ div#topSection {
 		flex-direction:row;
 		flex-wrap:wrap;
 		justify-content:flex-start;
-		filter:sepia(0.4);
 
 		@media screen and (max-width:$iPhone6Landscape) {
 			flex-direction:column;
@@ -358,6 +386,7 @@ div#topSection {
 			padding:4px;
 			height:33px;
 			margin-bottom:1px;
+			filter:sepia(0.7);
 
 			@media screen and (max-width:$iPhone6Landscape) {
 				border-left:none;
@@ -369,7 +398,7 @@ div#topSection {
 			&:hover {
 				border:1px solid rgba(205, 215, 255, 0.9);
 				background-color:rgba(20, 20, 60, 0.9);
-				filter:brightness(1.4);
+				filter:brightness(1.4) sepia(0.3);
 			}
 
 			&:after {
@@ -561,7 +590,6 @@ div#topSection {
 		border-radius:4px;
 		transition:all 100ms linear;
 		animation:fadeInScroll 500ms linear 1;
-		filter:sepia(0.5);
 
 		@media screen and (max-width:$iPhone6Portrait) {
 			flex-direction:column;
@@ -572,6 +600,7 @@ div#topSection {
 			height:64px;
 			background-image:url(../images/yt_icon.png);
 			cursor:pointer;
+			filter:sepia(0.7);
 
 			&:hover {
 				filter:brightness(1.3) sepia(0.3);
@@ -583,6 +612,7 @@ div#topSection {
 			height:64px;
 			background-image:url(../images/fb_icon.png);
 			cursor:pointer;
+			filter:sepia(0.7);
 
 			&:hover {
 				filter:brightness(1.3) sepia(0.3);

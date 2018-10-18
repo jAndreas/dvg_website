@@ -326,7 +326,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 			let articleSection = await import( /* webpackChunkName: "articleSection" */ 'articleSection/js/main.js' );
 			await articleSection.start( input );
 		} else {
-			this.log( 'aboutMeSection already online, aborting launch.' );
+			this.log( 'articleSection already online, aborting launch.' );
 		}
 	}
 

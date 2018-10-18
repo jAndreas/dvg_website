@@ -49,6 +49,8 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.userList	= {
 			add:				this.addUserToUserList.bind( this ),
 			remove:				this.removeUserFromUserList.bind( this ),
+			idle:				this.markUserAsIdle.bind( this ),
+			removeIdle:			this.removeUserAsIdle.bind( this ),
 			update:				this.updateUserFromUserList.bind( this ),
 			typing:				this.setUserAsTyping.bind( this ),
 			removeTyping:		this.removeAsTyping.bind( this )
@@ -69,6 +71,9 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.recv( 'userIsTyping', this.userIsTyping.bind( this ) );
 		this.recv( 'userConnectionUpdate', this.userConnectionUpdate.bind( this ) );
 		this.recv( 'userActionUpdate', this.userActionUpdate.bind( this ) );
+		this.recv( 'userHasGoneIdle', this.userHasGoneIdle.bind( this ) );
+		this.recv( 'userHasReturnedFromIdle', this.userHasReturnedFromIdle.bind( this ) );
+		this.recv( 'userIdleTimeoutExceeded', this.userIdleTimeoutExceeded.bind( this ) );
 
 		this.on( 'startNewSession.server', this.onNewSession.bind( this ) );
 		this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
@@ -191,7 +196,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.nodes.dialogRoot.style.alignSelf	= '';
 
 
-		let rect = await this.fire( 'getModuleDimensionsByName.videoPlayerDialog' );
+		let rect = await this.fire( 'getModuleDimensionsByName.VideoPlayerDialog' );
 
 		if( win.innerWidth < 450 ) {
 			this.nodes.root.style.height = '42vh';
@@ -260,7 +265,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = '';
 
 		if( this.nodes[ 'input#readChatInput' ].checked ) {
-			this.read( `Verbindung unterbrochen, das Vorlesen wird eingestellt.` );
+			this.read( 'Verbindung unterbrochen, das Vorlesen wird eingestellt.' );
 			this.nodes[ 'input#readChatInput' ].checked = false;
 		}
 	}
@@ -291,7 +296,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 
 			if( Array.isArray( result.data.loggedInUsers ) ) {
 				for( let user of result.data.loggedInUsers ) {
-					this.userList.add( user.name, user.action );
+					this.userList.add( user.name, user.action, user.isIdle );
 				}
 			}
 
@@ -391,10 +396,27 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 	}
 
 	async userLogout( data ) {
-		this.userList.remove( data.username );
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ data.username }` );
 
-		this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
-		this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+		if( match && match.classList.contains( 'idle' ) === false ) {
+			this.userList.remove( data.username );
+
+			this.nodes[ 'div.usersOnlineTotalNumber' ].textContent = data.totalUsersCount;
+			this.nodes[ 'div.usersOnlineLoggedInNumber' ].textContent = data.loggedInUsersCount;
+		}
+	}
+
+	async userHasGoneIdle( data ) {
+		this.userList.idle( data.username );
+	}
+
+	async userHasReturnedFromIdle( data ) {
+		this.userList.removeIdle( data.username );
+	}
+
+	async userIdleTimeoutExceeded( data ) {
+		this.userList.removeIdle( data.username );
+		this.userList.remove( data.username );
 	}
 
 	async userIsTyping( data ) {
@@ -442,17 +464,34 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.timeOffsetTimer = win.setTimeout( this.updateTimeOffsets.bind( this ), (Math.random()*60) * 1000 );
 	}
 
-	addUserToUserList( name, action ) {
+	addUserToUserList( name, action, isIdle ) {
 		this.removeUserFromUserList( name );
 
 		this.render({ htmlData:	userInListMarkup, standalone: true }).with({
 			name:		name,
 			status:		action,
+			isIdle:		isIdle ? 'idle' : '',
 			admin:		name === 'DerVeganeGermane' ? 'admin' : ''
 		}).at({
 			node:		'div.userListSection',
 			position:	'beforeend'
 		});
+	}
+
+	markUserAsIdle( name ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name }` );
+
+		if( match ) {
+			match.classList.add( 'idle' );
+		}
+	}
+
+	removeUserAsIdle( name ) {
+		let match = this.nodes[ 'div.userListSection' ].querySelector( `div.user-${ name }` );
+
+		if( match ) {
+			match.classList.remove( 'idle' );
+		}
 	}
 
 	removeUserFromUserList( name ) {

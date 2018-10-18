@@ -13,6 +13,11 @@ div.userListElement {
 		width:45vw;
 	}
 
+	&.idle {
+		opacity:0.7;
+		color:gray;
+	}
+
 	&.admin {
 		background-color:rgba(0, 0, 0, 0.3);
 		color:#82ff82;
