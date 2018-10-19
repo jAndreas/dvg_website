@@ -116,6 +116,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 			if( this.highlightArticleId ) {
 				this.nodes.root.classList.add( 'highlight' );
+				this.showMore();
 			}
 
 			if( this.speechNotAvailable ) {
@@ -309,6 +310,10 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 	readArticle() {
 		let success = this.read( this.articleData.body );
+
+		if( success ) {
+			// to be done.
+		}
 	}
 
 	showMore() {

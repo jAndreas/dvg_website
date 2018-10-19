@@ -80,7 +80,7 @@ class MobileNavigationSection extends Component {
 	}
 
 	loginMode() {
-		for( let [ name, node ] of Object.entries( this.nodes ) ) {
+		for( let [ /*name*/, node ] of Object.entries( this.nodes ) ) {
 			let flags = node.dataset.flags || '';
 
 			if( flags.indexOf( 'login' ) > -1 ) {
@@ -94,7 +94,7 @@ class MobileNavigationSection extends Component {
 	}
 
 	logoutMode() {
-		for( let [ name, node ] of Object.entries( this.nodes ) ) {
+		for( let [ /*name*/, node ] of Object.entries( this.nodes ) ) {
 			let flags = node.dataset.flags || '';
 
 			if( flags.indexOf( 'login' ) > -1 ) {

@@ -105,8 +105,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 			'input.videoTitle':title,
 			'textarea.videoDescription':desc,
 			'input.uploadThumbnail':saveButton,
-			'input.videoTags':tags,
-			'input.password':pass } = this.nodes;
+			'input.videoTags':tags } = this.nodes;
 
 		let blob = null;
 

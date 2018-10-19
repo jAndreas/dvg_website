@@ -122,7 +122,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		localStorage.setItem( 'dvgLogin', JSON.stringify( user ) );
 	}
 
-	onUserLogout( user ) {
+	onUserLogout() {
 		localStorage.removeItem( 'dvgLogin' );
 	}
 

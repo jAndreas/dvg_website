@@ -519,7 +519,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 			}
 		});
 
-		this.transitionToTheaterComplete = new Promise(async ( completeRes, completeRej ) => {
+		this.transitionToTheaterComplete = new Promise(async ( completeRes ) => {
 			let {	myVideo,
 					w1,
 					w2,
@@ -658,7 +658,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.isTheaterMode = false;
 
-		this.returnToMenuComplete = new Promise(async ( completeRes, completeRej ) => {
+		this.returnToMenuComplete = new Promise(async ( completeRes ) => {
 			let {	myVideo,
 					w1,
 					w2,
@@ -780,7 +780,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 		}
 	}
 
-	shakeAnimationStart( event ) {
+	shakeAnimationStart() {
 		/* create element, animate fade fly-away from chat shaking button with messages */
 		let len		= this._waitingUsers.length,
 			rndMsg	= this._waitingUsers[ ~~(Math.random() * len) ];

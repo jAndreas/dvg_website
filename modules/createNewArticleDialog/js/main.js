@@ -74,9 +74,9 @@ class CreateNewArticleDialog extends Mix( Overlay ).With( GlasEffect, ServerConn
 				payload:	{ articleSubject, articleBody, articleFiles }
 			});
 
-			console.log(result);
+			this.log( result );
 		} catch( ex ) {
-			console.error( ex );
+			this.error( ex );
 		}
 	}
 

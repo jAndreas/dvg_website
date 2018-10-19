@@ -263,7 +263,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 		return false;
 	}
 
-	onDonateAmountFocus( event ) {
+	onDonateAmountFocus() {
 		win.setTimeout(() => {
 			this.fire( 'updateHash.appEvents', {
 				data:	{

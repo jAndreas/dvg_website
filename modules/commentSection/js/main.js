@@ -3,7 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { Mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { extend } from 'barfoos2.0/toolkit.js';
-import { win, doc, undef } from 'barfoos2.0/domkit.js';
+import { win, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';

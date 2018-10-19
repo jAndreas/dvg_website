@@ -94,7 +94,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 	async destroy() {
 		win.clearTimeout( this.timeOffsetTimer );
 
-		for( let [ name, timeoutId ] of Object.entries( this.usersTyping ) ) {
+		for( let [ /*name*/, timeoutId ] of Object.entries( this.usersTyping ) ) {
 			win.clearTimeout( timeoutId );
 		}
 
@@ -423,7 +423,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 		this.userList.typing( data.username );
 	}
 
-	putLine({ from, content, time, type, extraClasses }) {
+	putLine({ from, content, time, extraClasses }) {
 		let chatMessageElements = this.nodes[ 'div.chatMessages' ].children;
 
 		if( chatMessageElements.length > 50 ) {
