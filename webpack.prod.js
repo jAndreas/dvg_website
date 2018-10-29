@@ -17,12 +17,6 @@ fs.readdirSync( websitePath ).forEach( file  => {
 });
 console.log( '\nDone.\n' );
 
-console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
-let indexHTML = fs.readFileSync( path.resolve( `${__dirname}/index.html` ), 'utf-8' );
-indexHTML = indexHTML.replace( /%build%/, buildTime );
-fs.writeFileSync( `${websitePath}index.html`, indexHTML );
-console.log( 'Done.\n' );
-
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
 execSync( 'buildbf -l' );
 console.log( 'Done.\n' );

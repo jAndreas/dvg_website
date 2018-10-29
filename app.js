@@ -1,7 +1,8 @@
 'use strict';
 
-/*import nodePolyfill from 'babel-polyfill/node.js';
-import babelPolyfill from 'babel-polyfill';*/
+//import nodePolyfill from 'babel-polyfill/node.js';
+//import babelPolyfill from 'babel-polyfill';
+
 import proxyPolyfill from 'proxy-polyfill/proxy.min.js';
 import urlPolyfill from 'url-search-params';
 
@@ -56,19 +57,22 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.recv( 'reloadPage', this.onRemotePageReload.bind( this ) );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
-		let objURL				= await this.backgroundImage;
 
-		this.fire( 'configApp.core', {
-			name:				'Der Vegane Germane - Website',
-			title:				'Der Vegane Germane',
-			version:			'0.4.0',
-			status:				'beta',
-			background:			{
-				objURL:		objURL,
-				css:	{
-				}
-			}
-		});
+		if( this.backgroundImage ) {
+			this.backgroundImage.then( objURL => {
+				this.fire( 'configApp.core', {
+					name:				'Der Vegane Germane - Website',
+					title:				'Der Vegane Germane',
+					version:			'0.4.0',
+					status:				'beta',
+					background:			{
+						objURL:		objURL,
+						css:	{
+						}
+					}
+				});
+			});
+		}
 
 		this.sessionLoginData	= localStorage.getItem( 'dvgLogin' );
 		this.dvgBackgroundVideo	= localStorage.getItem( 'dvgBackgroundVideo' );
