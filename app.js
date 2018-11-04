@@ -15,7 +15,7 @@ import LogTools from 'barfoos2.0/logtools.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
 
 const	Browser		= new BrowserKit(),
-		bgImagePath	= '/images/background.jpg';
+		bgImagePath	= ENV_PUBLIC_PATH + 'images/background.jpg';
 
 class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	constructor() {

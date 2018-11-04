@@ -2,7 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, isLocalChrome, isAgentCrawler } from 'barfoos2.0/toolkit.js';
 import Swipe from 'barfoos2.0/swipe.js';
 
 import html from '../markup/main.html';
@@ -29,9 +29,11 @@ class AboutMeSection extends Mix( Component ).With( Swipe ) {
 	async init() {
 		await super.init();
 
-		this.loadImage( background ).then( image => {
-			this.nodes.root.style.backgroundImage = `url( ${ image } )`;
-		});
+		if(!isLocalChrome && !isAgentCrawler ) {
+			this.loadImage( background ).then( image => {
+				this.nodes.root.style.backgroundImage = `url( ${ image } )`;
+			});
+		}
 
 		return this;
 	}

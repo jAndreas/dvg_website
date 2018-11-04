@@ -4,6 +4,7 @@ const	webpack			= require( 'webpack' ),
 		{ execSync }	= require( 'child_process' ),
 		websiteName		= 'der-vegane-germane.de',
 		websitePath		= `/var/www/html/${websiteName}/`,
+		publicPath		= `https://${ websiteName }/`,
 		buildTime		= Date.now();
 
 //const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -26,6 +27,7 @@ module.exports = {
 	entry:		[ './app.js' ],
 	output:		{
 		path:			websitePath,
+		publicPath:		publicPath,
 		filename:		'[name]-bundle.js',
 		chunkFilename:	'[id].[chunkhash].js'
 	},
@@ -81,7 +83,8 @@ module.exports = {
 						loader:		'url-loader',
 						options:	{
 							limit:				32000,
-							useRelativePath:	true
+							useRelativePath:	false,
+							publicPath:			publicPath
 						}
 					}
 				]
@@ -90,7 +93,8 @@ module.exports = {
 	},
 	plugins:	[
 		new webpack.DefinePlugin({
-			ENV_PROD: true
+			ENV_PROD:			true,
+			ENV_PUBLIC_PATH:	`"${ publicPath }"`
 		})
 	],
 	optimization:	{

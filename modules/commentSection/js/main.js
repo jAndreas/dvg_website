@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { Mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { Mix, getTimePeriod, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { win, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -59,7 +59,9 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.fire( 'getUserSession.server', session => this.session = session );
 
-		await this.getComments();
+		if(!isLocalChrome ) {
+			await this.getComments();
+		}
 
 		return this;
 	}

@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -24,27 +24,31 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 
 		super( options );
 
-		this.runtimeDependencies.push(
+		/*this.runtimeDependencies.push(
 			this.fire( 'waitForConnection.server' )
-		);
+		);*/
 
 		return this.init();
 	}
 
 	async init() {
-		await super.init();
+		if( isLocalChrome || isAgentCrawler ) {
+			super.init();
+		} else {
+			await super.init();
+		}
 
 		let retVal;
 
 		try {
-			retVal = this.loadArticleData( false, this.highlightArticleId );
+			retVal = await this.loadArticleData( false, this.highlightArticleId );
 		} catch( ex ) {
 			this.modalOverlay && this.modalOverlay.log( ex || 'Fehler', 0 );
 
 			this.tryReconnectServer();
 			await this.fire( 'waitForConnection.server' );
 
-			retVal = this.loadArticleData( false, this.highlightArticleId );
+			retVal = await this.loadArticleData( false, this.highlightArticleId );
 		}
 
 		this.on( 'loadNextArticles.ArticleSection', this.loadNextArticles, this );
@@ -130,7 +134,7 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 						articleData:			article,
 						highlightArticleId:		article.internalId === highlightArticleId || article.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') === highlightArticleId
 					});
-
+					
 					this.previewLinks.push( articlePreviewInstance );
 				}
 

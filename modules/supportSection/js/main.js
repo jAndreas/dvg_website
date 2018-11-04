@@ -2,7 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, isMobileDevice } from 'barfoos2.0/toolkit.js';
+import { extend, isMobileDevice, isLocalChrome, isAgentCrawler } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 
@@ -35,7 +35,11 @@ class SupportSection extends Component {
 	}
 
 	async init() {
-		await super.init();
+		if( isLocalChrome || isAgentCrawler ) {
+			super.init();
+		} else {
+			await super.init();
+		}
 
 		this._boundCheckTime	= this.checkVideoTime.bind( this );
 		this._boundPlayHandler	= this.play.bind( this );
@@ -44,11 +48,13 @@ class SupportSection extends Component {
 		this.addNodeEvent( 'div.privacy', 'click', this.onPrivacyClick );
 
 		try {
-			this.video = await loadVideo({
-				videoLink:		this.videoLink,
-				videoElement:	this.nodes[ 'video.supportMeSequence' ],
-				fallbackPath:	this.fallbackPath
-			});
+			if(!isLocalChrome && !isAgentCrawler ) {
+				this.video = await loadVideo({
+					videoLink:		this.videoLink,
+					videoElement:	this.nodes[ 'video.supportMeSequence' ],
+					fallbackPath:	this.fallbackPath
+				});
+			}
 		} catch( ex ) {
 			this.log( ex );
 		}

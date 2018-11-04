@@ -2,7 +2,7 @@
 
 import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, isLocalChrome, isAgentCrawler } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -41,26 +41,34 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 		super( options );
 
-		this.runtimeDependencies.push(
-			this.fire( 'waitforHLSSupport.appEvents' )
-		);
+		if(!isLocalChrome ) {
+			this.runtimeDependencies.push(
+				this.fire( 'waitforHLSSupport.appEvents' )
+			);
+		}
 
 		return this.init();
 	}
 
 	async init() {
-		await super.init();
+		if( isLocalChrome || isAgentCrawler ) {
+			super.init();
+		} else {
+			await super.init();
+		}
 
 		await this.scrollContainerIntoView();
 
-		this.createModalOverlay({
-			opts:	{ spinner: true }
-		});
-
 		this.on( 'streamInputChanged.video', this.streamInputChanged, this );
 
-		await this.initVideo();
-		await this.checkLiveChatStatus();
+		if(!isLocalChrome ) {
+			this.createModalOverlay({
+				opts:	{ spinner: true }
+			});
+
+			await this.initVideo();
+			await this.checkLiveChatStatus();
+		}
 
 		this.modalOverlay && this.modalOverlay.fulfill();
 
@@ -246,7 +254,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 	showFullDescription() {
 		this.removeNodes( 'div.expand', true );
-		this.nodes[ 'span.description' ].classList.remove( 'folded' );
+		this.nodes[ 'h2.description' ].classList.remove( 'folded' );
 
 		if(!this._liveChatMode ) {
 			this.centerOverlay({ centerToViewport: true });

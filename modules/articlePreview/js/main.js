@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
@@ -23,6 +23,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			input.articleData.aid					= input.articleData.subject ? input.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
 			input.articleData.articlePreviewImage	= input.articleData.fileNames[ 0 ];
 			input.articleData.formatedDate			= new Date( input.articleData.creationDate ).toLocaleDateString();
+			input.articleData.publicPath			= ENV_PUBLIC_PATH;
 
 			extend( options ).with({
 				name:				'ArticlePreview',
@@ -49,7 +50,11 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	}
 
 	async init() {
-		await super.init();
+		if( isLocalChrome || isAgentCrawler ) {
+			super.init();
+		} else {
+			await super.init();
+		}
 
 		if( this.mode === 'loadNextChunk' ) {
 			this.addNodeEvent( 'div.articlePreview', 'click', this.onLoadNextChunk );
@@ -74,47 +79,50 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			this.recv( 'articleWasRemoved', this.articleWasRemoved.bind( this ) );
 			this.recv( 'articleWasUpdated', this.articleWasUpdated.bind( this ) );
 
-			this.checkOverflow();
+			if(!isAgentCrawler && !isLocalChrome ) {
+				this.checkOverflow();
 
-			this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
-				text: () => {
-					this.copyLink = this.activateSpinner({
-						at:		this.nodes[ 'div.copyLinkToClipboard' ],
-						opts:	{
-							lowblur:	true
-						}
-					});
-
-					this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Kopiert!';
-
-					this.copyLink.fulfill().then( () => {
-						this.copyLink.cleanup();
-						this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
-					});
-
-					return `https://${ location.host }/static/${ this.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
-				}
-			});
-
-			if( this.articleData.articlePreviewImage ) {
-				if( Array.isArray( this.articleData.fileNames ) && this.articleData.fileNames.length > 1 ) {
-					for( let image of this.articleData.fileNames.reverse().slice( 0 ) ) {
-						this.render({ htmlData:	'<div class="additionalImageMini" style="background-image:url(/articleFiles/%internalId%/%srcMini%)" onclick="onMiniImageClick" data-imageurl="/articleFiles/%internalId%/%src%"></div>', standalone: true }).with({
-							src:		image,
-							srcMini:	image.substr( 0, image.lastIndexOf('.') ) + '_mini' + image.substr( image.lastIndexOf('.') ),
-							internalId:	this.articleData.internalId
-						}).at({
-							node:		'div.articleThumbnail',
-							position:	'afterbegin'
+				this.clipboard = new Clipboard(this.nodes[ 'div.copyLinkToClipboard' ], {
+					text: () => {
+						this.copyLink = this.activateSpinner({
+							at:		this.nodes[ 'div.copyLinkToClipboard' ],
+							opts:	{
+								lowblur:	true
+							}
 						});
+
+						this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Kopiert!';
+
+						this.copyLink.fulfill().then( () => {
+							this.copyLink.cleanup();
+							this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
+						});
+
+						return `https://${ location.host }/static/${ this.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
 					}
+				});
+
+				if( this.articleData.articlePreviewImage ) {
+					if( Array.isArray( this.articleData.fileNames ) && this.articleData.fileNames.length > 1 ) {
+						for( let image of this.articleData.fileNames.reverse().slice( 0 ) ) {
+							this.render({ htmlData:	'<div class="additionalImageMini" style="background-image:url(/articleFiles/%internalId%/%srcMini%)" onclick="onMiniImageClick" data-imageurl="/articleFiles/%internalId%/%src%"></div>', standalone: true }).with({
+								src:		image,
+								srcMini:	image.substr( 0, image.lastIndexOf('.') ) + '_mini' + image.substr( image.lastIndexOf('.') ),
+								internalId:	this.articleData.internalId
+							}).at({
+								node:		'div.articleThumbnail',
+								position:	'afterbegin'
+							});
+
+						}
+					}
+				} else {
+					//this.nodes[ 'div.articleBodyPreview' ].style.height = `${ this.nodes[ 'div.articleBodyPreview' ].offsetHeight + this.nodes[ 'div.articleThumbnail' ].offsetHeight }px`;
+					this.nodes[ 'div.articleThumbnail' ].style.display = 'none';
 				}
-			} else {
-				//this.nodes[ 'div.articleBodyPreview' ].style.height = `${ this.nodes[ 'div.articleBodyPreview' ].offsetHeight + this.nodes[ 'div.articleThumbnail' ].offsetHeight }px`;
-				this.nodes[ 'div.articleThumbnail' ].style.display = 'none';
 			}
 
-			if( this.highlightArticleId ) {
+			if( this.highlightArticleId || isAgentCrawler || isLocalChrome ) {
 				this.nodes.root.classList.add( 'highlight' );
 				this.showMore();
 			}
@@ -123,13 +131,14 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 				this.nodes[ 'div.read' ].remove();
 			}
 
-			this.initComments();
+			if(!isAgentCrawler && !isLocalChrome ) {
+				this.initComments();
+			}
 
 			await this.fire( 'getUserSession.server', session => this.session = session );
 
 			this.checkAdminRights( this.session );
 		}
-
 
 		return this;
 	}
@@ -151,7 +160,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	}
 
 	checkOverflow() {
-		if( this.nodes[ 'div.text' ].textContent.trim().length === 0 ) {
+		if( this.nodes[ 'h2.text' ].textContent.trim().length === 0 ) {
 			this.nodes[ 'div.articleBodyPreview'].classList.remove( 'textMode' );
 
 			if( this.articleData.articlePreviewImage ) {
@@ -159,11 +168,11 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			}
 		}
 
-		if( this.nodes[ 'div.text' ].scrollHeight > this.nodes[ 'div.text' ].offsetHeight ) {
+		if( this.nodes[ 'h2.text' ].scrollHeight > this.nodes[ 'h2.text' ].offsetHeight ) {
 			this.nodes[ 'div.showMore' ].style.display = 'flex';
-			this.nodes[ 'div.text' ].classList.add( 'overflow' );
+			this.nodes[ 'h2.text' ].classList.add( 'overflow' );
 		} else {
-			this.nodes[ 'div.text' ].classList.remove( 'overflow' );
+			this.nodes[ 'h2.text' ].classList.remove( 'overflow' );
 			this.nodes[ 'div.showMore' ].style.display = 'none';
 		}
 	}
@@ -209,20 +218,20 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	editMode() {
 		try {
 			this.render({ htmlData: '<textarea class="editTitle" style="width:%width%px;height:%height%px;background-color:transparent;">%text%</textarea>', crlf: true }).with({
-				text:		this.nodes[ 'div.articleTitle' ].innerHTML,
-				width:		this.nodes[ 'div.articleTitle' ].offsetWidth || '100',
-				height:		this.nodes[ 'div.articleTitle' ].offsetHeight || '10'
+				text:		this.nodes[ 'h1.articleTitle' ].innerHTML,
+				width:		this.nodes[ 'h1.articleTitle' ].offsetWidth || '100',
+				height:		this.nodes[ 'h1.articleTitle' ].offsetHeight || '10'
 			}).at({
-				node:		this.nodes[ 'div.articleTitle' ],
+				node:		this.nodes[ 'h1.articleTitle' ],
 				position:	'replace'
 			});
 
 			this.render({ htmlData: '<textarea class="editText" style="width:%width%px;height:%height%px;background-color:transparent;">%text%</textarea>', crlf: true }).with({
-				text:		this.nodes[ 'div.text' ].innerHTML,
-				width:		this.nodes[ 'div.text' ].offsetWidth || '100',
-				height:		this.nodes[ 'div.text' ].offsetHeight || '10'
+				text:		this.nodes[ 'h2.text' ].innerHTML,
+				width:		this.nodes[ 'h2.text' ].offsetWidth || '100',
+				height:		this.nodes[ 'h2.text' ].offsetHeight || '10'
 			}).at({
-				node:		this.nodes[ 'div.text' ],
+				node:		this.nodes[ 'h2.text' ],
 				position:	'replace'
 			});
 
@@ -250,10 +259,10 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			});
 
 			this.nodes[ 'div.articleTitle' ].innerHTML	= result.data.article.subject.replace( /\n/g, '<br/>' );
-			this.nodes[ 'div.text' ].innerHTML			= result.data.article.body.replace( /\n/g, '<br/>' );
+			this.nodes[ 'h2.text' ].innerHTML			= result.data.article.body.replace( /\n/g, '<br/>' );
 
 			this.nodes[ 'textarea.editTitle' ].replaceWith( this.nodes[ 'div.articleTitle' ] );
-			this.nodes[ 'textarea.editText' ].replaceWith( this.nodes[ 'div.text' ] );
+			this.nodes[ 'textarea.editText' ].replaceWith( this.nodes[ 'h2.text' ] );
 
 			this.removeNodes([ 'textarea.editTitle', 'textarea.editText' ]);
 
@@ -300,7 +309,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			});
 
 			this.nodes[ 'div.articleTitle' ].innerHTML = article.subject.replace( /\n/g, '<br/>' );
-			this.nodes[ 'div.text' ].innerHTML = article.body.replace( /\n/g, '<br/>' );
+			this.nodes[ 'h2.text' ].innerHTML = article.body.replace( /\n/g, '<br/>' );
 
 			this.checkOverflow();
 
@@ -318,7 +327,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 	showMore() {
 		this.nodes[ 'div.showMore' ].style.display = 'none';
-		this.nodes[ 'div.text' ].classList.remove( 'overflow' );
+		this.nodes[ 'h2.text' ].classList.remove( 'overflow' );
 		this.nodes[ 'div.articleBodyPreview' ].style.height = 'auto';
 	}
 

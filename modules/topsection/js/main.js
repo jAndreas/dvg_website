@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix, getTimePeriod, isMobileDevice, isAgentCrawler } from 'barfoos2.0/toolkit.js';
+import { extend, Mix, getTimePeriod, isMobileDevice, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
@@ -25,7 +25,10 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 			name:			'TopSection',
 			location:		moduleLocations.center,
 			tmpl:			html,
-			renderData:		{ backgroundVideo: (input.backgroundVideo === null || input.backgroundVideo === 'enabled') ? 'checked' : '' }
+			renderData:		{
+								backgroundVideo:	(input.backgroundVideo === null || input.backgroundVideo === 'enabled') ? 'checked' : '',
+								publicPath:			ENV_PUBLIC_PATH
+							}
 		}).and( input );
 
 		super( options );
@@ -108,7 +111,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 	async onBackgroundImageLoaded() {
 		try {
-			if( isMobileDevice || isAgentCrawler ) {
+			if( isMobileDevice || isAgentCrawler || isLocalChrome ) {
 				return;
 			}
 

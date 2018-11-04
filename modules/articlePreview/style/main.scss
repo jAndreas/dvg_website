@@ -75,7 +75,7 @@ div.articlePreview {
 			width:75%;
 			text-decoration:none;
 
-			> div.articleTitle {
+			> h1.articleTitle {
 				display:block;
 
 				width:75%;
@@ -125,7 +125,7 @@ div.articlePreview {
 			height:290px;
 		}
 
-		> div.text {
+		> h2.text {
 			overflow-x:hidden;
 			overflow-y:hidden;
 			align-self:flex-start;

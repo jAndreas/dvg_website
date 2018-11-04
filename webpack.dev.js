@@ -3,7 +3,8 @@ const	webpack			= require( 'webpack' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
 		websiteName		= 'dev.der-vegane-germane.de',
-		websitePath		= `/var/www/html/${websiteName}/`;
+		websitePath		= `/var/www/html/${websiteName}/`,
+		publicPath		= `https://${ websiteName }/`;
 
 console.log( `\nRemoving old javascript and mapping files in ${websitePath}...` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -12,10 +13,6 @@ fs.readdirSync( websitePath ).forEach( file  => {
 		fs.unlink( websitePath + file, () => {} );
 	}
 });
-
-console.log( `\nCopying ${__dirname}/index.html to ${websitePath}...` );
-fs.createReadStream( `${__dirname}/index.html` ).pipe( fs.createWriteStream( `${websitePath}index.html` ) );
-console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
 execSync( 'buildbf -d' );
@@ -26,6 +23,7 @@ module.exports = {
 	entry:		[ './app.js' ],
 	output:		{
 		path:			websitePath,
+		publicPath:		publicPath,
 		filename:		'[name]-bundle.js',
 		chunkFilename:	'[id].[chunkhash].js'
 	},
@@ -68,7 +66,8 @@ module.exports = {
 						loader:		'url-loader',
 						options:	{
 							limit:				32000,
-							useRelativePath:	true
+							useRelativePath:	false,
+							publicPath:			publicPath
 						}
 					}
 				]
@@ -77,7 +76,8 @@ module.exports = {
 	},
 	plugins:	[
 		new webpack.DefinePlugin({
-			ENV_PROD: false
+			ENV_PROD:			false,
+			ENV_PUBLIC_PATH:	`"${ publicPath }"`
 		})
 	],
 	optimization:	{

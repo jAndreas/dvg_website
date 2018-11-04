@@ -77,7 +77,8 @@
 			"allowImportExportEverywhere": true
 		},
 		"globals": {
-			"ENV_PROD": false
+			"ENV_PROD": false,
+			"ENV_PUBLIC_PATH": "runtime"
 		}
 	},
 	"devDependencies": {

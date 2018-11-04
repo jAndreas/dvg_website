@@ -24,9 +24,9 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 
 		super( options );
 
-		this.runtimeDependencies.push(
+		/*this.runtimeDependencies.push(
 			this.fire( 'waitForConnection.server' )
-		);
+		);*/
 
 		return this.init();
 	}
@@ -43,16 +43,14 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		let retVal;
 
 		try {
-			retVal = this.loadVideoData();
-
-			//await retVal;
+			retVal = await this.loadVideoData();
 		} catch( ex ) {
 			this.modalOverlay && this.modalOverlay.log( ex || 'Fehler', 0 );
 
 			this.tryReconnectServer();
 			await this.fire( 'waitForConnection.server' );
 
-			retVal = this.loadVideoData();
+			retVal = await this.loadVideoData();
 		}
 
 		//this.on( 'connect.server', this.onConnect.bind( this ) );

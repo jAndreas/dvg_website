@@ -16,8 +16,9 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
 class VideoPreview extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		if( input.videoData ) {
-			input.videoData.views	= input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
-			input.videoData.vid		= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.videoData.internalId;
+			input.videoData.views		= input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );
+			input.videoData.vid			= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.videoData.internalId;
+			input.videoData.publicPath	= ENV_PUBLIC_PATH;
 
 			extend( options ).with({
 				name:			'VideoPreview',
