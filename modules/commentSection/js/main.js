@@ -301,13 +301,15 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 		try {
 			let commentid	= rootNode.closest( 'div.commentWrapper' ).dataset.commentid;
 
-			await this.send({
-				type:		'removeComment',
-				payload:	{
-					context:	this.context,
-					commentid:	commentid
-				}
-			});
+			if( win.confirm( 'Diesen Kommentar löschen?' ) ) {
+				await this.send({
+					type:		'removeComment',
+					payload:	{
+						context:	this.context,
+						commentid:	commentid
+					}
+				});
+			}
 		} catch( ex ) {
 			this.createModalOverlay({
 				at:	rootNode

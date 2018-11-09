@@ -280,12 +280,14 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 	async removeArticle() {
 		try {
-			await this.send({
-				type:		'removeArticle',
-				payload:	{
-					articleId:		this.articleData._id
-				}
-			});
+			if( win.confirm( 'Diesen Artikels löschen?' ) ) {
+				await this.send({
+					type:		'removeArticle',
+					payload:	{
+						articleId:		this.articleData._id
+					}
+				});
+			}
 		} catch( ex ) {
 			this.log( ex );
 		}
