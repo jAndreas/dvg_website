@@ -33,6 +33,8 @@ class AboutMeSection extends Mix( Component ).With( Swipe ) {
 			this.loadImage( background ).then( image => {
 				this.nodes.root.style.backgroundImage = `url( ${ image } )`;
 			});
+		} else {
+			this.inViewport();
 		}
 
 		return this;
