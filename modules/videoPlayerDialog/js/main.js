@@ -68,6 +68,8 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 			await this.initVideo();
 			await this.checkLiveChatStatus();
+		} else {
+			this.showFullDescription();
 		}
 
 		this.modalOverlay && this.modalOverlay.fulfill();
@@ -97,7 +99,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 					this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
 				});
 
-				return `https://${ location.host }/static/${ this.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
+				return `https://${ location.host }/static/${ this.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/`;
 			}
 		});
 

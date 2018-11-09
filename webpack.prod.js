@@ -19,7 +19,7 @@ fs.readdirSync( websitePath ).forEach( file  => {
 console.log( '\nDone.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
-execSync( 'buildbf -l' );
+execSync( 'buildbf -p' );
 console.log( 'Done.\n' );
 
 module.exports = {

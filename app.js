@@ -182,39 +182,39 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 		if( hash.has( 'confirmSubscription' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
-			confirmSubDialog.start({
+			await confirmSubDialog.start({
 				secretKey:	hash.get( 'confirmSubscription' )
 			});
 		} else if( hash.has( 'confirmUser' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
-			confirmSubDialog.start({
+			await confirmSubDialog.start({
 				secretKey:		hash.get( 'confirmUser' ),
 				confirmUser:	true
 			});
 		} else if( hash.has( 'confirmReset' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
-			confirmSubDialog.start({
+			await confirmSubDialog.start({
 				secretKey:		hash.get( 'confirmReset' ),
 				confirmReset:	true
 			});
 		} else if( hash.has( 'confirmTermination' ) ) {
 			let confirmSubDialog = await import( /* webpackChunkName: "confirmSubscriptionDialog" */ 'confirmSubscriptionDialog/js/main.js' );
-			confirmSubDialog.start({
+			await confirmSubDialog.start({
 				secretKey:			hash.get( 'confirmTermination' ),
 				confirmTermination:	true
 			});
 		} else if( hash.has( 'uploadVideo' ) ) {
 			let uploadVideoDialog = await import( /* webpackChunkName: "uploadVideoDialog" */ 'uploadVideoDialog/js/main.js' );
-			uploadVideoDialog.start();
+			await uploadVideoDialog.start();
 		} else if( hash.has( 'dispatchMail' ) ) {
 			let dispatchMailDialog = await import( /* webpackChunkName: "dispatchMailDialog" */ 'dispatchMailDialog/js/main.js' );
-			dispatchMailDialog.start();
+			await dispatchMailDialog.start();
 		} else if( hash.has( 'createNewArticleDialog' ) ) {
 			let createNewArticleDialog = await import( /* webpackChunkName: "createNewArticleDialog" */ 'createNewArticleDialog/js/main.js' );
-			createNewArticleDialog.start();
+			await createNewArticleDialog.start();
 		} else if( hash.has( 'newsletter' ) ) {
 			let registerEmailDialog = await import( /* webpackChunkName: "registerEmailDialog" */ 'registerEmailDialog/js/main.js' );
-			registerEmailDialog.start();
+			await registerEmailDialog.start();
 		} else {
 			let ref = hash.get( 'ref' );
 
@@ -230,19 +230,26 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 			if( hash.has( 'watch' ) ) {
 				try {
-					let video = await this.send({
-						type:		'getVideoData',
-						payload:	{
-							internalId:		hash.get( 'watch' )
-						}
-					});
+					let id		= hash.get( 'watch' ),
+						video	= await this.send({
+							type:		'getVideoData',
+							payload:	{
+								internalId:		id
+							}
+						});
 
-					let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
+					if( video.data ) {
+						let videoPlayer = await import( /* webpackChunkName: "videoPlayerDialog" */'videoPlayerDialog/js/main.js' );
 
-					videoPlayer.start({
-						fixed:		true,
-						videoData:	video.data
-					});
+						await videoPlayer.start({
+							fixed:		true,
+							videoData:	video.data
+						});
+					} else {
+						hash.delete( 'watch' );
+						hash.set( 'read', id );
+						location.hash = hash.toString();
+					}
 				} catch( ex ) {
 					this.log( ex.message );
 				}

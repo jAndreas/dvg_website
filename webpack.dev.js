@@ -3,16 +3,17 @@ const	webpack			= require( 'webpack' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
 		websiteName		= 'dev.der-vegane-germane.de',
-		websitePath		= `/var/www/html/${websiteName}/`,
+		websitePath		= `/var/www/html/${ websiteName }/`,
 		publicPath		= `https://${ websiteName }/`;
 
-console.log( `\nRemoving old javascript and mapping files in ${websitePath}...` );
+console.log( `\nRemoving old javascript and mapping files in ${ websitePath }...` );
 fs.readdirSync( websitePath ).forEach( file  => {
 	if( /\.js$|\.map$/.test( file ) ) {
 		console.log( `\tremoving ${file}` );
 		fs.unlink( websitePath + file, () => {} );
 	}
 });
+console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
 execSync( 'buildbf -d' );

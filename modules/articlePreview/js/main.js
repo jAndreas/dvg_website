@@ -98,7 +98,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 							this.nodes[ 'div.copyLinkToClipboard' ].textContent = 'Link kopieren';
 						});
 
-						return `https://${ location.host }/static/${ this.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/index.html`;
+						return `https://${ location.host }/static/${ this.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') }/`;
 					}
 				});
 
