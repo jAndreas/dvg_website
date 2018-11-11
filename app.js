@@ -1,10 +1,9 @@
 'use strict';
 
-//import nodePolyfill from 'babel-polyfill/node.js';
-//import babelPolyfill from 'babel-polyfill';
-
-import proxyPolyfill from 'proxy-polyfill/proxy.min.js';
 import urlPolyfill from 'url-search-params';
+import 'babel-polyfill';
+import 'proxy-polyfill/proxy.min.js';
+import 'whatwg-fetch';
 
 import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
@@ -13,6 +12,10 @@ import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
+
+if(!('URLSearchParams' in win) ) {
+	win.URLSearchParams = urlPolyfill;
+}
 
 const	Browser		= new BrowserKit(),
 		bgImagePath	= ENV_PUBLIC_PATH + 'images/background.jpg';
