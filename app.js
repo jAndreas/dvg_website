@@ -1,7 +1,7 @@
 'use strict';
 
 import urlPolyfill from 'url-search-params';
-import 'babel-polyfill';
+import '@babel/polyfill';
 import 'proxy-polyfill/proxy.min.js';
 import 'whatwg-fetch';
 
