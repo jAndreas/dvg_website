@@ -3,6 +3,7 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend, Mix, getTimePeriod, isMobileDevice, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
+import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 
@@ -726,23 +727,31 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	async navigateTo( data = { } ) {
-		if( Object.keys( data ).length ) {
-			this.data.get( this.nodes[ data.id ] ).events[ 'touchend' ][ 0 ].call( this, data.event );
-		}
-
-		if(!this.nodes[ 'div.quickNav' ] ) {
-			this.addNodes({
-				htmlData:	quickNavMarkup,
-				reference:	{
-					node:		'root',
-					position:	'beforeend'
+		try {
+			if( Object.keys( data ).length ) {
+				if( this.nodes[ data.id ].href ) {
+					win.open( this.nodes[ data.id ].href, '_blank' );
+				} else {
+					this.data.get( this.nodes[ data.id ] ).events[ 'touchend' ][ 0 ].call( this, data.event );
 				}
-			});
+			}
+
+			if(!this.nodes[ 'div.quickNav' ] ) {
+				this.addNodes({
+					htmlData:	quickNavMarkup,
+					reference:	{
+						node:		'root',
+						position:	'beforeend'
+					}
+				});
+			}
+		} catch( ex ) {
+			this.log( ex.message );
 		}
 	}
 
 	async onUserLogin( user ) {
-		this.log('login data: ', user);
+		this.log( 'login data: ', user );
 
 		this.fire( 'startNewSession.server', user );
 		this.nodes[ 'div.login' ].style.display = 'none';
