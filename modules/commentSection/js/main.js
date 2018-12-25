@@ -353,6 +353,10 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 				action:		'commenting'
 			}
 		});
+
+		event.stopPropagation();
+		event.preventDefault();
+		return false;
 	}
 
 	focusoutCommentText() {
@@ -393,6 +397,8 @@ class CommentSection extends Mix( Component ).With( ServerConnection ) {
 			}
 		});
 
+		event.stopPropagation();
+		event.preventDefault();
 		return false;
 	}
 
