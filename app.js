@@ -35,7 +35,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async init() {
-		main();
+		main( false );
 
 		this.on( 'userLogin.server', this.onUserLogin, this );
 		this.on( 'userLogout.server', this.onUserLogout, this );
