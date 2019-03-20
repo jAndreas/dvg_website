@@ -38,6 +38,12 @@ class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerC
 			try {
 				let response = Object.create( null );
 
+				this.createModalOverlay({
+					opts:	{
+						spinner: true
+					}
+				});
+
 				if( this.confirmReset ) {
 					response = await this.send({
 						type:		'confirmReset',
@@ -52,12 +58,6 @@ class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerC
 					this.addNodeEventOnce( 'input.confirmTermination', 'click', async () => {
 						this.nodes[ 'input.confirmTermination' ].style.display = 'none';
 
-						this.createModalOverlay({
-							opts:	{
-								spinner: true
-							}
-						});
-
 						let response = await this.send({
 							type:		'confirmReset',
 							payload:	{
@@ -67,8 +67,6 @@ class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerC
 						}, {
 							noTimeout: true
 						});
-
-						await this.modalOverlay.fulfill();
 
 						this.nodes[ 'div.responseMsg' ].innerHTML = response.msg || '';
 					});
@@ -86,7 +84,7 @@ class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerC
 					});
 				}
 
-				this.modalOverlay.fulfill();
+				this.modalOverlay && this.modalOverlay.fulfill();
 
 				this.nodes[ 'div.responseMsg' ].innerHTML = response.msg || '';
 			} catch( ex ) {
