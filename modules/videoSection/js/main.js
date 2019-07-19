@@ -40,6 +40,9 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 		this.on( 'loadNextVideos.VideoSection', this.onLoadNextVideos, this );
 
+		this.addNodeEvent( 'input.SearchText', 'change', this.loadFilterResults );
+		this.addNodeEvent( 'i.removeFilter', 'click', this.removeSearchFilter );
+
 		let retVal;
 
 		try {
@@ -142,6 +145,46 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 				rej( ex );
 			}
 		});
+	}
+
+	async loadFilterResults() {
+		try {
+			this.previewLinks.forEach( lnk => lnk.destroy() );
+			this.previewLinks = [ ];
+
+			let response = await this.send({
+				type:		'loadFilterResults',
+				payload:	{
+					fullText:	this.nodes[ 'input.SearchText' ].value.slice( 0, 64 )
+				}
+			});
+
+			for( let video of response.data.videoData ) {
+				video.hTime = getTimePeriod( video.creationDate );
+
+				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
+
+				let videoPreviewInstance = await videoPreviewPromise.start({
+					location:	this.name,
+					videoData:	video
+				});
+
+				this.previewLinks.push( videoPreviewInstance );
+			}
+
+			this.nodes[ 'i.removeFilter' ].style.display = this.nodes[ 'input.SearchText' ].value.length ? 'flex' : 'none';
+		} catch( ex ) {
+			this.log( ex.message );
+		}
+	}
+
+	async removeSearchFilter() {
+		this.previewLinks.forEach( lnk => lnk.destroy() );
+		this.previewLinks = [ ];
+
+		this.nodes[ 'i.removeFilter' ].style.display = 'none';
+
+		await this.loadVideoData();
 	}
 
 	async checkNext( totalLength = 0 ) {

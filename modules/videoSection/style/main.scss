@@ -6,6 +6,48 @@ div.videoSection {
 	width:100vw;
 	min-height:100vh;
 
+	div.searchBar {
+		top: 10vh;
+		left: 3vh;
+		position: absolute;
+		width: 40vw;
+		height: 8vh;
+		margin: 10px;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-items: flex-start;
+
+		> input.SearchText {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border: 1px solid white;
+			padding-left: 8px;
+			padding-right: 8px;
+			outline: none;
+			background-color: rgba(200, 200, 200, 0.75);
+			border-radius: 8px;
+			font-size: 3vh;
+			color: #282828;
+
+			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
+				width:80vw;
+			}
+		}
+
+		> i.removeFilter {
+			position: absolute;
+			align-self: flex-end;
+			font-size: 3vw;
+			cursor: pointer;
+			color: #282828;
+			display:none;
+		}
+	}
+
 	div.videoContainer {
 		display:flex;
 		flex-direction:row;

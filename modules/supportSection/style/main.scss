@@ -1,5 +1,14 @@
 @import '~barfoos2.0/css/viewportDefinitions';
 
+@keyframes highlightPatreon {
+	from {
+		background-color: rgba(200, 200, 200, 0.51);
+	}
+	to {
+		background-color: rgba(200, 200, 200, 1);
+	}
+}
+
 div.supportSection {
 	position:relative;
 
@@ -19,7 +28,7 @@ div.supportSection {
 			mix-blend-mode:screen;
 			width:auto;
 			height:50vh;
-			z-index:5;
+			z-index:-1;
 
 			&.mobile {
 				height:auto;
@@ -85,13 +94,12 @@ div.supportSection {
 			}
 
 			> div.right {
-				position:absolute;
 				display:flex;
 				flex-direction:column;
 				justify-content:center;
-				align-items:flex-end;
-				align-self:flex-end;
-				margin-top:20vh;
+				align-items:center;
+				align-self:center;
+				right:2vw;
 
 				> a > div {
 					background-size:contain;
@@ -101,8 +109,8 @@ div.supportSection {
 
 				> a.paypalLink {
 					> div.paypal {
-						width:20vw;
-						height:10vw;
+						width:12vw;
+						height:6vw;
 						margin-right:2vw;
 						background-image:url(../images/paypal.png);
 
@@ -120,10 +128,21 @@ div.supportSection {
 					}
 				}
 
+				> a.patreonLink {
+					> div.patreon {
+						width:15vw;
+						height:5vw;
+						background-image:url(../images/patreon.png);
+						background-color: rgba(200, 200, 200, 0.51);
+						border-radius: 12px;
+						animation:1500ms linear alternate infinite highlightPatreon;
+					}
+				}
+
 				> a.amazonLink {
 					> div.amazon {
-						width:30vw;
-						height:10vw;
+						width:15vw;
+						height:5vw;
 						background-image:url(../images/amazon.png);
 
 						&.highlight {

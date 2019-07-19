@@ -231,6 +231,18 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 				await this.launchTopSection();
 			}
 
+			if( hash.has( 'newsletter' ) ) {
+				try {
+					let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
+
+					await registerEmailDialog.start({
+						location:	this.name
+					});
+				} catch( ex ) {
+					this.log( ex.message );
+				}
+			}
+
 			if( hash.has( 'watch' ) ) {
 				try {
 					let id		= hash.get( 'watch' ),

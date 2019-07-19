@@ -177,6 +177,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = '';
 		this.nodes[ 'div.setupBackgroundVideo' ].style.display = 'flex';
+		this.nodes[ 'a.supportMe' ].classList.remove( 'upperPosition' );
 
 		super.inViewport && super.inViewport( ...arguments );
 	}
@@ -213,6 +214,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.nodes[ 'div.gridOverlay' ].style.backgroundImage = 'none';
 		this.nodes[ 'div.setupBackgroundVideo' ].style.display = 'none';
+		this.nodes[ 'a.supportMe' ].classList.add( 'upperPosition' );
 
 		super.offViewport && super.offViewport( ...arguments );
 	}

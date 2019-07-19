@@ -48,13 +48,13 @@ class SupportSection extends Component {
 		this.addNodeEvent( 'div.privacy', 'click', this.onPrivacyClick );
 
 		try {
-			if(!isLocalChrome && !isAgentCrawler ) {
+			/*if(!isLocalChrome && !isAgentCrawler ) {
 				this.video = await loadVideo({
 					videoLink:		this.videoLink,
 					videoElement:	this.nodes[ 'video.supportMeSequence' ],
 					fallbackPath:	this.fallbackPath
 				});
-			}
+			}*/
 		} catch( ex ) {
 			this.log( ex );
 		}
