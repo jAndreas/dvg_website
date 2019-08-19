@@ -304,7 +304,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 					this.removeNodes( 'input.uploadVideo', true );
 
 					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
-					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
+					this.recv( 'videoTranscodingProgress', this.onVideoTranscodingProgressUpdate.bind( this ) );
 
 					await this.send({
 						type:		'fileUpload',
@@ -339,8 +339,9 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 						});
 					}
 
-					this.nodes[ 'span.infoConvert' ].textContent	= `Kodieren von ${ this.selectedVideoFile.name } ...`;
-					this.nodes[ 'sup.convertStep' ].textContent		= '???';
+					this.nodes[ 'span.infoConvert' ].textContent		= `Kodieren von ${ this.selectedVideoFile.name } ...`;
+					this.nodes[ 'progress.transcodeProgress' ].setAttribute( 'value', '0' );
+					this.nodes[ 'sup.transcodePercent' ].textContent	= '0%';
 
 					await this.modalOverlay.fulfill();
 
@@ -361,7 +362,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 					});
 
 					this.recv( 'videoConvertFinished', this.onVideoConvertFinish.bind( this ) );
-					this.recv( 'videoQualityConverted', this.onVideoQualityConverted.bind( this ) );
+					this.recv( 'videoTranscodingProgress', this.onVideoTranscodingProgressUpdate.bind( this ) );
 
 					this.nodes[ 'input.uploadThumbnail' ].removeAttribute( 'disabled' );
 				} else if( videoMeta.data.mode === 'finish' ) {
@@ -391,7 +392,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 					this.modalOverlay.fulfill();
 				}
 
-				uploadButton.removeAttribute( 'disabled' );
+				uploadButton && uploadButton.removeAttribute( 'disabled' );
 
 				if( typeof this.progressAnimation !== 'undefined' ) {
 					this.progressAnimation.cleanup();
@@ -424,11 +425,16 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 		}
 	}
 
-	async onVideoQualityConverted( data ) {
-		if( this.currentFileId === data.fileID ) {
-			this.nodes[ 'sup.convertStep' ].textContent		= data.alreadyConverted.map( q => q + ' ✓' ).join(', ');
-		} else {
-			this.log( 'Foreign VideoQualityConverted Event from: ', data.fileID );
+	async onVideoTranscodingProgressUpdate( data ) {
+		try {
+			if( this.currentFileId === data.fileID ) {
+				this.nodes[ 'progress.transcodeProgress' ].setAttribute( 'value', data.progress );
+				this.nodes[ 'sup.transcodePercent' ].textContent	= `Abgeschlossen: ${ data.progress }%`;
+			} else {
+				this.log( 'Foreign VideoQualityConverted Event from: ', data.fileID );
+			}
+		} catch( ex ) {
+			this.log( ex.message );
 		}
 	}
 

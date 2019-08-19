@@ -17,12 +17,12 @@ div.registerEmailDialog {
 	}
 
 	@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
-		width:90vw;
-		height:50vh;
+		width:95vw;
+		height:40vh;
 	}
 
 	@media screen and (min-width:$iPhone6Landscape) and (max-width:$iPadLandscape) {
-		width:85vw;
+		width:95vw;
 		height:40vh;
 	}
 
@@ -91,16 +91,21 @@ div.registerEmailDialog {
 				font-size:4vh;
 				width:auto;
 				align-self:stretch;
+				height:8vh;
 			}
 
 			@media screen and (min-width:$iPhone6Portrait) and (max-width:$iPhone6Landscape) {
-				font-size:5vh;
-				width:50vw;
+				font-size:4vh;
+				width:auto;
+				align-self:stretch;
+				height:8vh;
 			}
 
 			@media screen and (min-width:$iPhone6Landscape) and (max-width:$iPadLandscape) {
 				font-size:4vh;
-				width:50vw;
+				width:auto;
+				align-self:stretch;
+				height:8vh;
 			}
 		}
 	}

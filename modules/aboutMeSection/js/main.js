@@ -8,8 +8,6 @@ import Swipe from 'barfoos2.0/swipe.js';
 import html from '../markup/main.html';
 import style from '../style/main.scss';
 
-import background from '../images/aboutMebackground_static.jpg';
-
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
@@ -29,11 +27,7 @@ class AboutMeSection extends Mix( Component ).With( Swipe ) {
 	async init() {
 		await super.init();
 
-		if(!isLocalChrome && !isAgentCrawler ) {
-			this.loadImage( background ).then( image => {
-				this.nodes.root.style.backgroundImage = `url( ${ image } )`;
-			});
-		} else {
+		if(isLocalChrome || isAgentCrawler ) {
 			this.inViewport();
 		}
 

@@ -9,6 +9,10 @@ div.loginDialog {
 	overflow:hidden;
 	width:30vw;
 
+	@media screen and(max-width:$iPadLandscape) {
+		width:60vw;
+	}
+
 	@media screen and (max-width:$iPhone6Landscape) {
 		width:65vw;
 	}
@@ -37,11 +41,11 @@ div.loginDialog {
 			font-size:2vh;
 
 			@media screen and (max-width:$iPhone6Landscape) {
-				font-size:6vh;
+				font-size:4vh;
 			}
 
 			@media screen and (max-width:$iPhone6Portrait) {
-				font-size:4vh;
+				font-size:3vh;
 			}
 
 			> input {
@@ -53,6 +57,18 @@ div.loginDialog {
 				color:white;
 				background-color:rgba(73, 247, 79, 0);
 				margin-bottom:4px;
+
+				@media screen and(max-width:$iPadLandscape) {
+					height:5vh;
+				}
+
+				@media screen and (max-width:$iPhone6Landscape) {
+					height:8vh;
+				}
+
+				@media screen and (max-width:$iPhone6Portrait) {
+					height:8vh;
+				}
 
 				&:invalid {
 					background-color:#ff000021;
@@ -74,16 +90,22 @@ div.loginDialog {
 				font-size:2vh;
 				border:1px solid #ffffff9c;
 
+				@media screen and(max-width:$iPadLandscape) {
+					height:5vh;
+				}
+
 				@media screen and (max-width:$iPhone6Landscape) {
 					align-self:center;
 					width:auto;
-					font-size:6vh;
+					font-size:5vh;
+					height:8vh;
 				}
 
 				@media screen and (max-width:$iPhone6Portrait) {
 					width:auto;
 					align-self:stretch;
-					font-size:4vh;
+					font-size:3vh;
+					height:8vh;
 				}
 			}
 

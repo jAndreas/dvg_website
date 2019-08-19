@@ -10,7 +10,7 @@ div.registerDialog {
 	width:30vw;
 
 	@media screen and (max-width:$iPhone6Landscape) {
-		width:65vw;
+		width:95vw;
 	}
 
 	@media screen and (max-width:$iPhone6Portrait) {
@@ -53,6 +53,10 @@ div.registerDialog {
 				background-color:rgba(73, 247, 79, 0);
 				margin-bottom:4px;
 
+				@media screen and(max-width:$iPadLandscape) {
+					height:8vh;
+				}
+
 				&:invalid {
 					background-color:#ff000021;
 				}
@@ -84,15 +88,17 @@ div.registerDialog {
 				border:1px solid #ffffff9c;
 
 				@media screen and (max-width:$iPhone6Landscape) {
-					align-self:center;
 					width:auto;
-					font-size:4vh;
+					align-self:stretch;
+					font-size:2vh;
+					height:8vh;
 				}
 
 				@media screen and (max-width:$iPhone6Portrait) {
 					width:auto;
 					align-self:stretch;
 					font-size:2vh;
+					height:8vh;
 				}
 			}
 		}

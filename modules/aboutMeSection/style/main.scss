@@ -10,6 +10,7 @@ div.aboutMeSection {
 	background-size:cover;
 	background-repeat:no-repeat;
 	background-position:50% 50%;
+	filter:drop-shadow(-2px 0px 1px black);
 
 	@media screen and (max-width:$iPhone6Landscape) {
 		background-attachment:scroll;
@@ -19,17 +20,16 @@ div.aboutMeSection {
 	}
 
 	> article.aboutMeText {
-		font-family:verdana, arial;
+		font-family:GloriaHallelujah, Verdana;
 		color:rgb(235, 235, 235);
-		background-color:rgba(10, 11, 29, 0.75);
-		font-size:2.2vh;
+		font-size:3.2vh;
 		font-weight:bold;
 		padding:2vw;
 		overflow:hidden;
 
 		h1 {
 			font-weight:bold;
-			font-size:3.5vh;
+			font-size:4.5vh;
 			color:#da9999;
 			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
 			text-align:right;
@@ -40,7 +40,7 @@ div.aboutMeSection {
 
 		h2 {
 			font-weight:bold;
-			font-size:3vh;
+			font-size:4vh;
 			background-image:linear-gradient(240deg, rgba(250,250,250,0.3), transparent);
 			color:#da9999;
 			text-align:right;
@@ -69,8 +69,8 @@ div.aboutMeSection {
 		}
 
 		span.highlight {
-			background:#d1dcf7;
-			color:#1b2367;
+			color:#e3ffc1;
+			text-decoration:underline;
 		}
 
 		.hiddenRight {

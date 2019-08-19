@@ -152,6 +152,11 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 			this.previewLinks.forEach( lnk => lnk.destroy() );
 			this.previewLinks = [ ];
 
+			if( this.nextModule ) {
+				this.nextModule.destroy();
+				this.nextModule = null;
+			}
+
 			let response = await this.send({
 				type:		'loadFilterResults',
 				payload:	{
@@ -183,6 +188,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		this.previewLinks = [ ];
 
 		this.nodes[ 'i.removeFilter' ].style.display = 'none';
+		this.nodes[ 'input.SearchText' ].value = '';
 
 		await this.loadVideoData();
 	}

@@ -58,14 +58,24 @@ module.exports = {
 			{
 				test:		/\.css$/,
 				use: [
-					{ loader:		'style-loader/useable' },
+					{
+						loader:		'style-loader',
+						options:	{
+							injectType:		'lazyStyleTag'
+						}
+					},
 					{ loader:		'css-loader' }
 				]
 			},
 			{
 				test:		/\.scss$/,
 				use: [
-					{ loader:		'style-loader/useable' },
+					{
+						loader:		'style-loader',
+						options:	{
+							injectType:		'lazyStyleTag'
+						}
+					},
 					{ loader:		'css-loader' },
 					{ loader:		'sass-loader' }
 				]

@@ -44,8 +44,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.on( 'moduleLaunch.appEvents', this.onModuleLaunch, this );
 		this.on( 'moduleDestruction.appEvents', this.onModuleDestruction, this );
 		this.on( 'connect.server checkSession.appEvents', this.onReconnect, this );
-		this.once( 'TopSection.launchModule', this.launchTopSection, this );
-		this.once( 'VideoSection.launchModule', this.launchTopSection, this );
+		//this.once( 'TopSection.launchModule', this.launchTopSection, this );
+		this.once( 'VideoSection.launchModule', this.launchVideoSection, this );
 		this.once( 'ArticleSection.launchModule', this.launchArticleSection, this );
 		this.once( 'AboutMeSection.launchModule', this.launchAboutMeSection, this );
 		this.once( 'SupportSection.launchModule', this.launchSupportSection, this );
@@ -228,7 +228,8 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 				this.fire( `slideDownTo.${ ref }` );
 			} else {
-				await this.launchTopSection();
+				// await this.launchTopSection();
+				await this.launchVideoSection();
 			}
 
 			if( hash.has( 'newsletter' ) ) {
@@ -329,11 +330,11 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		location.hash = this.currentHash.toString();
 	}
 
-	async launchTopSection() {
+	/*async launchTopSection() {
 		let state = await this.fire( 'findModule.TopSection' );
 
 		if( state !== true ) {
-			let topSection = await import( /* webpackChunkName: "topSection" */ 'topSection/js/main.js' );
+			let topSection = await import( /* webpackChunkName: "topSection"  'topSection/js/main.js' );
 			await topSection.start({
 				skipInitialVideo:	this.currentHash.has( 'watch' ) || this.dvgBackgroundVideo === 'disabled',
 				backgroundVideo:	this.dvgBackgroundVideo
@@ -341,10 +342,34 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else {
 			this.log( 'topSection already online, aborting launch.' );
 		}
+	}*/
+
+	async launchNavSection() {
+		let state = await this.fire( 'findModule.VideoSection' );
+
+		if( state !== true ) {
+			let navSection = await import( /* webpackChunkName: "navSection" */ 'NavSection/js/main.js' );
+			await navSection.start();
+		} else {
+			this.log( 'navSection already online, aborting launch.' );
+		}
+	}
+
+	async launchVideoSection() {
+		this.launchNavSection();
+
+		let state = await this.fire( 'findModule.VideoSection' );
+
+		if( state !== true ) {
+			let videoSection = await import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
+			await videoSection.start();
+		} else {
+			this.log( 'videoSection already online, aborting launch.' );
+		}
 	}
 
 	async launchArticleSection( input ) {
-		await this.launchTopSection();
+		await this.launchVideoSection();
 
 		let state = await this.fire( 'findModule.ArticleSection' );
 

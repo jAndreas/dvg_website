@@ -37,6 +37,8 @@ class LoginDialog extends Mix( Overlay ).With( ServerConnection ) {
 	}
 
 	async destroy() {
+		this.fire( 'mobileNavMenuChange.core', 'close' );
+
 		super.destroy && super.destroy();
 		[ style ].forEach( s => s.unuse() );
 	}
