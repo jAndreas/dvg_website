@@ -18,6 +18,7 @@ class DispatchMailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnecti
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,
+			fixed:					true,
 			avoidOutsideClickClose:	true
 		}).and( input );
 

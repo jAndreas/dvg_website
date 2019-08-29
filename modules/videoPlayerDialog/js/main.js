@@ -29,6 +29,8 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 			location:				moduleLocations.center,
 			centerToViewport:		true,
+			fixed:					true,
+			visibleChat:			true,
 			topMost:				true,
 			avoidOutsideClickClose:	true,
 			hoverOverlay:			{

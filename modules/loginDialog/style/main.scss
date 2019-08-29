@@ -55,8 +55,9 @@ div.loginDialog {
 				outline:none;
 				width:95%;
 				color:white;
-				background-color:rgba(73, 247, 79, 0);
+
 				margin-bottom:4px;
+				height:5vh;
 
 				@media screen and(max-width:$iPadLandscape) {
 					height:5vh;
@@ -71,7 +72,11 @@ div.loginDialog {
 				}
 
 				&:invalid {
-					background-color:#ff000021;
+					background-color:#995c60;
+				}
+
+				&:valid:not(.bfButton) {
+					background-color:transparent;
 				}
 			}
 
@@ -84,38 +89,39 @@ div.loginDialog {
 			}
 
 			> input.login {
-				width:50%;
-				margin:1vh;
-				align-self:flex-start;
 				font-size:2vh;
 				border:1px solid #ffffff9c;
 
 				@media screen and(max-width:$iPadLandscape) {
 					height:5vh;
+					background-color:black;
 				}
 
 				@media screen and (max-width:$iPhone6Landscape) {
 					align-self:center;
-					width:auto;
 					font-size:5vh;
 					height:8vh;
+					background-color:black;
 				}
 
 				@media screen and (max-width:$iPhone6Portrait) {
-					width:auto;
-					align-self:stretch;
 					font-size:3vh;
 					height:8vh;
+					background-color:black;
 				}
 			}
 
 			> div.forgotPassword {
-				font-size:11px;
+				font-size:0.9rem;
 				align-self:flex-end;
 				margin-right:2vh;
-				text-decoration:underline;
+				margin-top:2vh;
 				cursor:pointer;
-				text-shadow:1px 1px 10px black;
+				color:black;
+
+				&:hover {
+					text-decoration:underline;
+				}
 			}
 		}
 	}

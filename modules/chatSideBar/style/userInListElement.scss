@@ -26,11 +26,11 @@ div.userListElement {
 		display:flex;
 		flex-direction:row;
 		align-items:flex-end;
-		font-family:verdana,arial;
+		font-family:Helvetica Neue,arial;
 
 		> div.userName {
 			font-weight:bold;
-			font-size:1.7vh;
+			font-size:2vh;
 			overflow:hidden;
 			text-overflow:ellipsis;
 			white-space:nowrap;

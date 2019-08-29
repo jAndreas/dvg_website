@@ -19,6 +19,7 @@ class CreateNewArticleDialog extends Mix( Overlay ).With( GlasEffect, ServerConn
 			tmpl:					html,
 			center:					true,
 			avoidOutsideClickClose:	true,
+			fixed:					true,
 			selectedAttachments:	[ ]
 		}).and( input );
 

@@ -15,11 +15,13 @@ import style from '../style/main.scss';
 class VideoSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:				'VideoSection',
-			location:			moduleLocations.center,
-			loadingMessage:		'Warte auf Serververbindung...',
-			tmpl:				html,
-			previewLinks:		[ ]
+			name:					'VideoSection',
+			location:				moduleLocations.center,
+			loadingMessage:			'Warte auf Serververbindung...',
+			tmpl:					html,
+			previewLinks:			[ ],
+			streamId:				null,
+			streamPreviewInstance:	null
 		}).and( input );
 
 		super( options );
@@ -40,13 +42,24 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		this.on( 'moduleDestruction.appEvents', this.onVideoPlayerDestruction, this );
 		this.on( 'loadNextVideos.VideoSection', this.onLoadNextVideos, this );
 
+		this.recv( 'twitchStatusUpdate', this.twitchStatusUpdate.bind( this ) );
+
 		this.addNodeEvent( 'input.SearchText', 'change', this.loadFilterResults );
 		this.addNodeEvent( 'i.removeFilter', 'click', this.removeSearchFilter );
+
+		this.createModalOverlay({
+			opts:	{
+				spinner:	true
+			}
+		});
+
+		this.modalOverlay && this.modalOverlay.log( 'Warte auf Serververbindung...', 0 );
 
 		let retVal;
 
 		try {
 			retVal = await this.loadVideoData();
+			this.modalOverlay && await this.modalOverlay.fulfill();
 		} catch( ex ) {
 			this.modalOverlay && this.modalOverlay.log( ex || 'Fehler', 0 );
 
@@ -54,12 +67,11 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 			await this.fire( 'waitForConnection.server' );
 
 			retVal = await this.loadVideoData();
+			this.modalOverlay && await this.modalOverlay.fulfill();
 		}
 
 		//this.on( 'connect.server', this.onConnect.bind( this ) );
 		//this.on( 'disconnect.server', this.onDisconnect.bind( this ) );
-
-		this.modalOverlay && await this.modalOverlay.fulfill();
 
 		return retVal;
 	}
@@ -124,6 +136,10 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 						start:	this.previewLinks.length
 					}
 				});
+
+				if( response.data.streamData ) {
+					this.twitchStatusUpdate( response.data.streamData );
+				}
 
 				for( let video of response.data.videoData ) {
 					video.hTime = getTimePeriod( video.creationDate );
@@ -215,6 +231,37 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		} else {
 			this.fire( 'destroyNextInfo.VideoPreview' );
 			return false;
+		}
+	}
+
+	async twitchStatusUpdate( stream ) {
+		this.log( 'twitchStatusUpdate: ', stream );
+
+		if( stream ) {
+			stream.hTime		= getTimePeriod( +new Date( stream.started_at ) );
+			stream.thumbnailUrl	= stream.thumbnail_url.replace( '{width}', '240' ).replace( '{height}', '140' );
+
+			if( stream.id !== this.streamId ) {
+				// new stream / different stream
+				this.streamId		= stream.id;
+				this.streamPreviewInstance && this.streamPreviewInstance.destroy();
+
+				let streamPreviewPromise = await import( /* webpackChunkName: "streamPreview" */ 'streamPreview/js/main.js'  );
+
+				this.streamPreviewInstance = await streamPreviewPromise.start({
+					location:		this.name,
+					nodeLocation:	'afterbegin',
+					streamData:		stream
+				});
+			} else {
+				// updated stream data
+				this.streamPreviewInstance && this.streamPreviewInstance.updateData( stream );
+			}
+		} else {
+			// no more active stream
+			this.streamPreviewInstance && this.streamPreviewInstance.destroy();
+			delete this.streamPreviewInstance;
+			delete this.streamId;
 		}
 	}
 

@@ -13,6 +13,8 @@ import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
 
+import * as chatSideBar from 'chatSideBar/js/main.js';
+
 if(!('URLSearchParams' in win) ) {
 	win.URLSearchParams = urlPolyfill;
 }
@@ -356,12 +358,13 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	async launchVideoSection() {
-		this.launchNavSection();
+		await this.launchNavSection();
 
 		let state = await this.fire( 'findModule.VideoSection' );
 
 		if( state !== true ) {
 			let videoSection = await import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
+			chatSideBar.start();
 			await videoSection.start();
 		} else {
 			this.log( 'videoSection already online, aborting launch.' );

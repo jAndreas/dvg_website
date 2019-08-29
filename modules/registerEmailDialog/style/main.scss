@@ -63,18 +63,17 @@ div.registerEmailDialog {
 		}
 
 		> input.emailAddress:invalid {
-			background-color:#ff000021;
+			background-color:#995c60;
 		}
 
 		> sup.statusUpdate {
-			color:rgba(248, 133, 133, 0.92);
+			color:black;
 			align-self:flex-end;
-			font-size:70%;
+			font-size:14px;
 			height:18px;
-			text-shadow:2px 2px 2px #080808;
 			position:relative;
 			overflow:hidden;
-			text-overflow:hidden;
+			text-overflow:ellipsis;
 			white-space:nowrap;
 		}
 

@@ -19,6 +19,7 @@ class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerC
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,
+			fixed:					true,
 			avoidOutsideClickClose:	true
 		}).and( input );
 

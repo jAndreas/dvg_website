@@ -15,8 +15,9 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			name:			'NavSection',
-			location:		moduleLocations.center,
-			tmpl:			html
+			location:		moduleLocations.head,
+			tmpl:			html,
+			mode:			'website'
 		}).and( input );
 
 		super( options );
@@ -28,9 +29,12 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		await super.init();
 
 		if( isMobileDevice ) {
-			this.addNodeEvent( 'div.anchors', 'click', this.toggleMenu );
+			this.fire( 'pushToSky.core', this.nodes.root );
 
-			let hash = this.render({ htmlData: '<li style="position:absolute;width:70vw;bottom:2vh;"></li>', standalone: true }).with({}).at({
+			this.addNodeEvent( 'div.anchors', 'click', this.toggleMenu );
+			this.addNodeEvent( 'a.enableChat', 'click', this.toggleChat );
+
+			let hash = this.render({ htmlData: '<li></li>', standalone: true }).with({}).at({
 				node:		'ul.navList',
 				position:	'beforeend'
 			});
@@ -42,6 +46,7 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		this.addNodeEvent( 'a.jumpToArticleSection','click', this.slideToArticleSection );
 		this.addNodeEvent( 'a.jumpToAboutSection', 'click', this.slideToAboutMeSection );
 		this.addNodeEvent( 'a.jumpToSupportSection', 'click', this.slideToSupportSection );
+		this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
 		this.addNodeEvent( 'a.registerName', 'click', this.onRegisterName );
 		this.addNodeEvent( 'a.login', 'click', this.onLoginClick );
 		this.addNodeEvent( 'a.logout', 'click', this.onLogoutClick );
@@ -95,6 +100,19 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		this.fire( 'slideDownTo.SupportSection' );
 	}
 
+	async followMeClick( event ) {
+		event.stopPropagation();
+		event.preventDefault();
+
+		this.removeNodeEvent( 'a.followMe', 'click', this.followMeClick );
+
+		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
+
+		await registerEmailDialog.start({
+			location:	this.name
+		});
+	}
+
 	async onUserLogin( user ) {
 		this.log( 'login data: ', user );
 
@@ -103,8 +121,7 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		this.nodes[ 'a.registerName' ].style.display = 'none';
 		this.nodes[ 'a.logout' ].style.display = 'flex';
 		this.nodes[ 'a.logout' ].setAttribute( 'title', `${ user.__username } ausloggen...` );
-
-		//this.inViewport();
+		this.nodes[ 'a.logout' ].textContent = user.__username;
 	}
 
 	async onSessionLogin( user ) {
@@ -125,7 +142,7 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 	onModuleDestruction( module ) {
 		switch( module.name ) {
 			case 'RegisterEmailDialog':
-				//this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
+				this.addNodeEvent( 'a.followMe', 'click', this.followMeClick );
 				break;
 			case 'LoginDialog':
 				this.addNodeEvent( 'a.login', 'click', this.onLoginClick );
@@ -205,17 +222,29 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		return false;
 	}
 
+	toggleChat() {
+		if( this.mode === 'website' ) {
+			this.fire( 'enableChatSideBar.core' );
+			this.mode = 'chat';
+			this.nodes[ 'a.enableChat' ].textContent = 'Zur Webseite';
+			this.fire( 'mobileChatEnabled' );
+		} else if( this.mode === 'chat' ) {
+			this.fire( 'disableChatSideBar.core' );
+			this.mode = 'website';
+			this.nodes[ 'a.enableChat' ].textContent = 'Zum Chat';
+			this.fire( 'mobileChatDisabled' );
+		}
+	}
+
 	onCenterScrollCore( scrollTop ) {
 		if( scrollTop > 50 ) {
 			if( this.nodes[ 'div.content' ].classList.contains( 'fixedTop' ) ) {
-				this.log('removing fixed  class...');
 				this.nodes[ 'div.content' ].classList.remove( 'fixedTop' );
 			}
 		}
 
 		if( scrollTop <= 10 ) {
 			if(!this.nodes[ 'div.content' ].classList.contains( 'fixedTop' ) ) {
-				this.log('adding fixed  class...');
 				this.nodes[ 'div.content' ].classList.add( 'fixedTop' );
 			}
 		}
