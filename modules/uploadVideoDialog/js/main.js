@@ -429,8 +429,14 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 	async onVideoTranscodingProgressUpdate( data ) {
 		try {
 			if( this.currentFileId === data.fileID ) {
-				this.nodes[ 'progress.transcodeProgress' ].setAttribute( 'value', data.progress );
-				this.nodes[ 'sup.transcodePercent' ].textContent	= `Abgeschlossen: ${ data.progress }%`;
+				if( data.progress === 'prepare_download' ) {
+					this.nodes[ 'sup.transcodePercent' ].textContent	= 'Aufbereitung als mp4 Download...';
+				} else if( data.progress === 'finish' ) {
+					this.nodes[ 'sup.transcodePercent' ].textContent	= 'Abgeschlossen.';
+				} else {
+					this.nodes[ 'progress.transcodeProgress' ].setAttribute( 'value', data.progress );
+					this.nodes[ 'sup.transcodePercent' ].textContent	= `Abgeschlossen: ${ data.progress }%`;
+				}
 			} else {
 				this.log( 'Foreign VideoQualityConverted Event from: ', data.fileID );
 			}

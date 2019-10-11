@@ -12,11 +12,17 @@ div.chatMessageElement {
 	width:100%;
 	border-bottom:1px dotted rgba(255,255,255,0.2);
 	box-sizing:border-box;
-	font-family:Helvetica Neue;
+	font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight:400;
 	font-size:12px;
+	position:relative;
 
 	&.pingHighlight {
 
+	}
+
+	&.adminVerified:hover > div.chatUserContent > div.adminOverlay {
+		display:flex;
 	}
 
 	&.serverNotification {
@@ -33,7 +39,8 @@ div.chatMessageElement {
 		border-right:none;
 		border-left:none;
 		padding:6px;
-		font-family:Helvetica Neue;
+		font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-weight:400;
 		font-size:10px;
 
 		@media screen and (max-width:$iPhone6Landscape) {
@@ -72,7 +79,7 @@ div.chatMessageElement {
 		filter:brightness(2.2);
 		margin-right:4px;
 		opacity:0.7;
-		width:25%;
+		width:32%;
 
 		@media screen and (max-width:$iPhone6Landscape) {
 			filter:brightness(4.2);
@@ -121,10 +128,42 @@ div.chatMessageElement {
 	}
 
 	> div.chatUserContent {
-		color:white;
-		font-weight:bold;
-		width:70%;
-		word-wrap:break-word;
 		align-self:flex-end;
+		width:68%;
+
+		> div.adminOverlay {
+			display:none;
+			flex-direction:row;
+			flex-wrap:nowrap;
+			justify-content:flex-end;
+			align-items:flex-start;
+			position:absolute;
+			top:0;
+			right:0;
+
+			> div.admin {
+				width:30px;
+				height:30px;
+				font-size:18px;
+				background-color:#23272b;
+				box-sizing:border-box;
+				display:flex;
+				justify-content:center;
+				align-items:center;
+				user-select:none;
+				cursor:pointer;
+				filter:grayscale(0.8);
+
+				&:hover {
+					filter:grayscale(0.7) brightness(1.2);
+				}
+			}
+		}
+
+		> div.userTextContent {
+			color:white;
+			line-height:16px;
+			word-wrap:break-word;
+		}
 	}
 }

@@ -2,8 +2,8 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
-import { extend, Mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
-import { win, doc, undef, timeout } from 'barfoos2.0/domkit.js';
+import { extend, Mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { win, undef } from 'barfoos2.0/domkit.js';
 import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
 
@@ -23,7 +23,8 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 			name:			'ChatSideBar',
 			location:		moduleLocations.right,
 			tmpl:			html,
-			firstLogin:		true
+			firstLogin:		true,
+			session:		Object.create( null )
 		}).and( input );
 
 		super( options );
@@ -55,6 +56,8 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		this.addNodeEvent( 'input.sendChatMessage', 'click', this.sendMessage );
 
 		this.recv( 'dispatchedChatMessage', this.receivedDispatchedChatMessage.bind( this ) );
+		this.recv( 'updatedChatMessage', this.updatedChatMessage.bind( this ) );
+		this.recv( 'deletedChatMessage', this.deletedChatMessage.bind( this ) );
 		this.recv( 'newUserLogin', this.newUserLogin.bind( this ) );
 		this.recv( 'userLogout', this.userLogout.bind( this ) );
 		this.recv( 'userIsTyping', this.userIsTyping.bind( this ) );
@@ -80,7 +83,12 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		this.nodes[ 'textarea.inputChatMessage' ].focus();
 
 		await this.fire( 'waitForConnection.server' );
-		await this.getInitialChatData({ showMOTD: this.firstLogin });
+		this.session = await this.fire( 'getUserSession.server' );
+
+		if( this.session === null ) {
+			this.session = Object.create( null );
+			await this.getInitialChatData({ showMOTD: this.firstLogin });
+		}
 
 		this.firstLogin = false;
 
@@ -123,6 +131,9 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		this.log('new session: ', user);
 
 		this.username = user.__username;
+		this.session = user;
+
+		await this.getInitialChatData({ showMOTD: this.firstLogin });
 		//this.nodes[ 'div.username' ].textContent = this.username + ':';
 
 
@@ -176,6 +187,10 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 			timeDiffNode.textContent = timestamp ? `[Vor ${ getTimePeriod( timestamp ) }]` : '';
 		});
 
+		Array.from( this.nodes[ 'section.userListSection' ].querySelectorAll( 'div.idle' ) ).forEach( idleUser => {
+			idleUser.querySelector( 'div.status' ).textContent = `Abwesend seit ${ getTimePeriod( idleUser.dataset.since ) }`;
+		});
+
 		this.timeOffsetTimer = win.setTimeout( this.updateTimeOffsets.bind( this ), (Math.random()*60) * 1000 );
 	}
 
@@ -191,11 +206,17 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 
 			if( Array.isArray( result.data.history ) ) {
 				for( let entry of result.data.history ) {
-					if( this.username !== entry.from && entry.content.indexOf( `@${ this.username }` ) > -1 ) {
-						this.putLine( Object.assign( { extraClasses: 'pingMessage' }, entry ) );
-					} else {
-						this.putLine( entry );
+					let modifierClasses = [ ];
+
+					if( this.session.__isAdmin ) {
+						modifierClasses.push( 'adminVerified' );
 					}
+
+					if( this.username !== entry.from && entry.content.indexOf( `@${ this.username }` ) > -1 ) {
+						modifierClasses.push( 'pingMessage' );
+					}
+
+					this.putLine( Object.assign( { extraClasses: modifierClasses.join( ' ' ) }, entry ) );
 				}
 			}
 
@@ -229,6 +250,58 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		if( Array.isArray( this.pingMessages ) && this.pingMessages.length ) {
 			this.pingMessages.forEach( data => {
 				this.putLine( Object.assign( { extraClasses: 'pingMessage' }, data ) );
+			});
+		}
+	}
+
+	async onEditText( event ) {
+		let root			= event.target.closest( 'div.chatMessageElement' ),
+			userText		= root.querySelector( 'div.userTextContent' );
+
+		if( userText.isContentEditable ) {
+			userText.contentEditable = false;
+			event.target.textContent = '✍';
+
+			let result = await this.send({
+				type:	'updateChatMessage',
+				payload:	{
+					from:		root.dataset.from,
+					timestamp:	root.dataset.timestamp,
+					message:	userText.textContent
+				}
+			});
+		} else {
+			userText.contentEditable = true;
+			event.target.textContent = '✓';
+
+			userText.focus();
+		}
+	}
+
+	async onDeleteComment( event ) {
+		let root			= event.target.closest( 'div.chatMessageElement' );
+
+		if( win.confirm( `Soll der Kommentar wirklich entfernt werden?` ) ) {
+			let result = await this.send({
+				type:	'deleteChatMessage',
+				payload:	{
+					from:		root.dataset.from,
+					timestamp:	root.dataset.timestamp
+				}
+			});
+		}
+	}
+
+	async onBanUser( event ) {
+		let root			= event.target.closest( 'div.chatMessageElement' );
+
+		if( win.confirm( `Soll der Benutzer ${ root.dataset.from } wirklich gesperrt werden?` ) ) {
+			let result = await this.send({
+				type:	'banUser',
+				payload:	{
+					from:		root.dataset.from,
+					timestamp:	root.dataset.timestamp
+				}
 			});
 		}
 	}
@@ -283,12 +356,42 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	async receivedDispatchedChatMessage( data ) {
+		let modifierClasses = [ ];
+
 		this.userList.removeTyping( data.from );
 
+		if( this.session.__isAdmin ) {
+			modifierClasses.push( 'adminVerified' );
+		}
+
 		if( this.username !== data.from && data.content.indexOf( `@${ this.username }` ) > -1 ) {
-			this.putLine( Object.assign( { extraClasses: 'pingMessage' }, data ) );
-		} else {
-			this.putLine( data );
+			modifierClasses.push( 'pingMessage' );
+		}
+
+		this.putLine( Object.assign( { extraClasses: modifierClasses.join( ' ' ) }, data ) );
+	}
+
+	async updatedChatMessage( data ) {
+		try {
+			let targetNode = this.nodes[ 'div.chatMessages' ].querySelector( `div.chatMessageElement[data-from="${ data.from }"][data-timestamp="${ data.time }"]` );
+
+			if( targetNode ) {
+				targetNode.querySelector( 'div.userTextContent' ).textContent = data.content;
+			}
+		} catch( ex ) {
+			this.log( ex.message );
+		}
+	}
+
+	async deletedChatMessage( data ) {
+		try {
+			let targetNode = this.nodes[ 'div.chatMessages' ].querySelector( `div.chatMessageElement[data-from="${ data.from }"][data-timestamp="${ data.time }"]` );
+
+			if( targetNode ) {
+				targetNode.remove();
+			}
+		} catch( ex ) {
+			this.log( ex.message );
 		}
 	}
 
@@ -403,6 +506,8 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 
 		if( match ) {
 			match.classList.add( 'idle' );
+			match.dataset.since = Date.now();
+			match.querySelector( 'div.status' ).textContent = `Abwesend seit ${ getTimePeriod( match.dataset.since ) }`;
 		}
 	}
 
@@ -474,11 +579,12 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		this.updateTimeOffsets();
 
 		this.render({ htmlData:	chatMessageElementMarkup, standalone: true }).with({
-			time:				time,
-			timeDiff:			time ? `[Vor ${ getTimePeriod( time ) }]` : '',
-			from:				this.paint( from ),
-			content:			content,
-			extraClasses:		extraClasses || ''
+			time:			time,
+			from:			from,
+			timeDiff:		time ? `[Vor ${ getTimePeriod( time ) }]` : '',
+			fromFormatted:	this.paint( from ),
+			content:		content,
+			extraClasses:	extraClasses || ''
 		}).at({
 			node:		'div.chatMessages',
 			position:	'beforeend'
