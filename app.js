@@ -62,7 +62,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		this.recv( 'reloadPage', this.onRemotePageReload.bind( this ) );
 
 		this.backgroundImage	= Browser.loadImage( bgImagePath );
-
+		
 		if( this.backgroundImage ) {
 			this.backgroundImage.then( objURL => {
 				this.fire( 'configApp.core', {
@@ -220,6 +220,10 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else if( hash.has( 'newsletter' ) ) {
 			let registerEmailDialog = await import( /* webpackChunkName: "registerEmailDialog" */ 'registerEmailDialog/js/main.js' );
 			await registerEmailDialog.start();
+		} else if( hash.has( 'wishListStatus' ) ) {
+			await this.fire( 'greenScreenMode.appEvents' );
+			let wishListDisplay = await import( /* webpackChunkName: "wishListDisplay" */ 'wishListDisplay/js/main.js' );
+			await wishListDisplay.start();
 		} else {
 			let ref = hash.get( 'ref' );
 
@@ -230,7 +234,6 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 				this.fire( `slideDownTo.${ ref }` );
 			} else {
-				// await this.launchTopSection();
 				await this.launchVideoSection();
 			}
 
@@ -364,7 +367,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 
 		if( state !== true ) {
 			let videoSection = await import( /* webpackChunkName: "videoSection" */ 'videoSection/js/main.js' );
-			chatSideBar.start();
+			await chatSideBar.start();
 			await videoSection.start();
 		} else {
 			this.log( 'videoSection already online, aborting launch.' );

@@ -1,0 +1,36 @@
+div.socialMediaLinks {
+	position:fixed;
+	right:4vw;
+	top:2vh;
+	box-sizing:border-box;
+	display:flex;
+	flex-direction:row;
+	z-index:1000;
+	border-radius:4px;
+	transition:all 100ms linear;
+	animation:fadeInScroll 500ms linear 1;
+	filter:sepia(0.5);
+
+	> a.youtubeIcon {
+		width:64px;
+		height:64px;
+		background-image:url(../images/yt_icon.png);
+		cursor:pointer;
+	}
+
+	> a.facebookIcon {
+		width:64px;
+		height:64px;
+		background-image:url(../images/fb_icon.png);
+		cursor:pointer;
+	}
+}
+
+@keyframes fadeInScroll {
+	from {
+		opacity:0;
+	}
+	to {
+		opacity:1;
+	}
+}

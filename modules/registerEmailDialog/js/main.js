@@ -74,8 +74,15 @@ class RegisterEmailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnect
 			let response = await this.send({
 				type:		'registerEmailAddress',
 				payload:	{
-					newAddress:	emailAddress.value,
-					origin:		location.origin
+					newAddress:		emailAddress.value,
+					emailOptions:	{
+						recvMailOnVideo:		!!this.nodes[ 'input.optionVideos' ].checked,
+						recvMailOnArticle:		!!this.nodes[ 'input.optionArticles' ].checked,
+						recvMailOnNews:			!!this.nodes[ 'input.optionNews' ].checked,
+						recvMailOnTwitch:		!!this.nodes[ 'input.optionLivestreams' ].checked,
+						recvMailOnTwitchGaming:	!!this.nodes[ 'input.optionLivestreamsGaming' ].checked
+					},
+					origin:			location.origin
 				}
 			});
 

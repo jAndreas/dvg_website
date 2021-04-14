@@ -1,0 +1,55 @@
+@import '~barfoos2.0/css/viewportDefinitions';
+@import '~barfoos2.0/css/util';
+
+div.giftOverlay {
+	display:flex;
+
+	flex-direction:row;
+	justify-content:center;
+	align-items:center;
+	flex-wrap:wrap;
+
+	width:100vw;
+	height:100vh;
+
+	background-color:rgba(30,30,30,0.85);
+
+	> div.giftImage {
+		width:80%;
+		height:80%;
+		background-size:contain;
+		background-position:center center;
+		background-repeat:no-repeat;
+	}
+
+	> div.giftDesc {
+		align-self:flex-end;
+		justify-content:center;
+		align-content:center;
+
+		width:50%;
+		height:80%;
+		font-size:6vh;
+		color:#B1DAFF;
+		text-shadow:0px 0px 4px black, 1px 1px 2px white;
+
+		text-overflow:ellipsis;
+		overflow:hidden;
+		white-space:nowrap;
+	}
+
+	> div.giftPrice {
+		border:2px solid gray;
+		border-radius:60px;
+		position:absolute;
+		right:18vw;
+		top:6vw;
+		transform:rotate(25deg);
+		color:#DDEEFF;
+		text-shadow:-1px -1px 2px white, 1px 1px 2px white;
+		font-size:8vh;
+		font-weight:bold;
+		padding:2vw;
+		background-color:rgba(25,55,25,0.45);
+	}
+}

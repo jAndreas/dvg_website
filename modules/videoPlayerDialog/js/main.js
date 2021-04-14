@@ -288,7 +288,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 	}
 
 	onDonateNowClick() {
-		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
+		win.open( 'https://www.tipeeestream.com/derveganegermane/donation', '_blank' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		'donation'

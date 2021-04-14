@@ -88,7 +88,7 @@ class StreamPreview extends Mix( Component ).With( ServerConnection ) {
 			//	videoData:	this.streamData,
 			//	at:			at
 			//});
-			win.open( 'https://www.twitch.tv/derveganegermane', '_blank' );
+			win.open( 'https://www.twitch.tv/meinungsverbrechen', '_blank' );
 		}
 	}
 

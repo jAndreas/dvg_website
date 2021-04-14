@@ -204,7 +204,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	}
 
 	onDonateNowClick() {
-		win.open( `https://www.paypal.com/myaccount/transfer/send/external/ppme?profile=DerVeganeGermane&currencyCode=EUR&amount=${ win.parseFloat( this.nodes[ 'input.donateAmount' ].value ) }&locale.x=de_DE&country.x=DE`, '_blank' );
+		win.open( 'https://www.tipeeestream.com/derveganegermane/donation', '_blank' );
 	}
 
 	checkAdminRights( session ) {

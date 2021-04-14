@@ -1,0 +1,29 @@
+<div id="topSection">
+	<video alias="myVideo" class="introduction darken" muted playsinline autoplay></video>
+	<div class="gridOverlay"></div>
+	<nav>
+		<ul class="navOverlay">
+			<li class="homeContainer">
+				<a class="home"></a>
+			</li>
+			<li class="jumpListContainer">
+				<ul class="jumpList">
+					<li><a class="jumpToVideoSection">Videos</a></li>
+					<li><a class="jumpToArticleSection">Beiträge</a></li>
+					<li><a class="jumpToSupportSection">Support</a></li>
+					<li><a class="jumpToAboutSection">Über mich</a></li>
+					<li><a class="followMe">Abonnieren!</a></li>
+				</ul>
+			</li>
+			<li class="WatchIntroContainer">
+				<a class="revealIntro">\u2720</a>
+			</li>
+			<li class="titleContainer">
+				<a class="title"><span alias="w1">Der</span> <span alias="w2">Vegane</span> <span alias="w3">Germane</span></a>
+			</li>
+			<li class="slideDownContainer">
+				<a class="slideDownArrow initialBounce"></a>
+			</li>
+		</ul>
+	</nav>
+</div>

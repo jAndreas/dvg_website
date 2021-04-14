@@ -15,7 +15,7 @@ import chatMessageElementStyle from '../style/chatMessageElement.scss';
 import userInListStyle from '../style/userInListElement.scss';
 
 /*****************************************************************************************************
- *  Privacy declaration dsgvo
+ *  Chat Sidebar
  *****************************************************************************************************/
 class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
@@ -83,12 +83,14 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 		this.nodes[ 'textarea.inputChatMessage' ].focus();
 
 		await this.fire( 'waitForConnection.server' );
+
 		this.session = await this.fire( 'getUserSession.server' );
 
 		if( this.session === null ) {
 			this.session = Object.create( null );
-			await this.getInitialChatData({ showMOTD: this.firstLogin });
 		}
+
+		await this.getInitialChatData({ showMOTD: this.firstLogin });
 
 		this.firstLogin = false;
 
@@ -128,8 +130,6 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	async onNewSession( user ) {
-		this.log('new session: ', user);
-
 		this.username = user.__username;
 		this.session = user;
 
@@ -199,7 +199,7 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 			let result = await this.send({
 				type:		'getInitialChatData'
 			});
-
+			
 			this.nodes[ 'div.chatMessages' ].innerHTML = '';
 
 			this.username = result.data.username || 'anonym';
@@ -281,7 +281,7 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 	async onDeleteComment( event ) {
 		let root			= event.target.closest( 'div.chatMessageElement' );
 
-		if( win.confirm( `Soll der Kommentar wirklich entfernt werden?` ) ) {
+		if( win.confirm( 'Soll der Kommentar wirklich entfernt werden?' ) ) {
 			let result = await this.send({
 				type:	'deleteChatMessage',
 				payload:	{
