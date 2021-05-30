@@ -52,6 +52,7 @@ class WishListOverlay extends Mix( Component ).With( ServerConnection ) {
 			for( let wishData of list ) {
 				//console.log( 'wishData:', wishData );
 				await this.showGiftOverlay( wishData );
+				await this.timeout( 2000 );
 			}
 		}
 	}

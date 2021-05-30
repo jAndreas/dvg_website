@@ -7,10 +7,10 @@ import io from 'socket.io-client';
 
 const	socket = io( win.location.protocol + '//' + win.location.hostname, {
 			transports:		isAgentCrawler ? [ 'polling' ] : [ 'websocket', 'polling' ],
-			secure:			true,
+			secure:			false,
 			autoConnect:	true,
 			forceNew:		true,
-			pingTimeout:	3000
+			pingTimeout:	5000
 		}),
 		maxTimeout	= 3000;
 

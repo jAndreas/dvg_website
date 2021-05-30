@@ -158,7 +158,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 
 		size = size / 1024 / 1024;
 
-		if( size < 10 ) {
+		/*if( size < 10 ) {
 			return mb * 0.25;
 		}
 		if( size < 100 ) {
@@ -172,9 +172,10 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 		}
 		if( size < 2000 ) {
 			return mb * 3.5;
-		}
+		}*/
 
-		return mb * 4.5;
+		//return mb * 4.5;
+		return mb * 0.75;
 	}
 
 	async onSubmit( event ) {
@@ -273,15 +274,21 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 						start = Date.now();
 						currentChunk = blob.slice( seek, seek + chunkSize );
 
-						await this.send({
-							type:		'fileUpload',
-							payload:	{
-								chunk:		currentChunk,
-								fileID:		videoMeta.data.fileID
-							}
-						}, {
-							noTimeout:	true
-						});
+						this.log( `Sending blob. Chunk ${ seek } to ${ seek + chunkSize }` );
+
+						try {
+							await this.send({
+								type:		'fileUpload',
+								payload:	{
+									chunk:		currentChunk,
+									fileID:		videoMeta.data.fileID
+								}
+							}, {
+								noTimeout:	false
+							});
+						} catch ( ex ) {
+							continue;
+						}
 
 						if( this.isUploadPaused ) {
 							return;
