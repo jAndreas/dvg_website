@@ -238,14 +238,14 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		this.log( 'twitchStatusUpdate: ', stream );
 
 		if( stream ) {
-			stream.hTime		= getTimePeriod( +new Date( stream.started_at ) );
-			stream.thumbnailUrl	= stream.thumbnail_url.replace( '{width}', '240' ).replace( '{height}', '140' );
+			stream.hTime		= getTimePeriod( +new Date( stream.created_at ) );
+			stream.thumbnailUrl	= stream.thumbnail;
 
-			if( stream.id !== this.streamId ) {
+			if( stream.is_live ) {
 				// new stream / different stream
-				this.streamId		= stream.id;
+				this.streamId		= stream.live_title;
 				this.streamPreviewInstance && this.streamPreviewInstance.destroy();
-
+				
 				let streamPreviewPromise = await import( /* webpackChunkName: "streamPreview" */ 'streamPreview/js/main.js'  );
 
 				this.streamPreviewInstance = await streamPreviewPromise.start({

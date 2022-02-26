@@ -48,9 +48,9 @@ class StreamPreview extends Mix( Component ).With( ServerConnection ) {
 	}
 
 	async updateData( stream ) {
-		this.nodes[ 'div.streamThumbnail' ].style.backgroundImage = `url(${ stream.thumbnailUrl })`;
-		this.nodes[ 'span.streamTitle' ].textContent = `${ stream.title }`;
-		this.nodes[ 'span.viewerCount' ].textContent = `${ stream.viewer_count } Zuschauer`;
+		this.nodes[ 'div.streamThumbnail' ].style.backgroundImage = `url(${ stream.thumbnail })`;
+		this.nodes[ 'span.streamTitle' ].textContent = `${ stream.live_title }`;
+		this.nodes[ 'span.viewerCount' ].textContent = `${ stream.current_viewers } Zuschauer`;
 		this.nodes[ 'span.streamDuration' ].textContent = `seit ${ stream.hTime }`;
 	}
 
@@ -88,7 +88,7 @@ class StreamPreview extends Mix( Component ).With( ServerConnection ) {
 			//	videoData:	this.streamData,
 			//	at:			at
 			//});
-			win.open( 'https://www.twitch.tv/meinungsverbrechen', '_blank' );
+			win.open( 'https://trovo.live/Meinungsverbrechen', '_blank' );
 		}
 	}
 
