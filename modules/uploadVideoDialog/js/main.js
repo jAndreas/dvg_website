@@ -23,6 +23,7 @@ class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnectio
 			tmpl:					html,
 			center:					true,
 			fixed:					true,
+			standAlone:				true,
 			avoidOutsideClickClose:	true,
 			selectedVideoFile:		null,
 			selectedThumbnailFile:	null
