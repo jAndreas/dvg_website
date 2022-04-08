@@ -20,7 +20,7 @@ class RegisterEmailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnect
 			tmpl:						html,
 			center:						true,
 			fixed:						true,
-			standAlone:					true,
+			standAlone:					input.standAlone,
 			avoidOutsideClickClose:		!input.location
 		}).and( input );
 

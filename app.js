@@ -220,7 +220,9 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 		} else if( hash.has( 'newsletter' ) ) {
 			await this.fire( 'greenScreenMode.appEvents' );
 			let registerEmailDialog = await import( /* webpackChunkName: "registerEmailDialog" */ 'registerEmailDialog/js/main.js' );
-			await registerEmailDialog.start();
+			await registerEmailDialog.start({
+				standAlone: true
+			});
 		} else if( hash.has( 'wishListStatus' ) ) {
 			await this.fire( 'greenScreenMode.appEvents' );
 			let wishListDisplay = await import( /* webpackChunkName: "wishListDisplay" */ 'wishListDisplay/js/main.js' );
