@@ -288,7 +288,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 	}
 
 	onDonateNowClick() {
-		win.open( 'https://www.tipeeestream.com/derveganegermane/donation', '_blank' );
+		win.open( 'https://www.der-vegane-germane.de/support', '_blank' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
 				action:		'donation'
