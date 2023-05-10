@@ -9,7 +9,7 @@ div.loginDialog {
 	overflow:hidden;
 	width:30vw;
 
-	@media screen and(max-width:$iPadLandscape) {
+	@media screen and (max-width:$iPadLandscape) {
 		width:60vw;
 	}
 
@@ -59,7 +59,7 @@ div.loginDialog {
 				margin-bottom:4px;
 				height:5vh;
 
-				@media screen and(max-width:$iPadLandscape) {
+				@media screen and (max-width:$iPadLandscape) {
 					height:5vh;
 				}
 
@@ -92,7 +92,7 @@ div.loginDialog {
 				font-size:2vh;
 				border:1px solid #ffffff9c;
 
-				@media screen and(max-width:$iPadLandscape) {
+				@media screen and (max-width:$iPadLandscape) {
 					height:5vh;
 					background-color:black;
 				}

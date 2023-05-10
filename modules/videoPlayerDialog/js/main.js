@@ -22,6 +22,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 		input.videoData.videoDescription	= input.videoData.videoDescription.replace(/http\S*/g, urlMatch => {
 			return `<a href="${ urlMatch }" target="_blank">${ urlMatch }</a>`;
 		});
+		input.videoData.videoDescription	= input.videoData.videoDescription.replace( /DE54460700240025046400/gi, 'LT673500010008036053' );
 
 		extend( options ).with({
 			name:					'VideoPlayerDialog',

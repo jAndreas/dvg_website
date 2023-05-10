@@ -19,7 +19,7 @@ fs.readdirSync( websitePath ).forEach( file  => {
 console.log( '\nDone.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
-execSync( 'buildbf -p' );
+execSync( 'buildbf -d' );
 console.log( 'Done.\n' );
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
 	devtool:	'source-map',
 	module:	{
 		rules: [
-			{
+			/*{
 				test:		/\.js$/,
 				enforce:	'pre',
 				exclude:	/node_modules/,
@@ -89,6 +89,10 @@ module.exports = {
 			},
 			{
 				test:		/\.(jpg|png|gif|ttf|eot|svg|mp3)$/,
+				type:		'asset/resource',
+				generator:	{
+					filename:	'images/[name][ext]'
+				}/*
 				use: [
 					{
 						loader:		'url-loader',
@@ -98,7 +102,7 @@ module.exports = {
 							publicPath:			publicPath
 						}
 					}
-				]
+				]*/
 			}
 		]
 	},

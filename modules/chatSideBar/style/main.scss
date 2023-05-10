@@ -6,6 +6,10 @@ div.chatSideBarSection {
 	height:90vh;
 	width:25vw;
 
+	@media screen and (max-width:$iPadLandscape) {
+		width:100vw;
+	}
+
 	> div.sideBar {
 		display:flex;
 		flex-direction:column;
@@ -80,7 +84,7 @@ div.chatSideBarSection {
 						background:rgba(200,200,200,0.75);
 					}
 
-					@media screen and(max-width:$iPadLandscape) {
+					@media screen and (max-width:$iPadLandscape) {
 						flex-basis:75%;
 					}
 				}
@@ -95,7 +99,7 @@ div.chatSideBarSection {
 					flex-direction:row;
 					flex-wrap:nowrap;
 
-					@media screen and(max-width:$iPadLandscape) {
+					@media screen and (max-width:$iPadLandscape) {
 						flex-direction:column;
 						flex-basis:25%;
 					}
@@ -111,7 +115,7 @@ div.chatSideBarSection {
 						font-size:0.75rem;
 						color:rgb(30, 33, 37);
 
-						@media screen and(max-width:$iPadLandscape) {
+						@media screen and (max-width:$iPadLandscape) {
 							flex-basis:65%;
 							font-size:1.2rem;
 						}
@@ -126,7 +130,7 @@ div.chatSideBarSection {
 						font-size:3vh;
 						color:#dadada;
 
-						@media screen and(max-width:$iPadLandscape) {
+						@media screen and (max-width:$iPadLandscape) {
 							flex-basis:35%;
 						}
 					}
