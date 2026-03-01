@@ -13,7 +13,6 @@ import style from '../style/main.scss';
 class ImageViewerDialog extends Overlay {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'ImageViewerDialog',
 			location:		input.location || moduleLocations.center,
 			tmpl:			html,
 			noBlur:			true,

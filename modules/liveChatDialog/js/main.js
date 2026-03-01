@@ -21,7 +21,6 @@ import userInListStyle from '../style/userInListElement.scss';
 class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, Speech ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'LiveChatDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			title:					'Live Chat',
@@ -115,7 +114,7 @@ class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, S
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			}
 		});
 

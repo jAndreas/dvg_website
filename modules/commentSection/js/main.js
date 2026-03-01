@@ -18,7 +18,6 @@ import displayStyle from '../style/display.scss';
 class CommentSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'CommentSection',
 			tmpl:			html,
 			inEditMode:		Object.create( null ),
 			session:		null,

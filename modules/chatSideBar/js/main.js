@@ -20,7 +20,6 @@ import userInListStyle from '../style/userInListElement.scss';
 class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'ChatSideBar',
 			location:		moduleLocations.right,
 			tmpl:			html,
 			firstLogin:		true,
@@ -107,8 +106,8 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 	}
@@ -440,7 +439,7 @@ class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			}
 		});
 

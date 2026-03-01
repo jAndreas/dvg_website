@@ -13,7 +13,6 @@ import style from '../style/main.scss';
 class CookieConfirmSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'CookieConfirmSection',
 			location:		moduleLocations.footer,
 			tmpl:			html
 		}).and( input );

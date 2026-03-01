@@ -1,4 +1,5 @@
 const	webpack			= require( 'webpack' ),
+		TerserPlugin	= require( 'terser-webpack-plugin' ),
 		path			= require( 'path' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
@@ -115,23 +116,14 @@ module.exports = {
 	optimization:	{
 		splitChunks:	{
 			minSize:	4000
-		}/*,
-		minimizer: [
-			new UglifyJSPlugin({
-				cache: true,
-				parallel: true,
-				uglifyOptions: {
-					compress: {
-						warnings: false,
-						keep_classnames: true
-					},
-					ecma: 6,
-					mangle: {
-						keep_classnames: true
-					}
-				},
-				sourceMap: false
+		},
+		minimizer:	[
+			new TerserPlugin({
+				terserOptions:	{
+					keep_classnames:	true,
+					keep_fnames:		true
+				}
 			})
-		]*/
+		]
 	}
 };

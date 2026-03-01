@@ -18,7 +18,6 @@ import progressConvertStyle from '../style/showprogress_convert.scss';
 class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'UploadVideoDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,

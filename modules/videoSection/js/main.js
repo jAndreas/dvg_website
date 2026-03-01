@@ -15,7 +15,6 @@ import style from '../style/main.scss';
 class VideoSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'VideoSection',
 			location:				moduleLocations.center,
 			loadingMessage:			'Warte auf Serververbindung...',
 			tmpl:					html,
@@ -87,8 +86,8 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 		this.fire( 'ArticleSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 	}
@@ -147,7 +146,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 					let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
 
 					let videoPreviewInstance = await videoPreviewPromise.start({
-						location:	this.name,
+						location:	this.id,
 						videoData:	video
 					});
 
@@ -186,7 +185,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
 
 				let videoPreviewInstance = await videoPreviewPromise.start({
-					location:	this.name,
+					location:	this.id,
 					videoData:	video
 				});
 
@@ -219,7 +218,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 				let videoPreviewPromise = await import( /* webpackChunkName: "videoPreview" */ 'videoPreview/js/main.js'  );
 
 				this.nextModule = await videoPreviewPromise.start({
-					location:	this.name,
+					location:	this.id,
 					mode:		'loadNextChunk',
 					info:		{
 						videosLeft:	totalLength - this.previewLinks.length
@@ -249,7 +248,7 @@ class VideoSection extends Mix( Component ).With( ServerConnection ) {
 				let streamPreviewPromise = await import( /* webpackChunkName: "streamPreview" */ 'streamPreview/js/main.js'  );
 
 				this.streamPreviewInstance = await streamPreviewPromise.start({
-					location:		this.name,
+					location:		this.id,
 					nodeLocation:	'afterbegin',
 					streamData:		stream
 				});

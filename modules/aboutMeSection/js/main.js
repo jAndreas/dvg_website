@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class AboutMeSection extends Mix( Component ).With( Swipe ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'AboutMeSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -50,8 +49,8 @@ class AboutMeSection extends Mix( Component ).With( Swipe ) {
 		this.fire( 'SupportSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 

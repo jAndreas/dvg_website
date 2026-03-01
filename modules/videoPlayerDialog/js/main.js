@@ -25,7 +25,6 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 		input.videoData.videoDescription	= input.videoData.videoDescription.replace( /DE54460700240025046400/gi, 'LT673500010008036053' );
 
 		extend( options ).with({
-			name:					'VideoPlayerDialog',
 			tmpl:					html,
 			renderData:				extend( input.videoData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 			location:				moduleLocations.center,
@@ -129,7 +128,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			},
 			extra:		this.videoData.id
 		});
@@ -151,7 +150,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 	videoFocused() {
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			},
 			extra:		this.videoData.id
 		});
@@ -231,7 +230,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 			this.fire( 'updateHash.appEvents', {
 				data:	{
-					action:		this.name
+					action:		this.id
 				},
 				extra:		this.videoData.id
 			});
@@ -242,7 +241,7 @@ class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection
 
 	async initComments() {
 		await commentSection.start({
-			location:		this.name,
+			location:		this.id,
 			context:		this.videoData.id,
 			internalId:		this.videoData.internalId,
 			speakingName:	this.videoData.videoTitle

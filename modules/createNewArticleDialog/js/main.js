@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class CreateNewArticleDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'CreateNewArticleDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,

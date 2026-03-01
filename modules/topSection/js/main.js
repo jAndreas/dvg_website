@@ -23,7 +23,6 @@ import * as videoSection from 'videoSection/js/main.js';
 class TopSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'TopSection',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			renderData:		{
@@ -162,8 +161,8 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 
@@ -262,7 +261,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 		let registerDialog	= await import( /* webpackChunkName: "registerDialog" */  'registerDialog/js/main.js'  );
 
 		await registerDialog.start({
-			location:	this.name,
+			location:	this.id,
 			position:	position,
 			center:		isMobileDevice
 		});
@@ -477,7 +476,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
 
 		await registerEmailDialog.start({
-			location:	this.name
+			location:	this.id
 		});
 	}
 
@@ -658,7 +657,7 @@ class TopSection extends Mix( Component ).With( ServerConnection ) {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			}
 		});
 

@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class RegisterDialog extends Mix( Overlay ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'RegisterDialog',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			fixed:			true

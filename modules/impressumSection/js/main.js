@@ -13,7 +13,6 @@ import style from '../style/main.scss';
 class ImpressumSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'ImpressumSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -39,8 +38,8 @@ class ImpressumSection extends Component {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 	}

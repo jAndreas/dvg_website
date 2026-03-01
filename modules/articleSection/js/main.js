@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:				'ArticleSection',
 			location:			moduleLocations.center,
 			loadingMessage:		'Warte auf Serververbindung...',
 			tmpl:				html,
@@ -72,8 +71,8 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 		this.fire( 'AboutMeSection.launchModule' );
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 	}
@@ -105,7 +104,7 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 		let articlePreviewPromise = await import( /* webpackChunkName: "articlePreview" */ 'articlePreview/js/main.js'  );
 
 		let articlePreviewInstance = await articlePreviewPromise.start({
-			location:		this.name,
+			location:		this.id,
 			nodeLocation:	'afterbegin',
 			articleData:	articleData
 		});
@@ -130,7 +129,7 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 					let articlePreviewPromise = await import( /* webpackChunkName: "articlePreview" */ 'articlePreview/js/main.js'  );
 
 					let articlePreviewInstance = await articlePreviewPromise.start({
-						location:				this.name,
+						location:				this.id,
 						articleData:			article,
 						highlightArticleId:		article.internalId === highlightArticleId || article.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') === highlightArticleId
 					});
@@ -150,14 +149,14 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 	async checkNext( totalLength = 0 ) {
 		if( this.previewLinks.length < totalLength ) {
 			if( this.nextModule ) {
-				this.fire( 'updateNextInfo.articlePreview', {
+				this.fire( 'updateNextInfo.ArticlePreview', {
 					articlesLeft:	totalLength - this.previewLinks.length
 				});
 			} else {
 				let articlePreviewPromise = await import( /* webpackChunkName: "articlePreview" */ 'articlePreview/js/main.js'  );
 
 				this.nextModule = await articlePreviewPromise.start({
-					location:	this.name,
+					location:	this.id,
 					mode:		'loadNextChunk',
 					info:		{
 						articlesLeft:	totalLength - this.previewLinks.length
@@ -167,7 +166,7 @@ class ArticleSection extends Mix( Component ).With( ServerConnection ) {
 
 			return true;
 		} else {
-			this.fire( 'destroyNextInfo.articlePreview' );
+			this.fire( 'destroyNextInfo.ArticlePreview' );
 			return false;
 		}
 	}

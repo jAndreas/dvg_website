@@ -18,7 +18,6 @@ import merchAudio from '../audio/merchbuy.mp3';
 class WishListOverlay extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'WishListOverlay',
 			tmpl:			html,
 			location:		moduleLocations.center,
 			audio:			new Audio( merchAudio )

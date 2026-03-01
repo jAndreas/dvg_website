@@ -154,7 +154,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	onModuleLaunch( module ) {
-		switch( module.name ) {
+		switch( module.id ) {
 			case 'VideoPlayerDialog':
 				this.currentHash.set( 'watch', module.state.videoData.vid );
 				doc.location.hash = this.currentHash.toString();
@@ -167,7 +167,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 	}
 
 	onModuleDestruction( module ) {
-		switch( module.name ) {
+		switch( module.id ) {
 			case 'VideoPlayerDialog':
 				this.currentHash.delete( 'watch' );
 				this.currentHash.delete( 'read' );
@@ -244,7 +244,7 @@ class DVGWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
 					let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
 
 					await registerEmailDialog.start({
-						location:	this.name
+						location:	this.id
 					});
 				} catch( ex ) {
 					this.log( ex.message );

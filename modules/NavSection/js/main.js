@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class NavSection extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'NavSection',
 			location:		moduleLocations.head,
 			tmpl:			html,
 			mode:			'website'
@@ -109,7 +108,7 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		let registerEmailDialog		= await import( /* webpackChunkName: "RegisterEmailDialog" */ 'registerEmailDialog/js/main.js'  );
 
 		await registerEmailDialog.start({
-			location:	this.name
+			location:	this.id
 		});
 	}
 
@@ -164,7 +163,7 @@ class NavSection extends Mix( Component ).With( ServerConnection ) {
 		let registerDialog	= await import( /* webpackChunkName: "registerDialog" */  'registerDialog/js/main.js'  );
 
 		await registerDialog.start({
-			location:	this.name,
+			location:	this.id,
 			center:		true
 		});
 	}

@@ -15,7 +15,6 @@ import style from '../style/main.scss';
 class SupportSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'SupportSection',
 			location:		moduleLocations.center,
 			tmpl:			html
 		}).and( input );
@@ -96,8 +95,8 @@ class SupportSection extends Component {
 
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name,
-				ref:		this.name
+				action:		this.id,
+				ref:		this.id
 			}
 		});
 

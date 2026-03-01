@@ -26,7 +26,6 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			input.articleData.publicPath			= ENV_PUBLIC_PATH;
 
 			extend( options ).with({
-				name:				'ArticlePreview',
 				tmpl:				html,
 				renderData:			extend( input.articleData ).with({ uri: ENV_PROD ? 'www.der-vegane-germane.de' : 'dev.der-vegane-germane.de' }).get(),
 				touchStartPos:		Object.create( null ),
@@ -34,7 +33,6 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 			}).and( input );
 		} else if( input.mode === 'loadNextChunk' ) {
 			extend( options ).with({
-				name:				'articlePreview',
 				tmpl:				loadNextChunkMarkup,
 				renderData:			input.info
 			}).and( input );
@@ -58,8 +56,8 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 		if( this.mode === 'loadNextChunk' ) {
 			this.addNodeEvent( 'div.articlePreview', 'click', this.onLoadNextChunk );
-			this.on( `updateNextInfo.${ this.name }`, this.onUpdateNextInfo, this );
-			this.on( `destroyNextInfo.${ this.name }`, this.onDestroyNextInfo, this );
+			this.on( `updateNextInfo.${ this.id }`, this.onUpdateNextInfo, this );
+			this.on( `destroyNextInfo.${ this.id }`, this.onDestroyNextInfo, this );
 		} else {
 			this.addNodeEvent( 'div.articleThumbnail', 'mousedown', this.articleTitleMouseDown );
 			this.addNodeEvent( 'div.articleThumbnail', 'mouseup', this.launchArticleViewer );
@@ -151,7 +149,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 
 	async initComments() {
 		await commentSection.start({
-			location:		this.name,
+			location:		this.id,
 			context:		this.articleData._id,
 			internalId:		this.articleData.internalId,
 			speakingName:	this.articleData.subject,
@@ -197,7 +195,7 @@ class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
 	onDonateAmountBlur() {
 		this.fire( 'updateHash.appEvents', {
 			data:	{
-				action:		this.name
+				action:		this.id
 			},
 			extra:		this.articleData.aid
 		});

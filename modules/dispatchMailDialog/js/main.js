@@ -14,7 +14,6 @@ import style from '../style/main.scss';
 class DispatchMailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:					'DispatchMailDialog',
 			location:				moduleLocations.center,
 			tmpl:					html,
 			center:					true,

@@ -15,7 +15,6 @@ import style from '../style/main.scss';
 class LoginDialog extends Mix( Overlay ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'LoginDialog',
 			location:		moduleLocations.center,
 			tmpl:			html,
 			fixed:			true,

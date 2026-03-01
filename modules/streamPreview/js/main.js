@@ -16,7 +16,6 @@ class StreamPreview extends Mix( Component ).With( ServerConnection ) {
 	constructor( input = { }, options = { } ) {
 		if( input.streamData ) {
 			extend( options ).with({
-				name:			'StreamPreview',
 				tmpl:			html,
 				renderData:		input.streamData,
 				touchStartPos:	Object.create( null )

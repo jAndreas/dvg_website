@@ -21,14 +21,12 @@ class VideoPreview extends Mix( Component ).With( ServerConnection ) {
 			input.videoData.publicPath	= ENV_PUBLIC_PATH;
 
 			extend( options ).with({
-				name:			'VideoPreview',
 				tmpl:			html,
 				renderData:		input.videoData,
 				touchStartPos:	Object.create( null )
 			}).and( input );
 		} else if( input.mode === 'loadNextChunk' ) {
 			extend( options ).with({
-				name:			'VideoPreview',
 				tmpl:			loadNextChunkMarkup,
 				renderData:		input.info
 			}).and( input );
@@ -48,8 +46,8 @@ class VideoPreview extends Mix( Component ).With( ServerConnection ) {
 
 		if( this.mode === 'loadNextChunk' ) {
 			this.addNodeEvent( 'div.videoPreview', 'click', this.onLoadNextChunk );
-			this.on( `updateNextInfo.${ this.name }`, this.onUpdateNextInfo, this );
-			this.on( `destroyNextInfo.${ this.name }`, this.onDestroyNextInfo, this );
+			this.on( `updateNextInfo.${ this.id }`, this.onUpdateNextInfo, this );
+			this.on( `destroyNextInfo.${ this.id }`, this.onDestroyNextInfo, this );
 		} else {
 			this.addNodeEvent( 'a.videoThumbnailAnchor, span.videoTitle', 'mousedown', this.videoTitleMouseDown );
 			this.addNodeEvent( 'a.videoThumbnailAnchor, span.videoTitle', 'mouseup', this.launchVideoModule );

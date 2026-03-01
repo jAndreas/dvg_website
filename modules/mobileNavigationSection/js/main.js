@@ -17,7 +17,6 @@ import navElementStyle from '../style/navElement.scss';
 class MobileNavigationSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
-			name:			'MobileNavigationSection',
 			location:		moduleLocations.right,
 			tmpl:			html
 		}).and( input );
