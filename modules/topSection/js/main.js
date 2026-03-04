@@ -1,11 +1,10 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix, getTimePeriod, isMobileDevice, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
+import { extend, getTimePeriod, isMobileDevice, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import scrollUpMarkup from '../markup/scrollup.html';
@@ -20,7 +19,7 @@ import * as videoSection from 'videoSection/js/main.js';
 /*****************************************************************************************************
  * Class TopSection inherits from BarFoos Component, GUI Module
  *****************************************************************************************************/
-class TopSection extends Mix( Component ).With( ServerConnection ) {
+class TopSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,

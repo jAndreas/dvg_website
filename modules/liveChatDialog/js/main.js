@@ -4,7 +4,6 @@ import { Overlay, Draggable } from 'barfoos2.0/dialog.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
 import { extend, Mix, intToRGB, hashCode, getTimePeriod, isMobileDevice } from 'barfoos2.0/toolkit.js';
 import { win, doc, undef } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
 
 import html from '../markup/main.html';
@@ -18,7 +17,7 @@ import userInListStyle from '../style/userInListElement.scss';
 /*****************************************************************************************************
  *  The live chat user interaction interface
  *****************************************************************************************************/
-class LiveChatDialog extends Mix( Overlay ).With( Draggable, ServerConnection, Speech ) {
+class LiveChatDialog extends Mix( Overlay ).With( Draggable, Speech ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,

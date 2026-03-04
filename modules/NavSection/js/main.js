@@ -2,8 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, Mix, isMobileDevice } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
+import { extend, isMobileDevice } from 'barfoos2.0/toolkit.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -11,7 +10,7 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  This module takes care about navigating the site dude, what did you expect?
  *****************************************************************************************************/
-class NavSection extends Mix( Component ).With( ServerConnection ) {
+class NavSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.head,

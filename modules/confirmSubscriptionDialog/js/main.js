@@ -3,7 +3,6 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -12,7 +11,7 @@ import style from '../style/main.scss';
  *  confirmSubscriptionDialog tries to verify a passed secret-key which gets assigned to an
 *	user account on subscription on main site.
  *****************************************************************************************************/
-class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
+class ConfirmSubscriptionDialog extends Mix( Overlay ).With( GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,

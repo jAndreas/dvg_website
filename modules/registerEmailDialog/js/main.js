@@ -3,7 +3,6 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -12,7 +11,7 @@ import style from '../style/main.scss';
  *  registerEmailDialog is a dialog which allows the user to enter his/her email-address which then
  *	gets transfered to the backend
  *****************************************************************************************************/
-class RegisterEmailDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
+class RegisterEmailDialog extends Mix( Overlay ).With( GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend(	options	).with({
 			location:					moduleLocations.center,

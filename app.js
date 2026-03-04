@@ -7,9 +7,9 @@ import 'whatwg-fetch';
 import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc, win } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
 
 import * as chatSideBar from 'chatSideBar/js/main.js';

@@ -1,9 +1,8 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -12,7 +11,7 @@ import style from '../style/main.scss';
  *  videoSection module receives all published video data and launches the videoPreview module based
  *	on that data. It will supervise the videoPreview modules.
  *****************************************************************************************************/
-class VideoSection extends Mix( Component ).With( ServerConnection ) {
+class VideoSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,

@@ -9,9 +9,9 @@ import urlPolyfill from 'url-search-params';
 import { main } from 'barfoos2.0/core.js';
 import { Composition } from 'barfoos2.0/toolkit.js';
 import { doc } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Mediator from 'barfoos2.0/mediator.js';
 import LogTools from 'barfoos2.0/logtools.js';
+import ServerConnection from 'barfoos2.0/serverconnection.js';
 import BrowserKit from 'barfoos2.0/browserkit.js';
 
 const	Browser		= new BrowserKit(),

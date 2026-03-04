@@ -3,7 +3,6 @@
 import { Component } from 'barfoos2.0/core.js';
 import { extend, Mix, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
 import * as commentSection from 'commentSection/js/main.js';
 import Clipboard from 'clipboard';
@@ -17,7 +16,7 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
  *  articlePreview Module renders previews based on article data. It also launches the
  *	articleViewer Module
  *****************************************************************************************************/
-class ArticlePreview extends Mix( Component ).With( ServerConnection, Speech ) {
+class ArticlePreview extends Mix( Component ).With( Speech ) {
 	constructor( input = { }, options = { } ) {
 		if( input.articleData ) {
 			input.articleData.aid					= input.articleData.subject ? input.articleData.subject.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;

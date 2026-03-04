@@ -2,9 +2,8 @@
 
 import { Overlay } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -12,7 +11,7 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  Logs in a user and dispatches session data
  *****************************************************************************************************/
-class LoginDialog extends Mix( Overlay ).With( ServerConnection ) {
+class LoginDialog extends Overlay {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.center,

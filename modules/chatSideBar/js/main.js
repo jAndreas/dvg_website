@@ -2,9 +2,8 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations, VK } from 'barfoos2.0/defs.js';
-import { extend, Mix, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
+import { extend, intToRGB, hashCode, getTimePeriod } from 'barfoos2.0/toolkit.js';
 import { win, undef } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import Speech from 'barfoos2.0/speech.js';
 
 import html from '../markup/main.html';
@@ -17,7 +16,7 @@ import userInListStyle from '../style/userInListElement.scss';
 /*****************************************************************************************************
  *  Chat Sidebar
  *****************************************************************************************************/
-class ChatSideBar extends Mix( Component ).With( ServerConnection ) {
+class ChatSideBar extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:		moduleLocations.right,

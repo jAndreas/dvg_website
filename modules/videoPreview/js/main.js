@@ -1,8 +1,7 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
+import { extend } from 'barfoos2.0/toolkit.js';
 
 import html from '../markup/main.html';
 import loadNextChunkMarkup from '../markup/loadNextChunk.html';
@@ -13,7 +12,7 @@ import loadNextChunkStyle from '../style/loadNextChunk.scss';
  *  videoPreview Module renders previews based on video data. It also launches the
  *	videoPlayer Module
  *****************************************************************************************************/
-class VideoPreview extends Mix( Component ).With( ServerConnection ) {
+class VideoPreview extends Component {
 	constructor( input = { }, options = { } ) {
 		if( input.videoData ) {
 			input.videoData.views		= input.videoData.views.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' );

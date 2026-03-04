@@ -3,7 +3,6 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import progressMarkup from '../markup/showprogress.html';
@@ -15,7 +14,7 @@ import progressConvertStyle from '../style/showprogress_convert.scss';
 /*****************************************************************************************************
  *	uploadVideoDialog is a dialog for privileged users which allows to upload video files to the dvg backend
  *****************************************************************************************************/
-class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
+class UploadVideoDialog extends Mix( Overlay ).With( GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,

@@ -1,9 +1,8 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
+import { extend } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -12,7 +11,7 @@ import style from '../style/main.scss';
  *  StreamPreview Module renders previews based on stream data. It also launches the
  *	videoPlayer Module
  *****************************************************************************************************/
-class StreamPreview extends Mix( Component ).With( ServerConnection ) {
+class StreamPreview extends Component {
 	constructor( input = { }, options = { } ) {
 		if( input.streamData ) {
 			extend( options ).with({

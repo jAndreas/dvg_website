@@ -3,7 +3,6 @@
 import { Overlay, GlasEffect } from 'barfoos2.0/dialog.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -11,7 +10,7 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  "description here"
  *****************************************************************************************************/
-class CreateNewArticleDialog extends Mix( Overlay ).With( GlasEffect, ServerConnection ) {
+class CreateNewArticleDialog extends Mix( Overlay ).With( GlasEffect ) {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:				moduleLocations.center,

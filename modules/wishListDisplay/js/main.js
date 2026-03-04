@@ -2,8 +2,7 @@
 
 import { Component } from 'barfoos2.0/core.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import { extend, Mix } from 'barfoos2.0/toolkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
+import { extend } from 'barfoos2.0/toolkit.js';
 
 import html from '../markup/main.html';
 import giftOverlayMarkup from '../markup/giftOverlay.html';
@@ -15,7 +14,7 @@ import merchAudio from '../audio/merchbuy.mp3';
 /*****************************************************************************************************
 *
 *****************************************************************************************************/
-class WishListOverlay extends Mix( Component ).With( ServerConnection ) {
+class WishListOverlay extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			tmpl:			html,

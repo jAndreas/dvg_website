@@ -5,7 +5,6 @@ import { moduleLocations } from 'barfoos2.0/defs.js';
 import { extend, Mix, isLocalChrome, isAgentCrawler } from 'barfoos2.0/toolkit.js';
 import { win } from 'barfoos2.0/domkit.js';
 import { loadVideo } from 'video.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 import * as commentSection from 'commentSection/js/main.js';
 import Clipboard from 'clipboard';
 
@@ -16,7 +15,7 @@ import style from '../style/main.scss';
  *  videoPlayer Dialog creates an overlay dialog to playback the passed in video based on the data
  *	It also displays all the information and is responsible for handling clicks/views
  *****************************************************************************************************/
-class VideoPlayerDialog extends Mix( Overlay ).With( Draggable, ServerConnection ) {
+class VideoPlayerDialog extends Mix( Overlay ).With( Draggable ) {
 	constructor( input = { }, options = { } ) {
 		input.videoData.vid					= input.videoData.videoTitle ? input.videoData.videoTitle.replace( /\s+/g, '-' ).replace( /[^\w.|-]/g, '') : input.articleData.internalId;
 		input.videoData.videoDescription	= input.videoData.videoDescription.replace(/http\S*/g, urlMatch => {

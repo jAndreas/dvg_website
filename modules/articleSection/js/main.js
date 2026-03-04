@@ -1,9 +1,8 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { extend, Mix, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
+import { extend, isAgentCrawler, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { moduleLocations } from 'barfoos2.0/defs.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import style from '../style/main.scss';
@@ -11,7 +10,7 @@ import style from '../style/main.scss';
 /*****************************************************************************************************
  *  articleSection is the host of articles
  *****************************************************************************************************/
-class ArticleSection extends Mix( Component ).With( ServerConnection ) {
+class ArticleSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			location:			moduleLocations.center,

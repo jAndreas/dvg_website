@@ -1,10 +1,9 @@
 'use strict';
 
 import { Component } from 'barfoos2.0/core.js';
-import { Mix, getTimePeriod, isLocalChrome } from 'barfoos2.0/toolkit.js';
+import { getTimePeriod, isLocalChrome } from 'barfoos2.0/toolkit.js';
 import { extend } from 'barfoos2.0/toolkit.js';
 import { win, undef } from 'barfoos2.0/domkit.js';
-import ServerConnection from 'barfoos2.0/serverconnection.js';
 
 import html from '../markup/main.html';
 import displayMarkup from '../markup/display.html';
@@ -15,7 +14,7 @@ import displayStyle from '../style/display.scss';
  *  The commentSection Module handles user input for comments and stores it into a database
  *	It will also handle the display and visualization of existing comments for the context
  *****************************************************************************************************/
-class CommentSection extends Mix( Component ).With( ServerConnection ) {
+class CommentSection extends Component {
 	constructor( input = { }, options = { } ) {
 		extend( options ).with({
 			tmpl:			html,
