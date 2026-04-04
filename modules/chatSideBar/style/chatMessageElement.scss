@@ -22,7 +22,10 @@ div.chatMessageElement {
 	}
 
 	&.adminVerified:hover > div.chatUserContent > div.adminOverlay {
-		display:flex;
+		@media (hover: hover) {
+			display:flex;
+	
+		}
 	}
 
 	&.serverNotification {
@@ -155,7 +158,10 @@ div.chatMessageElement {
 				filter:grayscale(0.8);
 
 				&:hover {
-					filter:grayscale(0.7) brightness(1.2);
+					@media (hover: hover) {
+						filter:grayscale(0.7) brightness(1.2);
+				
+					}
 				}
 			}
 		}

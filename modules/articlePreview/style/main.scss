@@ -28,8 +28,11 @@ div.articlePreview {
 	}
 
 	&:hover {
-		background:linear-gradient(45deg, rgba(255, 255, 255, 0.7), rgba(199, 211, 255, 0.77)), url(../images/paper.jpg);
-		background-size:100% auto;
+		@media (hover: hover) {
+			background:linear-gradient(45deg, rgba(255, 255, 255, 0.7), rgba(199, 211, 255, 0.77)), url(../images/paper.jpg);
+			background-size:100% auto;
+	
+		}
 	}
 
 	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
@@ -55,7 +58,10 @@ div.articlePreview {
 			margin-right:2vh;
 
 			&:hover {
-				text-decoration:underline;
+				@media (hover: hover) {
+					text-decoration:underline;
+			
+				}
 			}
 		}
 	}
@@ -89,7 +95,10 @@ div.articlePreview {
 				font-family:"system-ui","Futura","Lucida Grande","Arial";
 
 				&:hover {
-					text-decoration:underline;
+					@media (hover: hover) {
+						text-decoration:underline;
+				
+					}
 				}
 			}
 		}
@@ -157,7 +166,10 @@ div.articlePreview {
 			z-index:2;
 
 			&:hover {
-				box-shadow:0px 0px 2px 2px rgba(100,100,150,0.8);
+				@media (hover: hover) {
+					box-shadow:0px 0px 2px 2px rgba(100,100,150,0.8);
+			
+				}
 			}
 		}
 	}
@@ -184,7 +196,10 @@ div.articlePreview {
 		}
 
 		&:hover {
-			box-shadow:0 0 4px 1px #766f92;
+			@media (hover: hover) {
+				box-shadow:0 0 4px 1px #766f92;
+		
+			}
 		}
 
 		> div.additionalImageMini {
@@ -199,7 +214,10 @@ div.articlePreview {
 			opacity:0.8;
 
 			&:hover {
-				box-shadow:0 0 4px 1px #766f92;
+				@media (hover: hover) {
+					box-shadow:0 0 4px 1px #766f92;
+			
+				}
 			}
 
 			@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
@@ -302,7 +320,10 @@ div.articlePreview {
 			}
 
 			&:hover {
-				opacity:1;
+				@media (hover: hover) {
+					opacity:1;
+			
+				}
 			}
 		}
 
@@ -320,7 +341,10 @@ div.articlePreview {
 				height:100%;
 
 				&:hover {
-					opacity:1;
+					@media (hover: hover) {
+						opacity:1;
+				
+					}
 				}
 			}
 		}
@@ -347,7 +371,10 @@ div.articlePreview {
 			color:white;
 
 			&:hover {
-				opacity:1;
+				@media (hover: hover) {
+					opacity:1;
+			
+				}
 			}
 		}
 

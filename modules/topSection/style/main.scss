@@ -137,7 +137,10 @@ div#topSection {
 							transition:transform 100ms ease-in, text-shadow 100ms linear;
 
 							&:hover {
-								text-decoration:underline;
+								@media (hover: hover) {
+									text-decoration:underline;
+							
+								}
 							}
 						}
 
@@ -156,9 +159,12 @@ div#topSection {
 								filter:sepia(0.3);
 
 								&:hover {
-									filter:brightness(1.3) sepia(0.3);
-									transform:rotate(-35deg) translate(-80px, -20px) scale(1.2,1.2);
-									text-decoration:none;
+									@media (hover: hover) {
+										filter:brightness(1.3) sepia(0.3);
+										transform:rotate(-35deg) translate(-80px, -20px) scale(1.2,1.2);
+										text-decoration:none;
+								
+									}
 								}
 
 								@media screen and (max-width:$iPhone6Portrait) {
@@ -187,13 +193,16 @@ div#topSection {
 							font-weight:normal;
 
 							&:hover {
-								filter:brightness(1.3);
-								transform:rotate(15deg) scale(1.2, 1.2) translate(40px,0px);
-								text-decoration:none;
+								@media (hover: hover) {
+									filter:brightness(1.3);
+									transform:rotate(15deg) scale(1.2, 1.2) translate(40px,0px);
+									text-decoration:none;
 
-								> div.shopContainer > pre {
-									transition:200ms transform linear;
-									transform:rotate(20deg) translate(0px,0px);
+									> div.shopContainer > pre {
+										transition:200ms transform linear;
+										transform:rotate(20deg) translate(0px,0px);
+									}
+							
 								}
 							}
 
@@ -204,9 +213,12 @@ div#topSection {
 								top:20vh;
 
 								&:hover {
-									filter:brightness(1.3) sepia(0.3);
-									transform:none;
-									text-decoration:none;
+									@media (hover: hover) {
+										filter:brightness(1.3) sepia(0.3);
+										transform:none;
+										text-decoration:none;
+								
+									}
 								}
 							}
 
@@ -331,9 +343,12 @@ div#topSection {
 					opacity:0.8;
 
 					&:hover {
-						filter:drop-shadow(-1px 1px 2px);
-						text-shadow:0px 0px 10px rgba(255, 255, 255, 0.7);
-						opacity:0.9;
+						@media (hover: hover) {
+							filter:drop-shadow(-1px 1px 2px);
+							text-shadow:0px 0px 10px rgba(255, 255, 255, 0.7);
+							opacity:0.9;
+					
+						}
 					}
 
 					&.returnSymbol {
@@ -388,7 +403,10 @@ div#topSection {
 					transform:translateY(-18vh) translateX(5vw);
 
 					&:hover {
-						animation:2100ms ease 0ms infinite normal forwards bouncequick;
+						@media (hover: hover) {
+							animation:2100ms ease 0ms infinite normal forwards bouncequick;
+					
+						}
 					}
 
 					&.initialBounce {
@@ -466,9 +484,12 @@ div#topSection {
 			}
 
 			&:hover {
-				border:1px solid rgba(205, 215, 255, 0.9);
-				background-color:rgba(20, 20, 60, 0.9);
-				filter:brightness(1.4) sepia(0.3);
+				@media (hover: hover) {
+					border:1px solid rgba(205, 215, 255, 0.9);
+					background-color:rgba(20, 20, 60, 0.9);
+					filter:brightness(1.4) sepia(0.3);
+			
+				}
 			}
 
 			&:after {
@@ -673,7 +694,10 @@ div#topSection {
 			filter:sepia(0.7);
 
 			&:hover {
-				filter:brightness(1.3) sepia(0.3);
+				@media (hover: hover) {
+					filter:brightness(1.3) sepia(0.3);
+			
+				}
 			}
 		}
 
@@ -685,7 +709,10 @@ div#topSection {
 			filter:sepia(0.7);
 
 			&:hover {
-				filter:brightness(1.3) sepia(0.3);
+				@media (hover: hover) {
+					filter:brightness(1.3) sepia(0.3);
+			
+				}
 			}
 		}
 
@@ -697,7 +724,10 @@ div#topSection {
 			filter:sepia(0.7);
 
 			&:hover {
-				filter:brightness(1.3) sepia(0.3);
+				@media (hover: hover) {
+					filter:brightness(1.3) sepia(0.3);
+			
+				}
 			}
 		}
 	}
@@ -729,7 +759,10 @@ div#topSection {
 		}
 
 		&:hover {
-			filter:brightness(1.1) sepia(0.2);
+			@media (hover: hover) {
+				filter:brightness(1.1) sepia(0.2);
+		
+			}
 		}
 
 		@media screen and (max-width:$iPhone6Portrait) {

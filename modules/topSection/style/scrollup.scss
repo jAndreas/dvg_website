@@ -25,8 +25,11 @@ div.quickScrollUp {
 	}
 
 	&:hover {
-		border:1px solid rgba(205, 215, 255, 0.9);
-		box-shadow:0 0 14px 1px rgba(175, 175, 255, 0.9);
+		@media (hover: hover) {
+			border:1px solid rgba(205, 215, 255, 0.9);
+			box-shadow:0 0 14px 1px rgba(175, 175, 255, 0.9);
+	
+		}
 	}
 }
 

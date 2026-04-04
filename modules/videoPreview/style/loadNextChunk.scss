@@ -14,7 +14,10 @@ div.videoPreview {
 		align-self:center;
 
 		&:hover {
-			background:linear-gradient(45deg, rgba(0, 0, 30, 0.9), rgba(25, 205, 25, 0.2));
+			@media (hover: hover) {
+				background:linear-gradient(45deg, rgba(0, 0, 30, 0.9), rgba(25, 205, 25, 0.2));
+		
+			}
 		}
 
 		@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {

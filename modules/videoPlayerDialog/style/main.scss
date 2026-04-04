@@ -191,7 +191,10 @@ div.videoPlayerDialog {
 				}
 
 				&:hover {
-					opacity:1;
+					@media (hover: hover) {
+						opacity:1;
+				
+					}
 				}
 
 				&:after {
@@ -285,7 +288,10 @@ div.videoPlayerDialog {
 				}
 
 				&:hover {
-					opacity:1;
+					@media (hover: hover) {
+						opacity:1;
+				
+					}
 				}
 			}
 
@@ -303,7 +309,10 @@ div.videoPlayerDialog {
 					height:100%;
 
 					&:hover {
-						opacity:1;
+						@media (hover: hover) {
+							opacity:1;
+					
+						}
 					}
 				}
 			}
@@ -330,7 +339,10 @@ div.videoPlayerDialog {
 				color:white;
 
 				&:hover {
-					opacity:1;
+					@media (hover: hover) {
+						opacity:1;
+				
+					}
 				}
 			}
 
@@ -392,7 +404,10 @@ div.videoPlayerDialog {
 				align-self:center;
 
 				&:hover {
-					background:linear-gradient(0deg, rgba(180, 180, 210, 0.3), rgba(200, 170, 250, 0.3));
+					@media (hover: hover) {
+						background:linear-gradient(0deg, rgba(180, 180, 210, 0.3), rgba(200, 170, 250, 0.3));
+				
+					}
 				}
 			}
 		}

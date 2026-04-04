@@ -49,7 +49,10 @@ div.streamPreview {
 	}
 
 	&:hover {
-		background:linear-gradient(45deg, rgba(0, 0, 0, 0.9), rgba(108, 108, 183, 0.44));
+		@media (hover: hover) {
+			background:linear-gradient(45deg, rgba(0, 0, 0, 0.9), rgba(108, 108, 183, 0.44));
+	
+		}
 	}
 
 	@media screen and (min-width:1px) and (max-width:$iPhone6Portrait) {
@@ -98,7 +101,10 @@ div.streamPreview {
 		margin-left:8px;
 
 		&:hover {
-			text-decoration:underline;
+			@media (hover: hover) {
+				text-decoration:underline;
+		
+			}
 		}
 	}
 
